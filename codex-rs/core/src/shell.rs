@@ -45,19 +45,12 @@ impl Shell {
 
 #[cfg(unix)]
 fn detect_default_user_shell() -> Shell {
-    use libc::getpwuid;
-    use libc::getuid;
-    use std::ffi::CStr;
-
-    unsafe {
-        let uid = getuid();
-        let pw = getpwuid(uid);
-
-        if !pw.is_null() {
-            let shell_path = CStr::from_ptr((*pw).pw_shell)
-                .to_string_lossy()
-                .into_owned();
-            let home_path = CStr::from_ptr((*pw).pw_dir).to_string_lossy().into_owned();
+    // On Android/Termux, getpwuid() returns "/data/data/.../login" instead of the actual shell.
+    // Use $SHELL environment variable instead, which correctly points to bash/zsh.
+    #[cfg(target_os = "android")]
+    {
+        if let Ok(shell_path) = std::env::var("SHELL") {
+            let home_path = std::env::var("HOME").unwrap_or_else(|_| "/data/data/com.termux/files/home".to_string());
 
             if shell_path.ends_with("/zsh") {
                 return Shell::Zsh(ZshShell {
@@ -73,8 +66,43 @@ fn detect_default_user_shell() -> Shell {
                 });
             }
         }
+        return Shell::Unknown;
     }
-    Shell::Unknown
+
+    // On Linux/BSD/other Unix, use getpwuid() which works correctly
+    #[cfg(not(target_os = "android"))]
+    {
+        use libc::getpwuid;
+        use libc::getuid;
+        use std::ffi::CStr;
+
+        unsafe {
+            let uid = getuid();
+            let pw = getpwuid(uid);
+
+            if !pw.is_null() {
+                let shell_path = CStr::from_ptr((*pw).pw_shell)
+                    .to_string_lossy()
+                    .into_owned();
+                let home_path = CStr::from_ptr((*pw).pw_dir).to_string_lossy().into_owned();
+
+                if shell_path.ends_with("/zsh") {
+                    return Shell::Zsh(ZshShell {
+                        shell_path,
+                        zshrc_path: format!("{home_path}/.zshrc"),
+                    });
+                }
+
+                if shell_path.ends_with("/bash") {
+                    return Shell::Bash(BashShell {
+                        shell_path,
+                        bashrc_path: format!("{home_path}/.bashrc"),
+                    });
+                }
+            }
+        }
+        Shell::Unknown
+    }
 }
 
 #[cfg(unix)]

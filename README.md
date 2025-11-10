@@ -1,109 +1,149 @@
-<p align="center"><code>npm i -g @openai/codex</code><br />or <code>brew install --cask codex</code></p>
+# 🤖 Codex CLI - Termux Edition
 
-<p align="center"><strong>Codex CLI</strong> is a coding agent from OpenAI that runs locally on your computer.
-</br>
-</br>If you want Codex in your code editor (VS Code, Cursor, Windsurf), <a href="https://developers.openai.com/codex/ide">install in your IDE</a>
-</br>If you are looking for the <em>cloud-based agent</em> from OpenAI, <strong>Codex Web</strong>, go to <a href="https://chatgpt.com/codex">chatgpt.com/codex</a></p>
+> **Pre-compiled OpenAI Codex for Android Termux (ARM64)**
 
-<p align="center">
-  <img src="./.github/codex-cli-splash.png" alt="Codex CLI splash" width="80%" />
-  </p>
+## What This Is
+
+Official OpenAI Codex CLI compiled for Android Termux. Since Termux is not officially supported by upstream, we apply minimal patches only for critical compatibility issues.
+
+### What We Do:
+✅ **Use official OpenAI Codex source** (https://github.com/openai/codex)
+✅ **Compile for ARM64** (Android Termux native)
+✅ **Apply minimal patches** only for Termux-specific issues not addressed upstream
+✅ **Package as npm** for easy installation
+✅ **Maintain full Apache 2.0 compliance** with OpenAI attribution
+
+### What We DON'T Do:
+❌ **NO new features**
+❌ **NO behavior modifications** (works exactly like upstream)
+❌ **NO replacement** of official Codex
+
+### 🔧 Compatibility Patches
+
+We only apply patches for issues that:
+- **Prevent Codex from working on Termux**
+- **Are not addressed by upstream** (Termux is not officially supported)
+- **Are minimal and well-documented**
+
+**Current patches**: See [patches/](./patches/) directory for full documentation.
+
+**Found an issue?** Well-documented bug reports with reproduction steps are welcome! Open an [issue](https://github.com/DioNanos/codex-termux/issues).
 
 ---
 
-## Quickstart
+## 📋 Prerequisites
 
-### Installing and running Codex CLI
+```bash
+# Update Termux packages
+pkg update && pkg upgrade -y
 
-Install globally with your preferred package manager. If you use npm:
+# Install Node.js
+pkg install nodejs-lts -y
 
-```shell
-npm install -g @openai/codex
+# Verify
+node --version  # v14+
+npm --version   # v6+
 ```
 
-Alternatively, if you use Homebrew:
+**Requirements:**
+- Android 7+ (Termux)
+- ARM64 architecture
+- Node.js ≥ 14.0.0
+- ~50MB storage
 
-```shell
-brew install --cask codex
+---
+
+## 📦 Installation
+
+### Via npm (Recommended)
+
+```bash
+npm install -g @mmmbuto/codex-cli-termux
 ```
 
-Then simply run `codex` to get started:
+### Verify Installation
 
-```shell
+```bash
+codex --version
+# Output: codex-cli 0.57.0
+
+codex login
+# Opens browser for authentication
+```
+
+**Links:**
+- npm: https://www.npmjs.com/package/@mmmbuto/codex-cli-termux
+- Releases: https://github.com/DioNanos/codex-termux/releases
+- Upstream: https://github.com/openai/codex
+
+---
+
+## 🚀 Usage
+
+Same as official Codex CLI:
+
+```bash
+# Login to OpenAI
+codex login
+
+# Start chat
 codex
+
+# Help
+codex --help
 ```
 
-If you're running into upgrade issues with Homebrew, see the [FAQ entry on brew upgrade codex](./docs/faq.md#brew-upgrade-codex-isnt-upgrading-me).
-
-<details>
-<summary>You can also go to the <a href="https://github.com/openai/codex/releases/latest">latest GitHub Release</a> and download the appropriate binary for your platform.</summary>
-
-Each GitHub Release contains many executables, but in practice, you likely want one of these:
-
-- macOS
-  - Apple Silicon/arm64: `codex-aarch64-apple-darwin.tar.gz`
-  - x86_64 (older Mac hardware): `codex-x86_64-apple-darwin.tar.gz`
-- Linux
-  - x86_64: `codex-x86_64-unknown-linux-musl.tar.gz`
-  - arm64: `codex-aarch64-unknown-linux-musl.tar.gz`
-
-Each archive contains a single entry with the platform baked into the name (e.g., `codex-x86_64-unknown-linux-musl`), so you likely want to rename it to `codex` after extracting it.
-
-</details>
-
-### Using Codex with your ChatGPT plan
-
-<p align="center">
-  <img src="./.github/codex-cli-login.png" alt="Codex CLI login" width="80%" />
-  </p>
-
-Run `codex` and select **Sign in with ChatGPT**. We recommend signing into your ChatGPT account to use Codex as part of your Plus, Pro, Team, Edu, or Enterprise plan. [Learn more about what's included in your ChatGPT plan](https://help.openai.com/en/articles/11369540-codex-in-chatgpt).
-
-You can also use Codex with an API key, but this requires [additional setup](./docs/authentication.md#usage-based-billing-alternative-use-an-openai-api-key). If you previously used an API key for usage-based billing, see the [migration steps](./docs/authentication.md#migrating-from-usage-based-billing-api-key). If you're having trouble with login, please comment on [this issue](https://github.com/openai/codex/issues/1243).
-
-### Model Context Protocol (MCP)
-
-Codex can access MCP servers. To configure them, refer to the [config docs](./docs/config.md#mcp_servers).
-
-### Configuration
-
-Codex CLI supports a rich set of configuration options, with preferences stored in `~/.codex/config.toml`. For full configuration options, see [Configuration](./docs/config.md).
+For full documentation, see [OpenAI Codex docs](https://github.com/openai/codex).
 
 ---
 
-### Docs & FAQ
+## 🔨 Building from Source
 
-- [**Getting started**](./docs/getting-started.md)
-  - [CLI usage](./docs/getting-started.md#cli-usage)
-  - [Slash Commands](./docs/slash_commands.md)
-  - [Running with a prompt as input](./docs/getting-started.md#running-with-a-prompt-as-input)
-  - [Example prompts](./docs/getting-started.md#example-prompts)
-  - [Custom prompts](./docs/prompts.md)
-  - [Memory with AGENTS.md](./docs/getting-started.md#memory-with-agentsmd)
-- [**Configuration**](./docs/config.md)
-  - [Example config](./docs/example-config.md)
-- [**Sandbox & approvals**](./docs/sandbox.md)
-- [**Authentication**](./docs/authentication.md)
-  - [Auth methods](./docs/authentication.md#forcing-a-specific-auth-method-advanced)
-  - [Login on a "Headless" machine](./docs/authentication.md#connecting-on-a-headless-machine)
-- **Automating Codex**
-  - [GitHub Action](https://github.com/openai/codex-action)
-  - [TypeScript SDK](./sdk/typescript/README.md)
-  - [Non-interactive mode (`codex exec`)](./docs/exec.md)
-- [**Advanced**](./docs/advanced.md)
-  - [Tracing / verbose logging](./docs/advanced.md#tracing--verbose-logging)
-  - [Model Context Protocol (MCP)](./docs/advanced.md#model-context-protocol-mcp)
-- [**Zero data retention (ZDR)**](./docs/zdr.md)
-- [**Contributing**](./docs/contributing.md)
-- [**Install & build**](./docs/install.md)
-  - [System Requirements](./docs/install.md#system-requirements)
-  - [DotSlash](./docs/install.md#dotslash)
-  - [Build from source](./docs/install.md#build-from-source)
-- [**FAQ**](./docs/faq.md)
-- [**Open source fund**](./docs/open-source-fund.md)
+See [BUILDING.md](./BUILDING.md) for compilation instructions.
 
 ---
 
-## License
+## 📝 License
 
-This repository is licensed under the [Apache-2.0 License](LICENSE).
+This project maintains full compliance with the Apache 2.0 license from OpenAI Codex.
+
+**Original work**: Copyright OpenAI (https://github.com/openai/codex)
+**Termux port**: Minimal patches for Android compatibility
+
+See [LICENSE](./LICENSE) file for details.
+
+---
+
+## 🙏 Credits
+
+- **OpenAI** for the amazing Codex CLI
+- **Termux** community for Android terminal environment
+- All contributors to upstream Codex project
+
+---
+
+**Version**: Based on OpenAI Codex 0.57.0
+**Platform**: Android Termux ARM64
+**Maintained**: Community-driven, not affiliated with OpenAI
+
+---
+
+## 📜 Changelog
+
+### v0.57.0-termux (2025-11-10)
+
+Synced with upstream OpenAI Codex rust-v0.57.0 (25 commits)
+
+**Upstream improvements:**
+- ⌨️ **TUI Navigation**: CTRL-n / CTRL-p for navigating slash commands, files, history
+- 🔧 **Unified Exec**: Improved safe commands handling, process group timeout fixes
+- 🪟 **WSL Support**: Path normalization for Windows Subsystem for Linux
+- 🚀 **App-server v2**: New Thread/Turn APIs, account endpoints
+- 🧹 **Refactoring**: Terminal cleanup (deprecated flush logic removed)
+
+**Termux-specific:**
+- ✅ Android auto-update disabled (manual update instructions shown)
+- ✅ `termux-open-url` for browser login (ndk-context crash fix maintained)
+- ✅ RAM optimizations for 16GB devices (lto=false, codegen-units=16)
+
+Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.56.0...rust-v0.57.0

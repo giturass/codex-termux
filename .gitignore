@@ -82,3 +82,12 @@ CHANGELOG.ignore.md
 # nix related
 .direnv
 .envrc
+
+# Termux builds (do not commit binaries)
+*.tar.gz
+codex
+codex-rs/target/
+
+# Backup and temp files
+.backup-*/
+RECONSTRUCTION_PLAN.md

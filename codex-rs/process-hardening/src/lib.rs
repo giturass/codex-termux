@@ -40,19 +40,24 @@ pub(crate) fn pre_main_hardening_linux() {
 
     // Official Codex releases are MUSL-linked, which means that variables such
     // as LD_PRELOAD are ignored anyway, but just to be sure, clear them here.
-    let ld_keys: Vec<String> = std::env::vars()
-        .filter_map(|(key, _)| {
-            if key.starts_with("LD_") {
-                Some(key)
-            } else {
-                None
-            }
-        })
-        .collect();
+    // EXCEPTION: On Android/Termux, LD_* variables are required to find shared libraries
+    // in non-standard paths (/data/data/com.termux/files/usr/lib), so we must preserve them.
+    #[cfg(not(target_os = "android"))]
+    {
+        let ld_keys: Vec<String> = std::env::vars()
+            .filter_map(|(key, _)| {
+                if key.starts_with("LD_") {
+                    Some(key)
+                } else {
+                    None
+                }
+            })
+            .collect();
 
-    for key in ld_keys {
-        unsafe {
-            std::env::remove_var(key);
+        for key in ld_keys {
+            unsafe {
+                std::env::remove_var(key);
+            }
         }
     }
 }

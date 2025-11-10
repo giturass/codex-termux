@@ -264,13 +264,14 @@ ignored = [
 ]
 
 [profile.release]
-lto = "fat"
+lto = false                                    # Disable LTO (saves ~4GB RAM) - Termux optimization
 # Because we bundle some of these executables with the TypeScript CLI, we
 # remove everything to make the binary as small as possible.
 strip = "symbols"
 
 # See https://github.com/openai/codex/issues/1411 for details.
-codegen-units = 1
+codegen-units = 16                            # Use 16 parallel units (was 1) - Termux optimization
+opt-level = 3                                 # Keep optimization level high
 
 [profile.ci-test]
 debug = 1         # Reduce debug symbol size
