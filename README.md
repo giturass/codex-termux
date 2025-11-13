@@ -65,7 +65,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.57.0
+# Output: codex-cli 0.58.0
 
 codex login
 # Opens browser for authentication
@@ -122,13 +122,34 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.57.0
+**Version**: Based on OpenAI Codex 0.58.0 (includes GPT-5.1 support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
 ---
 
 ## 📜 Changelog
+
+### v0.58.0-termux (2025-11-13)
+
+Synced with upstream OpenAI Codex rust-v0.58.0 (62 commits)
+
+**Major features:**
+- 🤖 **GPT-5.1 Support**: New model family (gpt-5.1-codex, gpt-5.1-codex-mini, gpt-5.1)
+- 🧠 **Adaptive Reasoning**: Configurable effort levels (Low, Medium, High)
+- ⌨️ **Enhanced TUI**: Job control, improved navigation, better model picker
+- 🔧 **Shell Detection**: Centralized command generation for unified exec
+- 📊 **App-server v2**: Thread/Turn APIs improvements
+
+**Termux-specific:**
+- ✅ All Android patches preserved and verified working
+- ✅ Browser login fix (termux-open-url)
+- ✅ RAM optimizations (lto=false, codegen-units=16)
+- ✅ Auto-update for @mmmbuto/codex-cli-termux
+
+Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.57.0...rust-v0.58.0
+
+---
 
 ### v0.57.0-termux (2025-11-10)
 
