@@ -66,6 +66,9 @@ npm --version   # v6+
 
 ## 📦 Installation
 
+> [!WARNING]
+> **Deprecated versions:** Versions prior to v0.57.0-termux are no longer maintained. Please upgrade to the latest release.
+
 ### Via npm (Recommended)
 
 ```bash
@@ -81,8 +84,6 @@ codex --version
 codex login
 # Opens browser for authentication
 ```
-
-✨ **Working perfectly?** Consider [buying me a coffee](https://ko-fi.com/dionanos) to keep ARM64 builds alive!
 
 **Links:**
 - npm: https://www.npmjs.com/package/@mmmbuto/codex-cli-termux
@@ -116,22 +117,20 @@ See [BUILDING.md](./BUILDING.md) for compilation instructions.
 
 ---
 
-## ☕ Support This Project
+## 🔧 Project Maintenance
 
-**Codex-Termux** enables AI-powered coding on Android - a unique capability in mobile development.
+**Codex-Termux** is a community-maintained port enabling AI-powered coding on Android Termux.
 
-**What your support enables:**
-- 🔨 **Monthly ARM64 builds** (~18min compilation per release)
-- 🔄 **Upstream tracking** (62 commits merged in latest release)
-- 🐛 **Termux compatibility patches** (3 critical Android fixes maintained)
-- 📱 **Testing on real devices** (Pixel 9 Pro, other ARM64 phones)
-- 📚 **Documentation & support** (GitHub issues, troubleshooting)
+**Maintenance activities:**
+- 🔨 **ARM64 compilation** - Building native binaries for each upstream release (~18min per build)
+- 🔄 **Upstream synchronization** - Tracking OpenAI Codex updates and merging changes
+- 🐛 **Compatibility patches** - Maintaining Android-specific fixes for Termux environment
+- 📱 **Device testing** - Verification on real ARM64 hardware (Pixel 9 Pro, other devices)
+- 📚 **Documentation & support** - Maintaining docs, responding to GitHub issues
 
-**Time investment:** ~20 hours/month for a single maintainer
+**Time investment:** Approximately 20 hours per month for project upkeep.
 
-👉 **https://ko-fi.com/dionanos**
-
-Every coffee ☕ helps keep this project maintained and up-to-date with OpenAI's releases!
+**Thank you** to all users who have reported issues, provided feedback, and helped improve this project. Your contributions make Codex accessible on mobile platforms.
 
 ---
 
