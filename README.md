@@ -2,6 +2,17 @@
 
 > **Pre-compiled OpenAI Codex for Android Termux (ARM64)**
 
+[![npm](https://img.shields.io/npm/v/@mmmbuto/codex-cli-termux?style=flat-square&logo=npm)](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
+[![downloads](https://img.shields.io/npm/dt/@mmmbuto/codex-cli-termux?style=flat-square)](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
+[![ko-fi](https://img.shields.io/badge/☕_Support-Ko--fi-FF5E5B?style=flat-square&logo=ko-fi)](https://ko-fi.com/dionanos)
+
+> [!TIP]
+> **Enjoying Codex on mobile?** ☕
+> This project requires ~20 hours/month for ARM64 compilation, upstream tracking, and compatibility patches.
+> [Support development →](https://ko-fi.com/dionanos)
+
+---
+
 ## What This Is
 
 Official OpenAI Codex CLI compiled for Android Termux. Since Termux is not officially supported by upstream, we apply minimal patches only for critical compatibility issues.
@@ -71,6 +82,8 @@ codex login
 # Opens browser for authentication
 ```
 
+✨ **Working perfectly?** Consider [buying me a coffee](https://ko-fi.com/dionanos) to keep ARM64 builds alive!
+
 **Links:**
 - npm: https://www.npmjs.com/package/@mmmbuto/codex-cli-termux
 - Releases: https://github.com/DioNanos/codex-termux/releases
@@ -100,6 +113,25 @@ For full documentation, see [OpenAI Codex docs](https://github.com/openai/codex)
 ## 🔨 Building from Source
 
 See [BUILDING.md](./BUILDING.md) for compilation instructions.
+
+---
+
+## ☕ Support This Project
+
+**Codex-Termux** enables AI-powered coding on Android - a unique capability in mobile development.
+
+**What your support enables:**
+- 🔨 **Monthly ARM64 builds** (~18min compilation per release)
+- 🔄 **Upstream tracking** (62 commits merged in latest release)
+- 🐛 **Termux compatibility patches** (3 critical Android fixes maintained)
+- 📱 **Testing on real devices** (Pixel 9 Pro, other ARM64 phones)
+- 📚 **Documentation & support** (GitHub issues, troubleshooting)
+
+**Time investment:** ~20 hours/month for a single maintainer
+
+👉 **https://ko-fi.com/dionanos**
+
+Every coffee ☕ helps keep this project maintained and up-to-date with OpenAI's releases!
 
 ---
 
