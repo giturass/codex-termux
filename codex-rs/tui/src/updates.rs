@@ -132,10 +132,15 @@ fn extract_version_from_cask(cask_contents: &str) -> anyhow::Result<String> {
 }
 
 fn extract_version_from_latest_tag(latest_tag_name: &str) -> anyhow::Result<String> {
-    latest_tag_name
+    // Support both "rust-v" (upstream) and "v" (Termux fork)
+    let version = latest_tag_name
         .strip_prefix("rust-v")
-        .map(str::to_owned)
-        .ok_or_else(|| anyhow::anyhow!("Failed to parse latest tag name '{latest_tag_name}'"))
+        .or_else(|| latest_tag_name.strip_prefix("v"))
+        .ok_or_else(|| anyhow::anyhow!("Failed to parse latest tag name '{latest_tag_name}'"))?;
+
+    // Remove -termux suffix if present (e.g., "0.58.0-termux" -> "0.58.0")
+    let clean_version = version.split('-').next().unwrap_or(version);
+    Ok(clean_version.to_string())
 }
 
 /// Returns the latest version to show in a popup, if it should be shown.
@@ -173,7 +178,9 @@ fn parse_version(v: &str) -> Option<(u64, u64, u64)> {
     let mut iter = v.trim().split('.');
     let maj = iter.next()?.parse::<u64>().ok()?;
     let min = iter.next()?.parse::<u64>().ok()?;
-    let pat = iter.next()?.parse::<u64>().ok()?;
+    // Handle suffixes like "0-termux" by splitting on '-' and taking first part
+    let pat_str = iter.next()?;
+    let pat = pat_str.split('-').next()?.parse::<u64>().ok()?;
     Some((maj, min, pat))
 }
 
@@ -203,8 +210,16 @@ mod tests {
     }
 
     #[test]
+    fn extracts_version_from_termux_tag() {
+        assert_eq!(
+            extract_version_from_latest_tag("v0.58.0-termux").expect("failed to parse version"),
+            "0.58.0"
+        );
+    }
+
+    #[test]
     fn latest_tag_without_prefix_is_invalid() {
-        assert!(extract_version_from_latest_tag("v1.5.0").is_err());
+        assert!(extract_version_from_latest_tag("1.5.0").is_err());
     }
 
     #[test]
