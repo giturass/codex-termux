@@ -6,11 +6,6 @@
 [![downloads](https://img.shields.io/npm/dt/@mmmbuto/codex-cli-termux?style=flat-square)](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
 [![ko-fi](https://img.shields.io/badge/☕_Support-Ko--fi-FF5E5B?style=flat-square&logo=ko-fi)](https://ko-fi.com/dionanos)
 
-> [!TIP]
-> **Enjoying Codex on mobile?** ☕
-> This project requires ~20 hours/month for ARM64 compilation, upstream tracking, and compatibility patches.
-> [Support development →](https://ko-fi.com/dionanos)
-
 ---
 
 ## What This Is
