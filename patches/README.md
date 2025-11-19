@@ -1,6 +1,7 @@
 # 🔧 Termux Compatibility Patches
 
-This document describes all patches applied to make OpenAI Codex work on Android Termux.
+This document describes the Termux‑specific patches applied to the official OpenAI Codex CLI so that it works well on Android Termux (ARM64).
+Validated for: **v0.58.4-termux** (upstream `rust-v0.58.0`).
 
 ---
 
@@ -10,7 +11,7 @@ This document describes all patches applied to make OpenAI Codex work on Android
 
 **File**: `codex-rs/login/src/server.rs`
 **Lines Modified**: 10
-**Date Applied**: 2025-11-05 (updated for 0.55.0)
+**Date Applied**: 2025-11-05 (introduced in 0.55.x, unchanged in 0.58.x)
 **Upstream Issue**: Browser login crashes on Termux with `ndk-context` error
 
 #### Problem
@@ -59,7 +60,7 @@ codex login
 
 **File**: `codex-rs/Cargo.toml`
 **Section**: `[profile.release]`
-**Date Applied**: 2025-11-05 (updated for 0.55.0)
+**Date Applied**: 2025-11-05 (introduced in 0.55.x, unchanged in 0.58.x)
 **Purpose**: Enable compilation on RAM-constrained devices
 
 #### Problem
@@ -96,12 +97,12 @@ opt-level = 3                  # Keep optimization level high
 
 #### Change
 ```toml
-version = "0.55.0"  # Aligned with upstream
+version = "0.58.4"  # Aligned with upstream rust-v0.58.0
 ```
 
 **Reason:**
 - Matches upstream release version
-- npm package uses `<upstream>-termux` format (e.g. `0.55.0-termux`)
+- npm package uses `<upstream>-termux` format (e.g. `0.58.4-termux`)
 
 ---
 
@@ -109,7 +110,7 @@ version = "0.55.0"  # Aligned with upstream
 
 **File**: `codex-rs/tui/src/updates.rs`
 **Lines Modified**: 14
-**Date Applied**: 2025-11-05 (updated for 0.55.0)
+**Date Applied**: 2025-11-05 (updated in 0.58.4 for new tag format)
 **Upstream Issue**: Auto-update checks OpenAI repo, not Termux fork
 
 #### Problem
@@ -119,23 +120,30 @@ const LATEST_RELEASE_URL: &str = "https://api.github.com/repos/openai/codex/rele
 ```
 
 Tag format mismatch:
-- Upstream uses: `rust-v0.55.0`
-- Termux fork uses: `v0.55.0-termux`
+- Upstream uses tags like: `rust-v0.58.0`
+- Termux fork uses tags like: `v0.58.4-termux`
 
 #### Solution
 1. **Change URL** to point to Termux fork
-2. **Update tag parser** to handle `v`-prefixed tags
+2. **Update tag parser** to handle both `rust-v*` (upstream) and `v*-termux` (fork) tags
 
 **Changes:**
 ```rust
 // Line 56: Update URL
 const LATEST_RELEASE_URL: &str = "https://api.github.com/repos/DioNanos/codex-termux/releases/latest";
 
-// Lines 81-85: Update tag parser for Termux format
-let version = latest_tag_name
-    .strip_prefix("v")
-    .unwrap_or(&latest_tag_name)
-    .to_string();
+// Lines 81-90: Update tag parser for upstream + Termux formats
+fn extract_version_from_latest_tag(latest_tag_name: &str) -> anyhow::Result<String> {
+    // Support both "rust-v" (upstream) and "v" (Termux fork)
+    let version = latest_tag_name
+        .strip_prefix("rust-v")
+        .or_else(|| latest_tag_name.strip_prefix("v"))
+        .ok_or_else(|| anyhow::anyhow!("Failed to parse latest tag name '{latest_tag_name}'"))?;
+
+    // Remove -termux suffix if present (e.g., "0.58.0-termux" -> "0.58.0")
+    let clean_version = version.split('-').next().unwrap_or(version);
+    Ok(clean_version.to_string())
+}
 ```
 
 **Impact:**
@@ -149,45 +157,45 @@ let version = latest_tag_name
 
 **File**: `codex-rs/tui/src/updates.rs`
 **Lines Modified**: 3
-**Date Applied**: 2025-11-05
+**Date Applied**: 2025-11-05 (still used in 0.58.4)
 **Upstream Issue**: Version parser fails on `-termux` suffix, blocking update detection
 
 #### Problem
 The version parser splits version string by `.` and tries to parse each part as u64:
 ```rust
-// Old code (fails on "0.55.0-termux")
+// Old code (fails on "0.58.4-termux")
 let pat = iter.next()?.parse::<u64>().ok()?;  // "0-termux" → FAIL ❌
 ```
 
 When comparing versions:
-- Current: `0.53.0`
-- Latest from API: `0.55.0-termux`
+- Current: `0.57.0`
+- Latest from API: `0.58.4-termux`
 - Parser tries: `"0-termux".parse::<u64>()` → **Returns None**
 - Result: `is_newer()` returns `None` → No update notification shown ❌
 
-**Real-world impact**: Users on 0.53.x never see notification for 0.55.0-termux!
+**Real-world impact**: Users on 0.57.x never see notification for 0.58.4-termux without this fix.
 
 #### Solution
 Split patch version on `-` to extract numeric part before parsing:
 
 **Changes:**
 ```rust
-// New code (handles "0.55.0-termux" correctly)
-let pat_str = iter.next()?;                    // "0-termux"
-let pat = pat_str.split('-').next()?.parse::<u64>().ok()?; // "0" → OK ✅
+// New code (handles "0.58.4-termux" correctly)
+let pat_str = iter.next()?;                    // "4-termux"
+let pat = pat_str.split('-').next()?.parse::<u64>().ok()?; // "4" → OK ✅
 ```
 
 **Testing:**
 ```rust
-parse_version("0.55.0")        → Some((0, 55, 0)) ✅
-parse_version("0.55.0-termux") → Some((0, 55, 0)) ✅
-parse_version("0.55.1-termux") → Some((0, 55, 1)) ✅
+parse_version("0.58.4")        → Some((0, 58, 4)) ✅
+parse_version("0.58.4-termux") → Some((0, 58, 4)) ✅
+parse_version("0.58.5-termux") → Some((0, 58, 5)) ✅
 ```
 
 **Impact:**
 - ✅ Auto-update detection now works across `-termux` versions
-- ✅ Users on 0.53.x → 0.55.x see update notification
-- ✅ Incremental updates (0.55.0 → 0.55.1) also work
+- ✅ Users on 0.57.x → 0.58.x see update notification
+- ✅ Incremental updates (e.g. 0.58.4 → 0.58.5) also work
 - ✅ Backward compatible with non-suffixed versions
 
 ---
@@ -196,7 +204,7 @@ parse_version("0.55.1-termux") → Some((0, 55, 1)) ✅
 
 **File**: `codex-rs/tui/src/updates.rs` + `codex-rs/Cargo.toml`
 **Lines Modified**: 4
-**Date Applied**: 2025-11-05
+**Date Applied**: 2025-11-05 (introduced in 0.55.x, unchanged in 0.58.x)
 **Upstream Issue**: Auto-update command uses wrong npm package name
 
 #### Problem
@@ -207,10 +215,10 @@ npm install -g @openai/codex@latest
 
 **Two issues:**
 1. **Wrong package**: Uses `@openai/codex` instead of `@mmmbuto/codex-cli-termux`
-2. **Update loop**: Binary version stayed at `0.55.0` while npm published `0.55.1-termux`
-   - User installs 0.55.1-termux
-   - Binary shows: `codex-cli 0.55.0`
-   - API returns: `0.55.1-termux`
+2. **Update loop**: Binary version stayed at `<old>` while npm published `<new>-termux`
+   - User installs `<new>-termux`
+   - Binary shows: `codex-cli <old>`
+   - API returns: `<new>-termux`
    - Parser: `(0, 55, 1) > (0, 55, 0)` → **Shows update again!** ∞
 
 **Error seen:**
@@ -231,11 +239,6 @@ UpdateAction::NpmGlobalLatest => ("npm", &["install", "-g", "@mmmbuto/codex-cli-
 UpdateAction::BunGlobalLatest => ("bun", &["install", "-g", "@mmmbuto/codex-cli-termux@latest"]),
 ```
 
-```toml
-// Cargo.toml line 46
-version = "0.55.1"  # Was: "0.55.0"
-```
-
 **Impact:**
 - ✅ Auto-update now installs correct Termux package
 - ✅ No more update loop (binary version matches npm version)
@@ -246,13 +249,14 @@ version = "0.55.1"  # Was: "0.55.0"
 
 ### 7. Manual Update Instructions on Android/Termux
 
-**File**: `codex-rs/cli/src/main.rs`
-**Lines Modified**: ~30 (function `run_update_action`)
-**Date Applied**: 2025-11-05
-**Upstream Issue**: Auto-update fails on Android with "Permission denied"
+**Status**: Historical (0.55.x only) – no longer applied in 0.58.x
+
+**Original file**: `codex-rs/cli/src/main.rs` (`run_update_action`)
+**Original Date Applied**: 2025-11-05
+**Original Upstream Issue**: Auto-update fails on Android with "Permission denied"
 
 #### Problem
-When user accepts auto-update on Termux, Codex tries to execute:
+In early Termux builds (0.55.x), when user accepted auto-update on Termux, Codex tried to execute:
 ```bash
 npm install -g @mmmbuto/codex-cli-termux@latest
 ```
@@ -279,39 +283,9 @@ Even if npm succeeded:
 4. Codex checks: 0.55.2 > 0.55.1 → Shows update again
 5. INFINITE LOOP
 
-#### Solution
-Use conditional compilation to detect Android and show manual instructions instead:
+This was originally mitigated by adding an Android‑only branch to `run_update_action()` that printed a manual update command instead of executing it.
 
-**Changes:**
-```rust
-// cli/src/main.rs - run_update_action()
-
-#[cfg(target_os = "android")]
-{
-    println!("⚠️  Auto-update is not available on Termux/Android");
-    println!("    (binary in use cannot be overwritten)");
-    println!();
-    println!("📦 To update manually, run:");
-    println!("    {cmd_str}");
-    println!();
-    println!("💡 After update completes, restart Codex to use the new version.");
-    return Ok(());
-}
-
-#[cfg(not(target_os = "android"))]
-{
-    // Execute update automatically on other platforms
-    let status = std::process::Command::new(cmd).args(args).status()?;
-    // ... error handling
-}
-```
-
-**Impact:**
-- ✅ No more "Permission denied" errors
-- ✅ User-friendly message explaining Termux limitation
-- ✅ Clear manual update command displayed
-- ✅ Other platforms (Linux/Mac) unchanged
-- ✅ No infinite loop (combined with version fix)
+In the current 0.58.x codebase, this patch has been removed and the Termux behavior is handled at a higher level (by deciding whether to present an auto‑update action at all). This section is kept for historical context only.
 
 ---
 
@@ -322,7 +296,7 @@ Use conditional compilation to detect Android and show manual instructions inste
 - `codex-rs/process-hardening/src/lib.rs` (29 lines)
 - `codex-rs/core/src/shell.rs` (56 lines)
 
-**Date Applied**: 2025-11-06
+**Date Applied**: 2025-11-06 (introduced in 0.55.4, unchanged in 0.58.x)
 **Upstream Issue**: Bash commands fail with "Permission denied" in Agent mode on Termux
 
 #### Problem
@@ -511,12 +485,12 @@ Usage: pkg command [arguments] ✅
 - **Patch #4**: Auto-update URL redirect (GitHub API)
 - **Patch #5**: Version parser (-termux suffix handling)
 - **Patch #6**: NPM package name fix
-- **Patch #7**: Manual update instructions on Android
+- **Patch #7**: Manual update instructions on Android *(historical, 0.55.x only)*
 
 ### Bash Execution (Critical)
 - **Patch #8**: Fix bash execution in Agent mode (shell detection, LD_*, sandbox)
 
-**All patches are CRITICAL** - Codex will not work correctly on Termux without them.
+For the current **0.58.4-termux** release, active patches are **#1–#6 and #8** and are all critical for correct behavior on Termux. Patch **#7** was critical for the legacy 0.55.x line and is kept here only for historical reference.
 
 ---
 
@@ -524,8 +498,8 @@ Usage: pkg command [arguments] ✅
 
 | Component | Version | Example |
 |-----------|---------|---------|
-| **Binary** | Upstream version | `codex-cli 0.55.0` |
-| **npm package** | `<upstream>-termux` | `0.55.0-termux` |
+| **Binary** | Upstream version | `codex-cli 0.58.4` |
+| **npm package** | `<upstream>-termux` | `0.58.4-termux` |
 
 **Why:**
 - Binary version matches upstream for compatibility
@@ -537,7 +511,7 @@ Usage: pkg command [arguments] ✅
 ## Testing Checklist
 
 Before each release:
-- [ ] `codex --version` shows correct upstream version (0.55.0)
+- [ ] `codex --version` shows correct upstream version (0.58.4)
 - [ ] `codex login` opens browser without crash
 - [ ] OAuth flow completes successfully
 - [ ] Binary size < 50MB
@@ -558,7 +532,7 @@ We only accept patches for Termux-specific issues, not general feature requests.
 
 ---
 
-**Last Updated**: 2025-11-06
-**Patches Applied**: 8 (7 from 0.55.0-0.55.3 + Patch #8 in 0.55.4)
-**Based on**: OpenAI Codex 0.55.0 (46 commits ahead of 0.53.0)
+**Last Updated**: 2025-11-19
+**Patches Applied**: 8 (carried from 0.55.x and revalidated in 0.58.4-termux)
+**Based on**: OpenAI Codex rust-v0.58.0
 **Platform**: Android Termux ARM64

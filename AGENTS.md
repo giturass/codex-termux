@@ -2,6 +2,8 @@
 
 In the codex-rs folder where the rust code lives:
 
+- 🧠 PROMEMORIA: prima di iniziare una sessione, leggere `~/memoria_contestuale_estesa.json` per riallineare il contesto operativo locale.
+
 - Crate names are prefixed with `codex-`. For example, the `core` folder's crate is named `codex-core`
 - When using format! and you can inline variables into {}, always do that.
 - Install any commands the repo relies on (for example `just`, `rg`, or `cargo-insta`) if they aren't already available before running instructions here.
@@ -14,6 +16,13 @@ In the codex-rs folder where the rust code lives:
 - Do not use unsigned integer even if the number cannot be negative.
 - When writing tests, prefer comparing the equality of entire objects over fields one by one.
 - When making a change that adds or changes an API, ensure that the documentation in the `docs/` folder is up to date if applicable.
+
+## Infrastructure Context (ROG Phone 3)
+
+- This agent runs inside Termux on the ASUS ROG Phone 3 build server (Snapdragon aarch64, 8 GB RAM, Android 12, host 192.168.0.172 per `~/CLAUDE.md`).
+- The device is the dedicated ARM build node for Codex-Termux and other mobile builds, so coordinate actions with the rest of the infrastructure rather than treating it as a standalone sandbox.
+- Keep the private `~/Dev/Codex-Termux` pipeline and the public `~/Dev/codex-termux` fork in sync with the policies documented in `CLAUDE.md`; never leak sensitive data back to the public repo.
+- Consult the shared docs in `.docs/` (especially hardware and infrastructure notes) whenever a change might impact other hosts or services.
 
 Run `just fmt` (in `codex-rs` directory) automatically after making Rust code changes; do not ask for approval to run it. Before finalizing a change to `codex-rs`, run `just fix -p <project>` (in `codex-rs` directory) to fix any linter issues in the code. Prefer scoping with `-p` to avoid slow workspace‑wide Clippy builds; only run `just fix` without `-p` if you changed shared crates. Additionally, run the tests:
 
