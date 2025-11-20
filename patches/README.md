@@ -1,7 +1,7 @@
 # 🔧 Termux Compatibility Patches
 
 This document describes the Termux‑specific patches applied to the official OpenAI Codex CLI so that it works well on Android Termux (ARM64).
-Validated for: **v0.58.4-termux** (upstream `rust-v0.58.0`).
+Validated for: **v0.60.1-termux** (upstream `rust-v0.60.1`).
 
 ---
 
@@ -11,7 +11,7 @@ Validated for: **v0.58.4-termux** (upstream `rust-v0.58.0`).
 
 **File**: `codex-rs/login/src/server.rs`
 **Lines Modified**: 10
-**Date Applied**: 2025-11-05 (introduced in 0.55.x, unchanged in 0.58.x)
+**Date Applied**: 2025-11-05 (introduced in 0.55.x, revalidated in 0.60.1)
 **Upstream Issue**: Browser login crashes on Termux with `ndk-context` error
 
 #### Problem
@@ -60,7 +60,7 @@ codex login
 
 **File**: `codex-rs/Cargo.toml`
 **Section**: `[profile.release]`
-**Date Applied**: 2025-11-05 (introduced in 0.55.x, unchanged in 0.58.x)
+**Date Applied**: 2025-11-05 (introduced in 0.55.x, revalidated in 0.60.1)
 **Purpose**: Enable compilation on RAM-constrained devices
 
 #### Problem
@@ -204,7 +204,7 @@ parse_version("0.58.5-termux") → Some((0, 58, 5)) ✅
 
 **File**: `codex-rs/tui/src/updates.rs` + `codex-rs/Cargo.toml`
 **Lines Modified**: 4
-**Date Applied**: 2025-11-05 (introduced in 0.55.x, unchanged in 0.58.x)
+**Date Applied**: 2025-11-05 (introduced in 0.55.x, revalidated in 0.60.1)
 **Upstream Issue**: Auto-update command uses wrong npm package name
 
 #### Problem
@@ -296,7 +296,7 @@ In the current 0.58.x codebase, this patch has been removed and the Termux behav
 - `codex-rs/process-hardening/src/lib.rs` (29 lines)
 - `codex-rs/core/src/shell.rs` (56 lines)
 
-**Date Applied**: 2025-11-06 (introduced in 0.55.4, unchanged in 0.58.x)
+**Date Applied**: 2025-11-06 (introduced in 0.55.4, updated in 0.60.1 for upstream refactoring)
 **Upstream Issue**: Bash commands fail with "Permission denied" in Agent mode on Termux
 
 #### Problem
@@ -490,7 +490,7 @@ Usage: pkg command [arguments] ✅
 ### Bash Execution (Critical)
 - **Patch #8**: Fix bash execution in Agent mode (shell detection, LD_*, sandbox)
 
-For the current **0.58.4-termux** release, active patches are **#1–#6 and #8** and are all critical for correct behavior on Termux. Patch **#7** was critical for the legacy 0.55.x line and is kept here only for historical reference.
+For the current **0.60.1-termux** release, active patches are **#1–#6 and #8** and are all critical for correct behavior on Termux. Patch **#7** was critical for the legacy 0.55.x line and is kept here only for historical reference.
 
 ---
 
@@ -498,8 +498,8 @@ For the current **0.58.4-termux** release, active patches are **#1–#6 and #8**
 
 | Component | Version | Example |
 |-----------|---------|---------|
-| **Binary** | Upstream version | `codex-cli 0.58.4` |
-| **npm package** | `<upstream>-termux` | `0.58.4-termux` |
+| **Binary** | Upstream version | `codex-cli 0.60.1` |
+| **npm package** | `<upstream>-termux` | `0.60.1-termux` |
 
 **Why:**
 - Binary version matches upstream for compatibility
@@ -511,12 +511,13 @@ For the current **0.58.4-termux** release, active patches are **#1–#6 and #8**
 ## Testing Checklist
 
 Before each release:
-- [ ] `codex --version` shows correct upstream version (0.58.4)
+- [ ] `codex --version` shows correct upstream version (0.60.1)
 - [ ] `codex login` opens browser without crash
 - [ ] OAuth flow completes successfully
 - [ ] Binary size < 50MB
-- [ ] Compilation completes on 16GB device
+- [ ] Compilation completes on 8GB device (ROG Phone 3)
 - [ ] Auto-update checks correct URL
+- [ ] Agent mode bash execution works
 
 ---
 
@@ -532,7 +533,8 @@ We only accept patches for Termux-specific issues, not general feature requests.
 
 ---
 
-**Last Updated**: 2025-11-19
-**Patches Applied**: 8 (carried from 0.55.x and revalidated in 0.58.4-termux)
-**Based on**: OpenAI Codex rust-v0.58.0
+**Last Updated**: 2025-11-20
+**Patches Applied**: 8 (carried from 0.55.x, revalidated and updated for 0.60.1-termux)
+**Based on**: OpenAI Codex rust-v0.60.1
 **Platform**: Android Termux ARM64
+**Upstream Changes**: 250+ commits from 0.58.0 to 0.60.1 including GPT-5.1 support, bug fixes, and performance optimizations
