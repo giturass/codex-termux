@@ -7,8 +7,6 @@
 [![ko-fi](https://img.shields.io/badge/☕_Support-Ko--fi-FF5E5B?style=flat-square&logo=ko-fi)](https://ko-fi.com/dionanos)
 
 ---
-> 💡 Like CLI tools? Check out my next project, **NexusCLI** — an open, developer-focused AI terminal cockpit: https://github.com/DioNanos/NexusCLI
----
 
 ## What This Is
 
