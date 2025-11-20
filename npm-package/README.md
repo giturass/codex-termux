@@ -232,7 +232,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.60.1 (includes GPT-5.1 support)
+**Version**: Based on OpenAI Codex 0.60.1 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -245,7 +245,7 @@ See [LICENSE](./LICENSE) file for details.
 **Major Update**: Synced with upstream OpenAI Codex rust-v0.60.1 (250+ commits)
 
 **Upstream Features**:
-- 🤖 **GPT-5.1 Enhancements**: Continued improvements to GPT-5.1 model family
+- 🤖 **GPT-5.1 MAX Support**: New MAX model with enhanced capabilities and performance
 - 🔧 **App-Server Protocol**: Enhanced v2 APIs for thread management
 - ⚡ **Performance Optimizations**: Improved TUI responsiveness and memory usage
 - 🪟 **Windows Sandbox**: Enhanced security features (not applicable to Termux)
