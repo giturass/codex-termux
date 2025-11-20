@@ -1,7 +1,7 @@
 # 🔧 Termux Compatibility Patches
 
 This document describes the Termux‑specific patches applied to the official OpenAI Codex CLI so that it works well on Android Termux (ARM64).
-Validated for: **v0.60.1-termux** (upstream `rust-v0.60.1`).
+Validated for: **v0.61.0-termux** (upstream `rust-v0.61.0`).
 
 ---
 

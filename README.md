@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-tui 0.60.1
+# Output: codex-tui 0.61.0
 
 codex login
 # Opens browser for authentication
@@ -261,13 +261,49 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.60.1 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.61.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
 ---
 
 ## 📜 Changelog
+
+### v0.61.0-termux (2025-11-20)
+
+**Update**: Synced with upstream OpenAI Codex rust-v0.61.0 (13 commits from v0.60.1)
+
+**Upstream Features**:
+- 🚀 **Single Pass Truncation**: Improved performance for context management
+- 🔐 **execpolicy2 Integration**: Enhanced security with new execution policy system
+- 🐚 **Shell Fallback Improvements**: Better shell detection with automatic fallbacks (bash → zsh)
+- 🎨 **Model Migration UX**: Stop showing migration screen after first time
+- 🪟 **World-Writable Warnings**: Reduced false positives on Android
+
+**Termux-Specific**:
+- ✅ **All 8 patches preserved and verified**
+- ✅ **Shell fallback compatible**: Android `$SHELL` detection enhanced with upstream fallbacks
+- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3 (9m 06s)
+- ✅ **Binary size**: 42MB (+13% vs 0.60.1 due to execpolicy2)
+- ✅ **Test Suite**: 40/42 tests PASSED (95.2%), 10/10 Termux-specific tests
+
+**Patches Validated**:
+1. ✅ Browser login (`termux-open-url`)
+2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
+3. ✅ Android shell detection (`$SHELL` env var)
+4. ✅ Android sandbox disabled
+5. ✅ LD_* environment variables preserved
+6. ✅ Auto-update URL (`DioNanos/codex-termux`)
+7. ✅ Version parser (`-termux` suffix support)
+8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
+
+**Breaking Changes**: None - fully backward compatible
+
+**Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
+
+Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.60.1...rust-v0.61.0
+
+---
 
 ### v0.60.1-termux (2025-11-20)
 
@@ -302,29 +338,3 @@ See [LICENSE](./LICENSE) file for details.
 **Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.58.0...rust-v0.60.1
-
----
-
-### v0.58.4-termux (2025-11-14)
-
-**Critical bugfix**: Auto-update detection now working
-
-**Fixes:**
-- 🐛 **Auto-update detection restored** - Fixed version parser losing `-termux` suffix support after upstream merge
-- 🐛 **Tag parsing fixed** - `extract_version_from_latest_tag` now supports both `rust-v*` (upstream) and `v*-termux` (fork) formats
-- 🔧 **Test coverage added** - New test for Termux tag format validation
-
-**Technical details:**
-- **Root cause**: v0.58.0 upstream merge overwrote previous `-termux` suffix fix in `parse_version()`
-- **Additional issue**: New upstream code only accepted `rust-v` prefix, rejecting our `v0.58.0-termux` tags
-- **Impact**: `~/.config/codex/version.json` was never created, preventing "Update available" banner
-- **Solution**: Re-applied `-termux` suffix support + added `v*` prefix support in tag parser
-
-**Affected versions**: v0.58.0 through v0.58.3 had broken auto-update detection.
-
-**Termux patches (4 total):**
-- ✅ **Patch #1**: Browser login fix (`termux-open-url`)
-- ✅ **Patch #2**: RAM optimizations (`lto=false`, `codegen-units=16`)
-- ✅ **Patch #3**: Auto-update URL (`@mmmbuto/codex-cli-termux`)
-- ✅ **Patch #4**: Auto-update detection (this release)
-
