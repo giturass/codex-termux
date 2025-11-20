@@ -45,6 +45,7 @@ pub(crate) const MIN_YIELD_TIME_MS: u64 = 250;
 pub(crate) const MAX_YIELD_TIME_MS: u64 = 30_000;
 pub(crate) const DEFAULT_MAX_OUTPUT_TOKENS: usize = 10_000;
 pub(crate) const UNIFIED_EXEC_OUTPUT_MAX_BYTES: usize = 1024 * 1024; // 1 MiB
+pub(crate) const UNIFIED_EXEC_OUTPUT_MAX_TOKENS: usize = UNIFIED_EXEC_OUTPUT_MAX_BYTES / 4;
 
 pub(crate) struct UnifiedExecContext {
     pub session: Arc<Session>,
@@ -63,10 +64,8 @@ impl UnifiedExecContext {
 }
 
 #[derive(Debug)]
-pub(crate) struct ExecCommandRequest<'a> {
-    pub command: &'a str,
-    pub shell: &'a str,
-    pub login: bool,
+pub(crate) struct ExecCommandRequest {
+    pub command: Vec<String>,
     pub yield_time_ms: u64,
     pub max_output_tokens: Option<usize>,
     pub workdir: Option<PathBuf>,
@@ -76,6 +75,7 @@ pub(crate) struct ExecCommandRequest<'a> {
 
 #[derive(Debug)]
 pub(crate) struct WriteStdinRequest<'a> {
+    pub call_id: &'a str,
     pub session_id: i32,
     pub input: &'a str,
     pub yield_time_ms: u64,
@@ -91,6 +91,7 @@ pub(crate) struct UnifiedExecResponse {
     pub session_id: Option<i32>,
     pub exit_code: Option<i32>,
     pub original_token_count: Option<usize>,
+    pub session_command: Option<Vec<String>>,
 }
 
 #[derive(Default)]
@@ -104,7 +105,7 @@ struct SessionEntry {
     session_ref: Arc<Session>,
     turn_ref: Arc<TurnContext>,
     call_id: String,
-    command: String,
+    command: Vec<String>,
     cwd: PathBuf,
     started_at: tokio::time::Instant,
 }
@@ -122,37 +123,6 @@ pub(crate) fn generate_chunk_id() -> String {
     (0..6)
         .map(|_| format!("{:x}", rng.random_range(0..16)))
         .collect()
-}
-
-pub(crate) fn truncate_output_to_tokens(
-    output: &str,
-    max_tokens: usize,
-) -> (String, Option<usize>) {
-    if max_tokens == 0 {
-        let total_tokens = output.chars().count();
-        let message = format!("…{total_tokens} tokens truncated…");
-        return (message, Some(total_tokens));
-    }
-
-    let tokens: Vec<char> = output.chars().collect();
-    let total_tokens = tokens.len();
-    if total_tokens <= max_tokens {
-        return (output.to_string(), None);
-    }
-
-    let half = max_tokens / 2;
-    if half == 0 {
-        let truncated = total_tokens.saturating_sub(max_tokens);
-        let message = format!("…{truncated} tokens truncated…");
-        return (message, Some(total_tokens));
-    }
-
-    let truncated = total_tokens.saturating_sub(half * 2);
-    let mut truncated_output = String::new();
-    truncated_output.extend(&tokens[..half]);
-    truncated_output.push_str(&format!("…{truncated} tokens truncated…"));
-    truncated_output.extend(&tokens[total_tokens - half..]);
-    (truncated_output, Some(total_tokens))
 }
 
 #[cfg(test)]
@@ -193,9 +163,7 @@ mod tests {
             .unified_exec_manager
             .exec_command(
                 ExecCommandRequest {
-                    command: cmd,
-                    shell: "/bin/bash",
-                    login: true,
+                    command: vec!["bash".to_string(), "-lc".to_string(), cmd.to_string()],
                     yield_time_ms,
                     max_output_tokens: None,
                     workdir: None,
@@ -217,6 +185,7 @@ mod tests {
             .services
             .unified_exec_manager
             .write_stdin(WriteStdinRequest {
+                call_id: "write-stdin",
                 session_id,
                 input,
                 yield_time_ms,
