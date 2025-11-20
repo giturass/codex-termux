@@ -203,18 +203,20 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report**:
+**Example Report** (v0.61.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
-Total Tests: 74
-✅ Passed: 71
-❌ Failed: 1
+Platform: Android Termux ARM64
+Codex Version: 0.61.0
+Total Tests: 42
+✅ Passed: 40
+❌ Failed: 0
 ⚠️ Skipped: 2 (WebSearch, Git - optional)
 
 Termux-Specific: 10/10 passed ✅
 
-VERDICT: ✅ PASS
+VERDICT: ⚠️ PASS WITH WARNINGS
 ```
 
 ---
