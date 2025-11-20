@@ -474,6 +474,122 @@ Usage: pkg command [arguments] ✅
 
 ---
 
+### 9. Auto-Update Execution
+
+**File**: `codex-rs/tui/src/main.rs`
+**Lines Modified**: ~20 lines
+**Date Applied**: 2025-11-20 (introduced in 0.61.1)
+**Upstream Issue**: Auto-update prompt showed but never executed npm install
+
+#### Problem
+
+Auto-update mechanism showed "Update available" banner and accepted user input, but **never executed** the npm install command after user selected "Update now".
+
+**Affected versions:**
+- ❌ v0.60.1-termux - broken
+- ❌ v0.61.0-termux - broken
+- ✅ v0.58.4-termux - worked correctly
+
+**User-visible symptom:**
+1. TUI shows "Update available" banner
+2. User selects "Update now"
+3. TUI exits immediately
+4. **NO npm install execution**
+5. Same version still installed after restart
+
+#### Root Cause
+
+The code flow was:
+1. `updates.rs` - Detected update ✅
+2. `update_prompt.rs` - Showed prompt, captured selection ✅
+3. `update_action.rs` - Prepared npm command ✅
+4. `lib.rs` - Returned `update_action` in `AppExitInfo` ✅
+5. `main.rs` - Received `update_action` but **never executed it** ❌
+
+Investigation revealed:
+- v0.58.4 published npm binary contained execution code
+- Code was **never committed to git**
+- v0.60.1 and v0.61.0 builds lost the execution logic
+- Regression introduced when building from clean git checkout
+
+#### Solution
+
+Added execution logic in `main.rs` after `run_main()` returns:
+
+```rust
+let exit_info = run_main(inner, codex_linux_sandbox_exe).await?;
+
+// Execute update if requested
+if let Some(action) = exit_info.update_action {
+    let (cmd, args) = action.command_args();
+    println!("\nUpdating Codex via `{} {}`...\n", cmd, args.join(" "));
+
+    match std::process::Command::new(cmd).args(args).status() {
+        Ok(status) if status.success() => {
+            println!("\n🎉 Update ran successfully! Please restart Codex.\n");
+        }
+        Ok(status) => {
+            eprintln!("\nUpdate failed with exit code: {:?}\n", status.code());
+        }
+        Err(err) => {
+            eprintln!("\nUpdate failed to execute: {}\n", err);
+        }
+    }
+    return Ok(());
+}
+
+let token_usage = exit_info.token_usage;
+```
+
+**How it works:**
+- `UpdateAction` enum already contains correct npm command from `update_action.rs`
+- We just needed to **execute** the prepared command using `std::process::Command`
+- Displays progress and result to user
+- Early return prevents token usage output after update
+
+#### Testing
+
+**Verify execution code present:**
+```bash
+strings codex-tui | grep "Updating Codex"
+# Expected output:
+# Updating Codex via ``...
+#  Update ran successfully! Please restart Codex.
+```
+
+**End-to-end test:**
+```bash
+# Install old version:
+npm install -g @mmmbuto/codex-cli-termux@0.58.4-termux
+
+# Start codex - will show update banner
+codex
+
+# Select "Update now"
+# Expected output:
+# Updating Codex via `npm install -g @mmmbuto/codex-cli-termux@latest`...
+# (npm output)
+# 🎉 Update ran successfully! Please restart Codex.
+
+# Verify updated:
+codex --version  # Should show latest version
+```
+
+#### Impact
+
+- ✅ **Auto-update now works**: Users can update with one click
+- ✅ **User-friendly**: Shows clear progress and success/error messages
+- ✅ **Handles errors**: Displays exit codes and error messages
+- ✅ **No loop**: Early return prevents re-showing update prompt
+- ✅ **Cross-platform**: Works on all platforms (npm/bun/brew commands)
+
+**npm deprecations issued:**
+- `@mmmbuto/codex-cli-termux@0.61.0-termux` - deprecated
+- `@mmmbuto/codex-cli-termux@0.60.1-termux` - deprecated
+- Message: "Broken auto-update execution - use v0.61.1-termux"
+
+---
+
 ## 📊 Patch Categories
 
 ### Core Functionality (Required)
@@ -486,11 +602,12 @@ Usage: pkg command [arguments] ✅
 - **Patch #5**: Version parser (-termux suffix handling)
 - **Patch #6**: NPM package name fix
 - **Patch #7**: Manual update instructions on Android *(historical, 0.55.x only)*
+- **Patch #9**: Auto-update execution (main.rs)
 
 ### Bash Execution (Critical)
 - **Patch #8**: Fix bash execution in Agent mode (shell detection, LD_*, sandbox)
 
-For the current **0.60.1-termux** release, active patches are **#1–#6 and #8** and are all critical for correct behavior on Termux. Patch **#7** was critical for the legacy 0.55.x line and is kept here only for historical reference.
+For the current **0.61.1-termux** release, active patches are **#1–#6, #8, and #9**. All are critical for correct behavior on Termux. Patch **#7** was critical for the legacy 0.55.x line and is kept here only for historical reference.
 
 ---
 
@@ -534,7 +651,7 @@ We only accept patches for Termux-specific issues, not general feature requests.
 ---
 
 **Last Updated**: 2025-11-20
-**Patches Applied**: 8 (carried from 0.55.x, revalidated and updated for 0.60.1-termux)
-**Based on**: OpenAI Codex rust-v0.60.1
+**Patches Applied**: 9 (8 carried from 0.55.x revalidated for 0.61.0, + Patch #9 added in 0.61.1)
+**Based on**: OpenAI Codex rust-v0.61.0
 **Platform**: Android Termux ARM64
-**Upstream Changes**: 250+ commits from 0.58.0 to 0.60.1 including GPT-5.1 support, bug fixes, and performance optimizations
+**Upstream Changes**: 13 commits from 0.60.1 to 0.61.0 including execpolicy2 integration, single-pass truncation, and shell fallback improvements
