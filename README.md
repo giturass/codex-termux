@@ -202,7 +202,7 @@ See [BUILDING.md](./BUILDING.md) for compilation instructions.
 - 🔨 **ARM64 compilation** - Building native binaries for each upstream release (~18min per build)
 - 🔄 **Upstream synchronization** - Tracking OpenAI Codex updates and merging changes
 - 🐛 **Compatibility patches** - Maintaining Android-specific fixes for Termux environment
-- 📱 **Device testing** - Verification on real ARM64 hardware (Pixel 9 Pro, other devices)
+- 📱 **Device testing** - Verification on real ARM64 hardware (ARM64 flagship device, other devices)
 - 📚 **Documentation & support** - Maintaining docs, responding to GitHub issues
 
 **Time investment:** Approximately 20 hours per month for project upkeep.
