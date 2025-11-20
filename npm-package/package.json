@@ -1,7 +1,7 @@
 {
   "name": "@mmmbuto/codex-cli-termux",
-  "version": "0.58.4-termux",
-  "description": "OpenAI Codex CLI v0.58.4 with GPT-5.1 support, pre-compiled for Android Termux (ARM64)",
+  "version": "0.60.1-termux",
+  "description": "OpenAI Codex CLI v0.60.1 with GPT-5.1 MAX support, pre-compiled for Android Termux (ARM64)",
   "type": "module",
   "main": "bin/codex.js",
   "bin": {
