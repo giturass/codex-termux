@@ -962,6 +962,7 @@ impl ChatWidget {
                 parsed,
                 source,
                 None,
+                self.config.animations,
             )));
         }
 
@@ -1071,6 +1072,7 @@ impl ChatWidget {
                 ev.parsed_cmd,
                 ev.source,
                 interaction_input,
+                self.config.animations,
             )));
         }
 
@@ -1083,6 +1085,7 @@ impl ChatWidget {
         self.active_cell = Some(Box::new(history_cell::new_active_mcp_tool_call(
             ev.call_id,
             ev.invocation,
+            self.config.animations,
         )));
         self.request_redraw();
     }
@@ -1104,7 +1107,11 @@ impl ChatWidget {
             Some(cell) if cell.call_id() == call_id => cell.complete(duration, result),
             _ => {
                 self.flush_active_cell();
-                let mut cell = history_cell::new_active_mcp_tool_call(call_id, invocation);
+                let mut cell = history_cell::new_active_mcp_tool_call(
+                    call_id,
+                    invocation,
+                    self.config.animations,
+                );
                 let extra_cell = cell.complete(duration, result);
                 self.active_cell = Some(Box::new(cell));
                 extra_cell
@@ -1146,6 +1153,7 @@ impl ChatWidget {
                 enhanced_keys_supported,
                 placeholder_text: placeholder,
                 disable_paste_burst: config.disable_paste_burst,
+                animations_enabled: config.animations,
             }),
             active_cell: None,
             config: config.clone(),
@@ -1220,6 +1228,7 @@ impl ChatWidget {
                 enhanced_keys_supported,
                 placeholder_text: placeholder,
                 disable_paste_burst: config.disable_paste_burst,
+                animations_enabled: config.animations,
             }),
             active_cell: None,
             config: config.clone(),
@@ -1464,6 +1473,7 @@ impl ChatWidget {
                     // }),
                     msg: EventMsg::ApplyPatchApprovalRequest(ApplyPatchApprovalRequestEvent {
                         call_id: "1".to_string(),
+                        turn_id: "turn-1".to_string(),
                         changes: HashMap::from([
                             (
                                 PathBuf::from("/tmp/test.txt"),
@@ -2110,6 +2120,14 @@ impl ChatWidget {
         } else {
             default_choice
         };
+        let selection_choice = highlight_choice.or(default_choice);
+        let initial_selected_idx = choices
+            .iter()
+            .position(|choice| choice.stored == selection_choice)
+            .or_else(|| {
+                selection_choice
+                    .and_then(|effort| choices.iter().position(|choice| choice.display == effort))
+            });
         let mut items: Vec<SelectionItem> = Vec::new();
         for choice in choices.iter() {
             let effort = choice.display;
@@ -2186,6 +2204,7 @@ impl ChatWidget {
             header: Box::new(header),
             footer_hint: Some(standard_popup_hint_line()),
             items,
+            initial_selected_idx,
             ..Default::default()
         });
     }

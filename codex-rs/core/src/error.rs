@@ -10,6 +10,7 @@ use chrono::Local;
 use chrono::Utc;
 use codex_async_utils::CancelErr;
 use codex_protocol::ConversationId;
+use codex_protocol::protocol::CodexErrorInfo;
 use codex_protocol::protocol::ErrorEvent;
 use codex_protocol::protocol::RateLimitSnapshot;
 use reqwest::StatusCode;
@@ -432,17 +433,31 @@ impl CodexErr {
         (self as &dyn std::any::Any).downcast_ref::<T>()
     }
 
-    pub fn http_status_code(&self) -> Option<StatusCode> {
+    /// Translate core error to client-facing protocol error.
+    pub fn to_codex_protocol_error(&self) -> CodexErrorInfo {
         match self {
-            CodexErr::UnexpectedStatus(err) => Some(err.status),
-            CodexErr::RetryLimit(err) => Some(err.status),
-            CodexErr::UsageLimitReached(_) | CodexErr::UsageNotIncluded => {
-                Some(StatusCode::TOO_MANY_REQUESTS)
+            CodexErr::ContextWindowExceeded => CodexErrorInfo::ContextWindowExceeded,
+            CodexErr::UsageLimitReached(_)
+            | CodexErr::QuotaExceeded
+            | CodexErr::UsageNotIncluded => CodexErrorInfo::UsageLimitExceeded,
+            CodexErr::RetryLimit(_) => CodexErrorInfo::ResponseTooManyFailedAttempts {
+                http_status_code: self.http_status_code_value(),
+            },
+            CodexErr::ConnectionFailed(_) => CodexErrorInfo::HttpConnectionFailed {
+                http_status_code: self.http_status_code_value(),
+            },
+            CodexErr::ResponseStreamFailed(_) => CodexErrorInfo::ResponseStreamConnectionFailed {
+                http_status_code: self.http_status_code_value(),
+            },
+            CodexErr::RefreshTokenFailed(_) => CodexErrorInfo::Unauthorized,
+            CodexErr::SessionConfiguredNotFirstEvent
+            | CodexErr::InternalServerError
+            | CodexErr::InternalAgentDied => CodexErrorInfo::InternalServerError,
+            CodexErr::UnsupportedOperation(_) | CodexErr::ConversationNotFound(_) => {
+                CodexErrorInfo::BadRequest
             }
-            CodexErr::InternalServerError => Some(StatusCode::INTERNAL_SERVER_ERROR),
-            CodexErr::ResponseStreamFailed(err) => err.source.status(),
-            CodexErr::ConnectionFailed(err) => err.source.status(),
-            _ => None,
+            CodexErr::Sandbox(_) => CodexErrorInfo::SandboxError,
+            _ => CodexErrorInfo::Other,
         }
     }
 
@@ -452,16 +467,22 @@ impl CodexErr {
             Some(prefix) => format!("{prefix}: {error_message}"),
             None => error_message,
         };
-
         ErrorEvent {
             message,
-            http_status_code: http_status_code_value(self.http_status_code()),
+            codex_error_info: Some(self.to_codex_protocol_error()),
         }
     }
-}
 
-pub fn http_status_code_value(http_status_code: Option<StatusCode>) -> Option<u16> {
-    http_status_code.as_ref().map(StatusCode::as_u16)
+    pub fn http_status_code_value(&self) -> Option<u16> {
+        let http_status_code = match self {
+            CodexErr::RetryLimit(err) => Some(err.status),
+            CodexErr::UnexpectedStatus(err) => Some(err.status),
+            CodexErr::ConnectionFailed(err) => err.source.status(),
+            CodexErr::ResponseStreamFailed(err) => err.source.status(),
+            _ => None,
+        };
+        http_status_code.as_ref().map(StatusCode::as_u16)
+    }
 }
 
 pub fn get_error_message_ui(e: &CodexErr) -> String {
@@ -510,6 +531,10 @@ mod tests {
     use chrono::Utc;
     use codex_protocol::protocol::RateLimitWindow;
     use pretty_assertions::assert_eq;
+    use reqwest::Response;
+    use reqwest::ResponseBuilderExt;
+    use reqwest::StatusCode;
+    use reqwest::Url;
 
     fn rate_limit_snapshot() -> RateLimitSnapshot {
         let primary_reset_at = Utc
@@ -603,6 +628,33 @@ mod tests {
             output: Box::new(output),
         });
         assert_eq!(get_error_message_ui(&err), "stdout only");
+    }
+
+    #[test]
+    fn to_error_event_handles_response_stream_failed() {
+        let response = http::Response::builder()
+            .status(StatusCode::TOO_MANY_REQUESTS)
+            .url(Url::parse("http://example.com").unwrap())
+            .body("")
+            .unwrap();
+        let source = Response::from(response).error_for_status_ref().unwrap_err();
+        let err = CodexErr::ResponseStreamFailed(ResponseStreamFailed {
+            source,
+            request_id: Some("req-123".to_string()),
+        });
+
+        let event = err.to_error_event(Some("prefix".to_string()));
+
+        assert_eq!(
+            event.message,
+            "prefix: Error while reading the server response: HTTP status client error (429 Too Many Requests) for url (http://example.com/), request id: req-123"
+        );
+        assert_eq!(
+            event.codex_error_info,
+            Some(CodexErrorInfo::ResponseStreamConnectionFailed {
+                http_status_code: Some(429)
+            })
+        );
     }
 
     #[test]
@@ -806,44 +858,5 @@ mod tests {
             let expected = format!("You've hit your usage limit. Try again at {expected_time}.");
             assert_eq!(err.to_string(), expected);
         });
-    }
-
-    #[test]
-    fn error_event_includes_http_status_code_when_available() {
-        let err = CodexErr::UnexpectedStatus(UnexpectedResponseError {
-            status: StatusCode::BAD_REQUEST,
-            body: "oops".to_string(),
-            request_id: Some("req-1".to_string()),
-        });
-        let event = err.to_error_event(None);
-
-        assert_eq!(
-            event.message,
-            "unexpected status 400 Bad Request: oops, request id: req-1"
-        );
-        assert_eq!(
-            event.http_status_code,
-            Some(StatusCode::BAD_REQUEST.as_u16())
-        );
-    }
-
-    #[test]
-    fn error_event_omits_http_status_code_when_unknown() {
-        let event = CodexErr::Fatal("boom".to_string()).to_error_event(None);
-
-        assert_eq!(event.message, "Fatal error: boom");
-        assert_eq!(event.http_status_code, None);
-    }
-
-    #[test]
-    fn error_event_applies_message_wrapper() {
-        let event = CodexErr::Fatal("boom".to_string())
-            .to_error_event(Some("Error running remote compact task".to_string()));
-
-        assert_eq!(
-            event.message,
-            "Error running remote compact task: Fatal error: boom"
-        );
-        assert_eq!(event.http_status_code, None);
     }
 }

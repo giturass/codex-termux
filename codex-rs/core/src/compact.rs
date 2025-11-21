@@ -127,8 +127,8 @@ async fn run_compact_task_inner(
                     continue;
                 }
                 sess.set_total_tokens_full(turn_context.as_ref()).await;
-                sess.send_event(&turn_context, EventMsg::Error(e.to_error_event(None)))
-                    .await;
+                let event = EventMsg::Error(e.to_error_event(None));
+                sess.send_event(&turn_context, event).await;
                 return;
             }
             Err(e) => {
@@ -138,14 +138,14 @@ async fn run_compact_task_inner(
                     sess.notify_stream_error(
                         turn_context.as_ref(),
                         format!("Reconnecting... {retries}/{max_retries}"),
-                        e.http_status_code(),
+                        e,
                     )
                     .await;
                     tokio::time::sleep(delay).await;
                     continue;
                 } else {
-                    sess.send_event(&turn_context, EventMsg::Error(e.to_error_event(None)))
-                        .await;
+                    let event = EventMsg::Error(e.to_error_event(None));
+                    sess.send_event(&turn_context, event).await;
                     return;
                 }
             }
