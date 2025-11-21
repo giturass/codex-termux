@@ -6,6 +6,157 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.62.0-termux] - 2025-11-21 (PENDING)
+
+### Upstream Changes (rust-v0.62.0)
+
+**New Features:**
+- **codex-shell-tool-mcp**: New MCP server for shell tools with Bash/exec wrappers (#7005)
+- **execpolicycheck**: New CLI command for exec policy debugging (#7012)
+- **TUI reasoning default**: Changed to "medium" level (#7040)
+- **resume --last**: Allow reading prompt from last session (#6719)
+- **v2 apply_patch approval flow**: Enhanced patch approval process (#6760)
+- **v2 app-server error events**: Improved error reporting (#6938)
+- **TUI animations toggle**: Feature switch to disable animations (#6870)
+- **Shell timeout 1 hour**: Increased user shell timeout from default to 1 hour (#7025)
+
+**Improvements:**
+- FreeBSD shell behavior portability (#7039)
+- Fuzzy search results increased 8 → 20 (#7013)
+- Markdown styling: inline code now cyan (#7023)
+- Text encoding improvements for shell output in VSCode (#6182)
+- Windows Sandbox: network_access and exclude_tmpdir_env_var support (#7030)
+- Cancellation token support for exec tool calls (#6972)
+- Elicitation wait no longer counts against shell timeout (#6973)
+
+**Breaking/Refactoring:**
+- `execpolicy` → `execpolicy-legacy`, `execpolicy2` → `execpolicy` (#6956)
+- Removed `tiktoken-rs` dependency (#7018)
+- Removed `shell_command` feature flag (#7024)
+- `ExecParams.timeout_ms` replaced with `ExecExpiration` enum
+
+**Stats:** 195 files changed, +5915 insertions, -2293 deletions
+
+### Termux Patches
+
+All 9 Termux patches verified compatible - **no conflicts expected**:
+- Patch #1: Browser login (termux-open-url) ✅
+- Patch #2: RAM optimizations ✅
+- Patch #3: Version alignment ✅
+- Patch #4: Auto-update URL redirect ✅
+- Patch #5: Version parser (-termux suffix) ✅
+- Patch #6: NPM package name ✅
+- Patch #8: Bash execution (sandbox, LD_*, shell detection) ✅
+- Patch #9: Auto-update execution ✅
+
+### Changed
+- Binary version: 0.62.0
+- npm package: 0.62.0-termux
+- Based on: upstream rust-v0.62.0
+
+---
+
+## [0.61.1-termux] - 2025-11-20
+
+### Fixed
+- **Critical**: Auto-update execution restored - was broken in v0.60.1 and v0.61.0
+- Update prompt showed but npm install never executed
+
+### Added
+- **Patch #9**: Auto-update execution in `tui/src/main.rs`
+- Execution logic after `run_main()` returns with `UpdateAction`
+
+### Changed
+- Binary version: 0.61.1
+- npm package: 0.61.1-termux
+
+### Deprecated
+- npm deprecate @mmmbuto/codex-cli-termux@0.61.0-termux
+- npm deprecate @mmmbuto/codex-cli-termux@0.60.1-termux
+
+### Test Results
+- Test Suite: 40/42 PASSED (95.2%)
+- Termux-specific: 10/10 PASSED
+
+---
+
+## [0.61.0-termux] - 2025-11-19
+
+### Upstream Changes (rust-v0.61.0)
+- ExecPolicy2 integration as default
+- Single-pass truncation improvements
+- Shell fallback reliability
+- Error reporting enhancements
+
+### Changed
+- Binary version: 0.61.0
+- npm package: 0.61.0-termux
+- 13 upstream commits merged
+
+### Known Issues
+- ⚠️ Auto-update execution broken (fixed in 0.61.1)
+
+---
+
+## [0.60.1-termux] - 2025-11-13
+
+### Upstream Changes (rust-v0.60.1)
+- Bug fixes from 0.60.0
+- Stability improvements
+
+### Changed
+- Binary version: 0.60.1
+- npm package: 0.60.1-termux
+
+### Known Issues
+- ⚠️ Auto-update execution broken (fixed in 0.61.1)
+
+---
+
+## [0.58.4-termux] - 2025-11-08
+
+### Fixed
+- Auto-update detection restored
+- Version checking improvements
+
+### Changed
+- Binary version: 0.58.4
+- npm package: 0.58.4-termux
+- Last version with working auto-update before regression
+
+---
+
+## [0.58.0-termux] - 2025-11-07
+
+### Upstream Changes (rust-v0.58.0)
+- Major upstream sync
+- New features and improvements
+
+### Changed
+- Binary version: 0.58.0
+- npm package: 0.58.0-termux
+
+---
+
+## [0.57.0-termux] - 2025-11-07
+
+### Upstream Changes (rust-v0.57.0)
+- Intermediate release for upstream tracking
+
+### Changed
+- Binary version: 0.57.0
+- npm package: 0.57.0-termux
+
+---
+
+## [0.56.x-termux] - 2025-11-06
+
+### Changed
+- Multiple patch releases (0.56.0 through 0.56.3)
+- Stability and compatibility improvements
+
+---
+
 ## [0.55.4-termux] - 2025-11-06
 
 ### Fixed
@@ -168,14 +319,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Patch Overview
 
-| Patch | Version Added | File | Purpose |
-|-------|---------------|------|---------|
-| #1 | 0.50.2 | login/src/server.rs | Browser login fix |
+| Patch | Version | File | Purpose |
+|-------|---------|------|---------|
+| #1 | 0.50.2 | login/src/server.rs | Browser login (termux-open-url) |
 | #2 | 0.50.2 | Cargo.toml | RAM optimizations |
 | #3 | 0.50.2 | Cargo.toml | Version alignment |
 | #4 | 0.53.1 | tui/src/updates.rs | Auto-update URL redirect |
-| #5 | 0.55.1 | tui/src/updates.rs | Version parser fix |
-| #6 | 0.55.2 | tui/src/updates.rs + Cargo.toml | NPM package name fix |
+| #5 | 0.55.1 | tui/src/updates.rs | Version parser (-termux suffix) |
+| #6 | 0.55.2 | tui/src/updates.rs + Cargo.toml | NPM package name |
+| #7 | 0.55.3 | cli/src/main.rs | Manual update on Android (historical) |
+| #8 | 0.55.4 | safety.rs, process-hardening, shell.rs | Bash execution fix |
+| #9 | 0.61.1 | tui/src/main.rs | Auto-update execution |
 
 ---
 

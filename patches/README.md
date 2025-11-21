@@ -1,7 +1,7 @@
 # 🔧 Termux Compatibility Patches
 
 This document describes the Termux‑specific patches applied to the official OpenAI Codex CLI so that it works well on Android Termux (ARM64).
-Validated for: **v0.61.0-termux** (upstream `rust-v0.61.0`).
+Validated for: **v0.62.0-termux** (upstream `rust-v0.62.0`).
 
 ---
 
@@ -615,8 +615,8 @@ For the current **0.61.1-termux** release, active patches are **#1–#6, #8, and
 
 | Component | Version | Example |
 |-----------|---------|---------|
-| **Binary** | Upstream version | `codex-cli 0.60.1` |
-| **npm package** | `<upstream>-termux` | `0.60.1-termux` |
+| **Binary** | Upstream version | `codex-cli 0.62.0` |
+| **npm package** | `<upstream>-termux` | `0.62.0-termux` |
 
 **Why:**
 - Binary version matches upstream for compatibility
@@ -628,7 +628,7 @@ For the current **0.61.1-termux** release, active patches are **#1–#6, #8, and
 ## Testing Checklist
 
 Before each release:
-- [ ] `codex --version` shows correct upstream version (0.60.1)
+- [ ] `codex --version` shows correct upstream version (0.62.0)
 - [ ] `codex login` opens browser without crash
 - [ ] OAuth flow completes successfully
 - [ ] Binary size < 50MB
@@ -650,8 +650,8 @@ We only accept patches for Termux-specific issues, not general feature requests.
 
 ---
 
-**Last Updated**: 2025-11-20
-**Patches Applied**: 9 (8 carried from 0.55.x revalidated for 0.61.0, + Patch #9 added in 0.61.1)
-**Based on**: OpenAI Codex rust-v0.61.0
+**Last Updated**: 2025-11-21
+**Patches Applied**: 9 (all revalidated for 0.62.0 - no conflicts)
+**Based on**: OpenAI Codex rust-v0.62.0
 **Platform**: Android Termux ARM64
-**Upstream Changes**: 13 commits from 0.60.1 to 0.61.0 including execpolicy2 integration, single-pass truncation, and shell fallback improvements
+**Upstream Changes**: 40+ commits from 0.61.0 to 0.62.0 including codex-shell-tool-mcp, execpolicycheck CLI, TUI animations toggle, shell timeout 1h, FreeBSD portability
