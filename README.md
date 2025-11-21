@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-tui 0.61.0
+# Output: codex-tui 0.62.0
 
 codex login
 # Opens browser for authentication
@@ -203,18 +203,18 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.61.0):
+**Example Report** (v0.62.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64
-Codex Version: 0.61.0
+Codex Version: 0.62.0
 Total Tests: 42
-✅ Passed: 40
-❌ Failed: 0
+✅ Passed: 39
+❌ Failed: 1
 ⚠️ Skipped: 2 (WebSearch, Git - optional)
 
-Termux-Specific: 10/10 passed ✅
+Termux-Specific: 9/10 passed ✅
 
 VERDICT: ⚠️ PASS WITH WARNINGS
 ```
@@ -263,13 +263,42 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.61.0 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.62.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
 ---
 
 ## 📜 Changelog
+
+### v0.62.0-termux (2025-11-21)
+
+**Update**: Synced with upstream OpenAI Codex rust-v0.62.0 (40+ commits from v0.61.0)
+
+**Upstream Features**:
+- 🆕 **codex-shell-tool-mcp**: New MCP server for shell tools
+- 🆕 **execpolicycheck**: New CLI command for exec policy debugging
+- 🎯 **TUI reasoning default**: Changed to "medium" level
+- ⏱️ **Shell timeout**: Increased to 1 hour for long-running commands
+- 🎬 **TUI animations toggle**: Feature switch to disable animations
+- 🔄 **resume --last**: Allow reading prompt from last session
+
+**Breaking Changes**:
+- `execpolicy` migration: `execpolicy2` → `execpolicy`, old → `execpolicy-legacy`
+- Removed `tiktoken-rs` dependency
+- `ExecParams.timeout_ms` replaced with `ExecExpiration` enum
+
+**Termux-Specific**:
+- ✅ **All 9 patches preserved and verified** (no conflicts)
+- ✅ **Build optimized for 8GB RAM**: Compiled in 10m 35s on ROG Phone 3
+- ✅ **Binary size**: 35MB
+- ✅ **Test Suite**: 39/42 passed (92.9%), 9/10 Termux-specific
+
+**Stats**: 195 files changed, +5915 insertions, -2293 deletions
+
+Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
+
+---
 
 ### v0.61.0-termux (2025-11-20)
 
