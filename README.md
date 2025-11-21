@@ -275,6 +275,8 @@ See [LICENSE](./LICENSE) file for details.
 
 **Update**: Synced with upstream OpenAI Codex rust-v0.62.0 (40+ commits from v0.61.0)
 
+> **Note**: Upstream rust-v0.63.0 skipped - only 3 minor commits (duplicate bash fix, drop unused param, declined status). Will sync with next significant release.
+
 **Upstream Features**:
 - 🆕 **codex-shell-tool-mcp**: New MCP server for shell tools
 - 🆕 **execpolicycheck**: New CLI command for exec policy debugging
