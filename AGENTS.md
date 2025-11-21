@@ -19,7 +19,7 @@ In the codex-rs folder where the rust code lives:
 
 ## Infrastructure Context (ROG Phone 3)
 
-- This agent runs inside Termux on the ASUS ROG Phone 3 build server (Snapdragon aarch64, 8 GB RAM, Android 12, host 192.168.0.172 per `~/CLAUDE.md`).
+- This agent runs inside Termux on the ASUS ROG Phone 3 build server (Snapdragon aarch64, 8 GB RAM, Android 12).
 - The device is the dedicated ARM build node for Codex-Termux and other mobile builds, so coordinate actions with the rest of the infrastructure rather than treating it as a standalone sandbox.
 - Keep the private `~/Dev/Codex-Termux` pipeline and the public `~/Dev/codex-termux` fork in sync with the policies documented in `CLAUDE.md`; never leak sensitive data back to the public repo.
 - Consult the shared docs in `.docs/` (especially hardware and infrastructure notes) whenever a change might impact other hosts or services.

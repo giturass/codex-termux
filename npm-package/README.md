@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-tui 0.61.0
+# Output: codex-tui 0.62.0
 
 codex login
 # Opens browser for authentication
@@ -131,13 +131,13 @@ prefix_rule(
 
 In this example rule, if Codex wants to run commands with the prefix `git push` or `git fetch`, it will first ask for user approval.
 
-Use [`execpolicy2` CLI](./codex-rs/execpolicy2/README.md) to preview decisions for policy files:
+Use [`execpolicy` CLI](./codex-rs/execpolicy/README.md) to preview decisions for policy files:
 
 ```shell
-cargo run -p codex-execpolicy2 -- check --policy ~/.codex/policy/default.codexpolicy git push origin main
+cargo run -p codex-execpolicy -- check --policy ~/.codex/policy/default.codexpolicy git push origin main
 ```
 
-Pass multiple `--policy` flags to test how several files combine. See the [`codex-rs/execpolicy2` README](./codex-rs/execpolicy2/README.md) for a more detailed walkthrough of the available syntax.
+Pass multiple `--policy` flags to test how several files combine. See the [`codex-rs/execpolicy` README](./codex-rs/execpolicy/README.md) for a more detailed walkthrough of the available syntax.
 
 ---
 
@@ -263,13 +263,41 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.61.0 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.62.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
 ---
 
 ## 📜 Changelog
+
+### v0.62.0-termux (2025-11-21)
+
+**Update**: Synced with upstream OpenAI Codex rust-v0.62.0 (40+ commits from v0.61.0)
+
+**Upstream Features**:
+- 🆕 **codex-shell-tool-mcp**: New MCP server for shell tools
+- 🆕 **execpolicycheck**: New CLI command for exec policy debugging
+- 🎯 **TUI reasoning default**: Changed to "medium" level
+- ⏱️ **Shell timeout**: Increased to 1 hour for long-running commands
+- 🎬 **TUI animations toggle**: Feature switch to disable animations
+- 🔄 **resume --last**: Allow reading prompt from last session
+
+**Breaking Changes**:
+- `execpolicy` migration: `execpolicy2` → `execpolicy`, old → `execpolicy-legacy`
+- Removed `tiktoken-rs` dependency
+- `ExecParams.timeout_ms` replaced with `ExecExpiration` enum
+
+**Termux-Specific**:
+- ✅ **All 9 patches preserved and verified** (no conflicts)
+- ✅ **Build optimized for 8GB RAM**: Compiled in 10m 35s on ROG Phone 3
+- ✅ **Binary size**: 35MB
+
+**Stats**: 195 files changed, +5915 insertions, -2293 deletions
+
+Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
+
+---
 
 ### v0.61.0-termux (2025-11-20)
 
