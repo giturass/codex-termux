@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.62.0-termux] - 2025-11-21 (PENDING)
+## [0.62.0-termux] - 2025-11-21
 
 ### Upstream Changes (rust-v0.62.0)
 
