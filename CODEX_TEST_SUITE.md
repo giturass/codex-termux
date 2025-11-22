@@ -375,6 +375,8 @@ cd ~/codex-test-workspace
 
 ## 🌐 Category 6: Web & Network (if available)
 
+> **Tip**: To enable web search, start codex with `codex --search` flag. This enables the native `web_search` tool for the model.
+
 ### TEST-601: Web Search
 
 **Action**: Perform web search (if WebSearch tool available)
