@@ -1,9 +1,11 @@
 # 🧪 Codex CLI - Universal Test Suite
 
-**Version**: 1.1 (Compatible with all Codex versions)
+**Version**: 1.2 (Compatible with all Codex versions)
 **Platform**: Android Termux ARM64
-**Total Tests**: 74 (including 10 Termux-specific)
+**Total Tests**: 82 (including 10 Termux-specific + 8 Package Verification)
 **Purpose**: Automated functional testing for Codex CLI builds
+
+> ⚠️ **v1.2 UPDATE**: Added Category 12 (Package & Binary Verification) after v0.62.0 incident where codex-exec was missing from npm package.
 
 ---
 
@@ -684,6 +686,159 @@ cd ~/codex-test-workspace
 
 ---
 
+## 📦 Category 12: Package & Binary Verification (CRITICAL)
+
+> ⚠️ **IMPORTANTE**: Questa categoria verifica che TUTTI i componenti siano presenti.
+> Lezione appresa da v0.62.0: codex-exec mancante nel package npm.
+
+### TEST-1201: Verify codex-tui Binary
+
+**Action**: Verify main TUI binary exists and works
+
+**Tasks**:
+1. Check `codex --version` returns version
+2. Verify binary size is reasonable (>30MB)
+3. Check `codex --help` shows TUI options
+
+**Expected**: TUI binary functional
+
+**Verify**: Version displayed, help shows interactive options
+
+---
+
+### TEST-1202: Verify codex-exec Binary
+
+**Action**: Verify automation binary exists and works
+
+**Tasks**:
+1. Check `codex-exec --version` returns version
+2. Verify binary exists and is executable
+3. Check `codex-exec --help` shows exec options
+
+**Expected**: codex-exec binary functional
+
+**Verify**: Version displayed, help shows automation options
+
+**Note**: CRITICAL - This was missing in v0.62.0!
+
+---
+
+### TEST-1203: Verify codex-exec JSON Flag
+
+**Action**: Verify --json flag available for automation
+
+**Tasks**:
+1. Run `codex-exec --help | grep json`
+2. Verify `--json` flag documented
+3. Verify `--output-schema` flag available
+
+**Expected**: JSON output capability present
+
+**Verify**: Help shows:
+- `--json    Print events to stdout as JSONL`
+- `--output-schema <FILE>`
+
+**Note**: CRITICAL for CI/CD and automation use cases
+
+---
+
+### TEST-1204: NPM Package Structure
+
+**Action**: Verify npm package has all required files
+
+**Tasks** (if installed via npm):
+1. Find npm package location: `npm root -g`
+2. Check `bin/codex` binary exists
+3. Check `bin/codex-exec` binary exists
+4. Check `bin/codex.js` wrapper exists
+5. Check `bin/codex-exec.js` wrapper exists
+
+**Expected**: All 4 files present in bin/
+
+**Verify**:
+```bash
+ls -la $(npm root -g)/@mmmbuto/codex-cli-termux/bin/
+# Should show: codex, codex.js, codex-exec, codex-exec.js
+```
+
+**Note**: CRITICAL - All binaries must be included
+
+---
+
+### TEST-1205: Binary Version Consistency
+
+**Action**: Verify both binaries report same upstream version
+
+**Tasks**:
+1. Get `codex --version` output
+2. Get `codex-exec --version` output
+3. Compare version numbers
+
+**Expected**: Both show same upstream version (e.g., 0.62.0)
+
+**Verify**: Versions match (excluding -termux suffix in npm)
+
+---
+
+### TEST-1206: Package.json Bin Entries
+
+**Action**: Verify package.json exposes both commands
+
+**Tasks** (for local package verification):
+1. Read npm-package/package.json
+2. Check "bin" section has "codex" entry
+3. Check "bin" section has "codex-exec" entry
+4. Check "files" array includes all binaries
+
+**Expected**: Both commands exposed in package.json
+
+**Verify**:
+```json
+"bin": {
+  "codex": "bin/codex.js",
+  "codex-exec": "bin/codex-exec.js"
+}
+```
+
+---
+
+### TEST-1207: Global Command Availability
+
+**Action**: Verify both commands available after npm install -g
+
+**Tasks**:
+1. Run `which codex`
+2. Run `which codex-exec`
+3. Verify both point to npm bin directory
+
+**Expected**: Both commands in PATH
+
+**Verify**: Both return valid paths
+
+**Note**: Run after `npm install -g @mmmbuto/codex-cli-termux`
+
+---
+
+### TEST-1208: Upstream Crate Inventory
+
+**Action**: Verify all upstream binary crates are compiled
+
+**Tasks** (for build verification):
+1. Check codex-rs workspace Cargo.toml
+2. List all `[[bin]]` targets
+3. Verify each binary is compiled
+
+**Expected**: All binary crates compiled
+
+**Current required binaries**:
+- `codex-tui` (tui/)
+- `codex-exec` (exec/)
+- `codex` (cli/) - optional wrapper
+
+**Verify**: `ls codex-rs/target/release/codex*`
+
+---
+
 ## 🧹 Category 11: Cleanup
 
 ### TEST-1101: Remove Test Files
@@ -737,6 +892,7 @@ CATEGORY BREAKDOWN:
 9. Error Handling: X/Y passed
 10. Termux-Specific: X/Y passed
 11. Cleanup: X/Y passed
+12. Package & Binary Verification: X/8 passed (CRITICAL!)
 
 CRITICAL FAILURES:
 ------------------
@@ -763,6 +919,7 @@ VERDICT: ✅ PASS / ⚠️ PASS WITH WARNINGS / ❌ FAIL
 - All Category 1-5 tests pass (System, Files, Search, Shell, Text)
 - All Category 9 tests pass (Error Handling)
 - All Category 10 tests pass (Termux-Specific)
+- **All Category 12 tests pass (Package & Binary Verification) - CRITICAL!**
 - No critical crashes
 - At least 80% overall pass rate
 
@@ -771,8 +928,16 @@ VERDICT: ✅ PASS / ⚠️ PASS WITH WARNINGS / ❌ FAIL
 - Category 7 (Git) - if not in repo or git not installed
 - Category 10 TEST-1003 - if Termux-API not installed
 
+**Categories that CANNOT be skipped:**
+- Category 12 (Package & Binary) - MUST pass for release approval
+
 ---
 
-**Version**: 1.1
-**Last Updated**: 2025-11-20
+**Version**: 1.2
+**Last Updated**: 2025-11-22
 **License**: Apache 2.0 (same as Codex CLI)
+
+**Changelog v1.2**:
+- Added Category 12: Package & Binary Verification (8 tests)
+- Tests verify: codex-tui, codex-exec, npm package structure, JSON flags
+- Prevents missing component issues like v0.62.0 codex-exec incident

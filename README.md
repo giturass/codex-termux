@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-tui 0.62.0
+# Output: codex-cli 0.62.1
 
 codex login
 # Opens browser for authentication
@@ -107,6 +107,30 @@ codex --help
 ```
 
 For full documentation, see [OpenAI Codex docs](https://github.com/openai/codex).
+
+### Non-Interactive Mode (Automation)
+
+The `codex` binary is a multitool that includes the `exec` subcommand for automation and scripting:
+
+```bash
+# Run non-interactively with JSON output
+codex exec --json "list files in current directory"
+
+# With custom sandbox mode
+codex exec --json -s danger-full-access "run npm test"
+
+# Skip git repo check for non-repo directories
+codex exec --json --skip-git-repo-check "echo hello"
+
+# Output to file
+codex exec --json -o output.json "describe this project"
+```
+
+**Key flags:**
+- `--json` - Output events as JSONL (for parsing)
+- `-s, --sandbox` - Sandbox mode: `read-only`, `workspace-write`, `danger-full-access`
+- `--skip-git-repo-check` - Run outside git repositories
+- `-o, --output-last-message` - Save final response to file
 
 ### Execpolicy Quickstart
 
@@ -150,8 +174,9 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **74 automated tests** across 11 categories
+- ✅ **82 automated tests** across 12 categories
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
+- ✅ **8 Package & Binary tests** for npm installation verification
 - ✅ File operations, shell execution, environment detection
 - ✅ Android permissions, library paths, package manager
 - ✅ Error handling and edge cases
@@ -187,6 +212,7 @@ Codex will automatically:
 9. Error Handling (3 tests)
 10. **Termux-Specific (10 tests)** ⭐ - Validates all Android patches
 11. Cleanup (1 test)
+12. **Package & Binary (8 tests)** ⭐ - Validates npm installation and binaries
 
 **Termux-Specific Tests Include**:
 - ✅ Environment paths (`$PREFIX`, `$HOME`, `$LD_LIBRARY_PATH`)
@@ -203,18 +229,19 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.62.0):
+**Example Report** (v0.62.1):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
-Platform: Android Termux ARM64
-Codex Version: 0.62.0
-Total Tests: 42
-✅ Passed: 39
-❌ Failed: 1
-⚠️ Skipped: 2 (WebSearch, Git - optional)
+Platform: Android Termux ARM64 (ROG Phone 3)
+Codex Version: 0.62.1
+Total Tests: 49
+✅ Passed: 46
+❌ Failed: 0
+⚠️ Skipped: 3 (WebSearch, Git - optional)
 
-Termux-Specific: 9/10 passed ✅
+Termux-Specific: 10/10 passed ✅
+Package & Binary: 8/8 passed ✅
 
 VERDICT: ⚠️ PASS WITH WARNINGS
 ```
@@ -263,7 +290,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.62.0 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.62.1 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
