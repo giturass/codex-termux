@@ -298,6 +298,12 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
+### v0.62.1-termux (2025-11-22)
+
+**Fix**: Switched to multitool binary with `exec` subcommand integrated. Use `codex exec --json` for automation instead of separate `codex-exec` binary.
+
+---
+
 ### v0.62.0-termux (2025-11-21)
 
 **Update**: Synced with upstream OpenAI Codex rust-v0.62.0 (40+ commits from v0.61.0)
