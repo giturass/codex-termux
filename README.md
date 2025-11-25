@@ -88,6 +88,7 @@ codex login
 - npm: https://www.npmjs.com/package/@mmmbuto/codex-cli-termux
 - Releases: https://github.com/DioNanos/codex-termux/releases
 - Upstream: https://github.com/openai/codex
+- Web UI: [NexusCLI](https://github.com/DioNanos/nexuscli) - Optional web interface for Codex/Claude/Gemini
 
 ---
 
