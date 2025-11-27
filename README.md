@@ -65,9 +65,6 @@ npm --version   # v6+
 
 ## 📦 Installation
 
-> [!WARNING]
-> **Deprecated versions:** Versions prior to v0.57.0-termux are no longer maintained. Please upgrade to the latest release.
-
 ### Via npm (Recommended)
 
 ```bash
@@ -78,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.62.1
+# Output: codex-cli 0.64.0
 
 codex login
 # Opens browser for authentication
@@ -114,6 +111,9 @@ For full documentation, see [OpenAI Codex docs](https://github.com/openai/codex)
 The `codex` binary is a multitool that includes the `exec` subcommand for automation and scripting:
 
 ```bash
+# Enable web search tool
+codex --search
+
 # Run non-interactively with JSON output
 codex exec --json "list files in current directory"
 
@@ -146,7 +146,7 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **90 automated tests** across 13 categories
+- ✅ **82 automated tests** across 13 categories
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
 - ✅ **8 Package & Binary tests** for npm installation verification
 - ✅ **8 Merge Verification tests** for post-upstream-merge validation
@@ -203,16 +203,16 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.62.1):
+**Example Report** (v0.64.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.62.1
+Codex Version: 0.64.0
 Total Tests: 49
-✅ Passed: 46
+✅ Passed: 47
 ❌ Failed: 0
-⚠️ Skipped: 3 (WebSearch, Git - optional)
+⚠️ Skipped: 2 (Git optional)
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
@@ -293,13 +293,20 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.62.1 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.64.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
 ---
 
 ## 📜 Changelog
+
+### v0.64.0-termux (2025-11-27)
+
+- ✅ Binario unico `codex`; `codex-exec` è ora wrapper/symlink allo stesso binario (~49 MB).
+- ✅ Npm package completo: `package.json` espone `codex` e `codex-exec`; `bin/` include wrapper JS e symlink.
+- ✅ LD_LIBRARY_PATH forzato a `$PREFIX/lib` via `~/.zshenv` (Termux library path preservation).
+- ✅ Test suite v1.2: 47/49 pass (10/10 Termux, 8/8 Package), web search flag `--search` verificato; skip solo test Git opzionali.
 
 ### v0.62.1-termux (2025-11-22)
 
@@ -337,72 +344,6 @@ See [LICENSE](./LICENSE) file for details.
 Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
 
 ---
-
-### v0.61.0-termux (2025-11-20)
-
-**Update**: Synced with upstream OpenAI Codex rust-v0.61.0 (13 commits from v0.60.1)
-
-**Upstream Features**:
-- 🚀 **Single Pass Truncation**: Improved performance for context management
-- 🔐 **execpolicy2 Integration**: Enhanced security with new execution policy system
-- 🐚 **Shell Fallback Improvements**: Better shell detection with automatic fallbacks (bash → zsh)
-- 🎨 **Model Migration UX**: Stop showing migration screen after first time
-- 🪟 **World-Writable Warnings**: Reduced false positives on Android
-
-**Termux-Specific**:
-- ✅ **All 8 patches preserved and verified**
-- ✅ **Shell fallback compatible**: Android `$SHELL` detection enhanced with upstream fallbacks
-- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3 (9m 06s)
-- ✅ **Binary size**: 42MB (+13% vs 0.60.1 due to execpolicy2)
-- ✅ **Test Suite**: 40/42 tests PASSED (95.2%), 10/10 Termux-specific tests
-
-**Patches Validated**:
-1. ✅ Browser login (`termux-open-url`)
-2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
-3. ✅ Android shell detection (`$SHELL` env var)
-4. ✅ Android sandbox disabled
-5. ✅ LD_* environment variables preserved
-6. ✅ Auto-update URL (`DioNanos/codex-termux`)
-7. ✅ Version parser (`-termux` suffix support)
-8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
-
-**Breaking Changes**: None - fully backward compatible
-
-**Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.60.1...rust-v0.61.0
-
----
-
-### v0.60.1-termux (2025-11-20)
-
-**Major Update**: Synced with upstream OpenAI Codex rust-v0.60.1 (250+ commits)
-
-**Upstream Features**:
-- 🤖 **GPT-5.1 MAX Support**: New MAX model with enhanced capabilities and performance
-- 🔧 **App-Server Protocol**: Enhanced v2 APIs for thread management
-- ⚡ **Performance Optimizations**: Improved TUI responsiveness and memory usage
-- 🪟 **Windows Sandbox**: Enhanced security features (not applicable to Termux)
-- 🐛 **Bug Fixes**: 250+ commits with stability improvements and fixes
-
-**Termux-Specific**:
-- ✅ **All 8 patches preserved and verified**
-- ✅ **Patch #8 updated**: Shell detection refactored for upstream changes
-- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3
-- ✅ **Binary size**: 37MB (24% smaller than 0.58.4)
-- ✅ **Test Suite**: 74 automated tests including 10 Termux-specific validations
-
-**Patches Validated**:
-1. ✅ Browser login (`termux-open-url`)
-2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
-3. ✅ Android shell detection (`$SHELL` env var)
-4. ✅ Android sandbox disabled
-5. ✅ LD_* environment variables preserved
-6. ✅ Auto-update URL (`DioNanos/codex-termux`)
-7. ✅ Version parser (`-termux` suffix support)
-8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
-
-**Breaking Changes**: None - fully backward compatible
 
 **Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
