@@ -65,9 +65,6 @@ npm --version   # v6+
 
 ## 📦 Installation
 
-> [!WARNING]
-> **Deprecated versions:** Versions prior to v0.57.0-termux are no longer maintained. Please upgrade to the latest release.
-
 ### Via npm (Recommended)
 
 ```bash
@@ -78,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.62.1
+# Output: codex-cli 0.64.0
 
 codex login
 # Opens browser for authentication
@@ -114,6 +111,9 @@ For full documentation, see [OpenAI Codex docs](https://github.com/openai/codex)
 The `codex` binary is a multitool that includes the `exec` subcommand for automation and scripting:
 
 ```bash
+# Enable web search tool
+codex --search
+
 # Run non-interactively with JSON output
 codex exec --json "list files in current directory"
 
@@ -133,38 +133,9 @@ codex exec --json -o output.json "describe this project"
 - `--skip-git-repo-check` - Run outside git repositories
 - `-o, --output-last-message` - Save final response to file
 
-### Execpolicy Quickstart
+### Execpolicy
 
-Codex can enforce your own rules-based execution policy before it runs shell commands.
-
-1. Create a policy directory: `mkdir -p ~/.codex/policy`.
-2. Create one or more `.codexpolicy` files in that folder. Codex automatically loads every `.codexpolicy` file in there on startup.
-3. Write `prefix_rule` entries to describe the commands you want to allow, prompt, or block:
-
-```starlark
-prefix_rule(
-    pattern = ["git", ["push", "fetch"]],
-    decision = "prompt",  # allow | prompt | forbidden
-    match = [["git", "push", "origin", "main"]],  # examples that must match
-    not_match = [["git", "status"]],              # examples that must not match
-)
-```
-
-- `pattern` is a list of shell tokens, evaluated from left to right; wrap tokens in a nested list to express alternatives (e.g., match both `push` and `fetch`).
-- `decision` sets the severity; Codex picks the strictest decision when multiple rules match (forbidden > prompt > allow).
-- `match` and `not_match` act as (optional) unit tests. Codex validates them when it loads your policy, so you get feedback if an example has unexpected behavior.
-
-In this example rule, if Codex wants to run commands with the prefix `git push` or `git fetch`, it will first ask for user approval.
-
-Use the `codex execpolicy check` subcommand to preview decisions before you save a rule (see the [`codex-execpolicy` README](./codex-rs/execpolicy/README.md) for syntax details):
-
-```shell
-codex execpolicy check --policy ~/.codex/policy/default.codexpolicy git push origin main
-```
-
-Pass multiple `--policy` flags to test how several files combine, and use `--pretty` for formatted JSON output. See the [`codex-rs/execpolicy` README](./codex-rs/execpolicy/README.md) for a more detailed walkthrough of the available syntax.
-
-## Note: `execpolicy` commands are still in preview. The API may have breaking changes in the future.
+See the [Execpolicy quickstart](./docs/execpolicy.md) to set up rules that govern what commands Codex can execute.
 
 ## 🧪 Testing & Validation
 
@@ -175,9 +146,10 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **82 automated tests** across 12 categories
+- ✅ **82 automated tests** across 13 categories
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
 - ✅ **8 Package & Binary tests** for npm installation verification
+- ✅ **8 Merge Verification tests** for post-upstream-merge validation
 - ✅ File operations, shell execution, environment detection
 - ✅ Android permissions, library paths, package manager
 - ✅ Error handling and edge cases
@@ -214,6 +186,7 @@ Codex will automatically:
 10. **Termux-Specific (10 tests)** ⭐ - Validates all Android patches
 11. Cleanup (1 test)
 12. **Package & Binary (8 tests)** ⭐ - Validates npm installation and binaries
+13. **Merge Verification (8 tests)** 🔄 - Validates patches after upstream merge
 
 **Termux-Specific Tests Include**:
 - ✅ Environment paths (`$PREFIX`, `$HOME`, `$LD_LIBRARY_PATH`)
@@ -230,22 +203,51 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.62.1):
+**Example Report** (v0.64.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.62.1
+Codex Version: 0.64.0
 Total Tests: 49
-✅ Passed: 46
+✅ Passed: 47
 ❌ Failed: 0
-⚠️ Skipped: 3 (WebSearch, Git - optional)
+⚠️ Skipped: 2 (Git optional)
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
 
 VERDICT: ⚠️ PASS WITH WARNINGS
 ```
+- [**Getting started**](./docs/getting-started.md)
+  - [CLI usage](./docs/getting-started.md#cli-usage)
+  - [Slash Commands](./docs/slash_commands.md)
+  - [Running with a prompt as input](./docs/getting-started.md#running-with-a-prompt-as-input)
+  - [Example prompts](./docs/getting-started.md#example-prompts)
+  - [Custom prompts](./docs/prompts.md)
+  - [Memory with AGENTS.md](./docs/getting-started.md#memory-with-agentsmd)
+- [**Configuration**](./docs/config.md)
+  - [Example config](./docs/example-config.md)
+- [**Sandbox & approvals**](./docs/sandbox.md)
+- [**Execpolicy quickstart**](./docs/execpolicy.md)
+- [**Authentication**](./docs/authentication.md)
+  - [Auth methods](./docs/authentication.md#forcing-a-specific-auth-method-advanced)
+  - [Login on a "Headless" machine](./docs/authentication.md#connecting-on-a-headless-machine)
+- **Automating Codex**
+  - [GitHub Action](https://github.com/openai/codex-action)
+  - [TypeScript SDK](./sdk/typescript/README.md)
+  - [Non-interactive mode (`codex exec`)](./docs/exec.md)
+- [**Advanced**](./docs/advanced.md)
+  - [Tracing / verbose logging](./docs/advanced.md#tracing--verbose-logging)
+  - [Model Context Protocol (MCP)](./docs/advanced.md#model-context-protocol-mcp)
+- [**Zero data retention (ZDR)**](./docs/zdr.md)
+- [**Contributing**](./docs/contributing.md)
+- [**Install & build**](./docs/install.md)
+  - [System Requirements](./docs/install.md#system-requirements)
+  - [DotSlash](./docs/install.md#dotslash)
+  - [Build from source](./docs/install.md#build-from-source)
+- [**FAQ**](./docs/faq.md)
+- [**Open source fund**](./docs/open-source-fund.md)
 
 ---
 
@@ -291,13 +293,20 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.62.1 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.64.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
 ---
 
 ## 📜 Changelog
+
+### v0.64.0-termux (2025-11-27)
+
+- ✅ Binario unico `codex`; `codex-exec` è ora wrapper/symlink allo stesso binario (~49 MB).
+- ✅ Npm package completo: `package.json` espone `codex` e `codex-exec`; `bin/` include wrapper JS e symlink.
+- ✅ LD_LIBRARY_PATH forzato a `$PREFIX/lib` via `~/.zshenv` (Termux library path preservation).
+- ✅ Test suite v1.2: 47/49 pass (10/10 Termux, 8/8 Package), web search flag `--search` verificato; skip solo test Git opzionali.
 
 ### v0.62.1-termux (2025-11-22)
 
@@ -335,72 +344,6 @@ See [LICENSE](./LICENSE) file for details.
 Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
 
 ---
-
-### v0.61.0-termux (2025-11-20)
-
-**Update**: Synced with upstream OpenAI Codex rust-v0.61.0 (13 commits from v0.60.1)
-
-**Upstream Features**:
-- 🚀 **Single Pass Truncation**: Improved performance for context management
-- 🔐 **execpolicy2 Integration**: Enhanced security with new execution policy system
-- 🐚 **Shell Fallback Improvements**: Better shell detection with automatic fallbacks (bash → zsh)
-- 🎨 **Model Migration UX**: Stop showing migration screen after first time
-- 🪟 **World-Writable Warnings**: Reduced false positives on Android
-
-**Termux-Specific**:
-- ✅ **All 8 patches preserved and verified**
-- ✅ **Shell fallback compatible**: Android `$SHELL` detection enhanced with upstream fallbacks
-- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3 (9m 06s)
-- ✅ **Binary size**: 42MB (+13% vs 0.60.1 due to execpolicy2)
-- ✅ **Test Suite**: 40/42 tests PASSED (95.2%), 10/10 Termux-specific tests
-
-**Patches Validated**:
-1. ✅ Browser login (`termux-open-url`)
-2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
-3. ✅ Android shell detection (`$SHELL` env var)
-4. ✅ Android sandbox disabled
-5. ✅ LD_* environment variables preserved
-6. ✅ Auto-update URL (`DioNanos/codex-termux`)
-7. ✅ Version parser (`-termux` suffix support)
-8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
-
-**Breaking Changes**: None - fully backward compatible
-
-**Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.60.1...rust-v0.61.0
-
----
-
-### v0.60.1-termux (2025-11-20)
-
-**Major Update**: Synced with upstream OpenAI Codex rust-v0.60.1 (250+ commits)
-
-**Upstream Features**:
-- 🤖 **GPT-5.1 MAX Support**: New MAX model with enhanced capabilities and performance
-- 🔧 **App-Server Protocol**: Enhanced v2 APIs for thread management
-- ⚡ **Performance Optimizations**: Improved TUI responsiveness and memory usage
-- 🪟 **Windows Sandbox**: Enhanced security features (not applicable to Termux)
-- 🐛 **Bug Fixes**: 250+ commits with stability improvements and fixes
-
-**Termux-Specific**:
-- ✅ **All 8 patches preserved and verified**
-- ✅ **Patch #8 updated**: Shell detection refactored for upstream changes
-- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3
-- ✅ **Binary size**: 37MB (24% smaller than 0.58.4)
-- ✅ **Test Suite**: 74 automated tests including 10 Termux-specific validations
-
-**Patches Validated**:
-1. ✅ Browser login (`termux-open-url`)
-2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
-3. ✅ Android shell detection (`$SHELL` env var)
-4. ✅ Android sandbox disabled
-5. ✅ LD_* environment variables preserved
-6. ✅ Auto-update URL (`DioNanos/codex-termux`)
-7. ✅ Version parser (`-termux` suffix support)
-8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
-
-**Breaking Changes**: None - fully backward compatible
 
 **Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
