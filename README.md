@@ -303,10 +303,10 @@ See [LICENSE](./LICENSE) file for details.
 
 ### v0.64.0-termux (2025-11-27)
 
-- ✅ Binario unico `codex`; `codex-exec` è ora wrapper/symlink allo stesso binario (~49 MB).
-- ✅ Npm package completo: `package.json` espone `codex` e `codex-exec`; `bin/` include wrapper JS e symlink.
-- ✅ LD_LIBRARY_PATH forzato a `$PREFIX/lib` via `~/.zshenv` (Termux library path preservation).
-- ✅ Test suite v1.2: 47/49 pass (10/10 Termux, 8/8 Package), web search flag `--search` verificato; skip solo test Git opzionali.
+- ✅ Single binary `codex`; `codex-exec` is now a wrapper/symlink to the same ~49 MB binary.
+- ✅ Complete npm package: `package.json` exposes `codex` and `codex-exec`; `bin/` ships JS wrappers plus symlink.
+- ✅ LD_LIBRARY_PATH enforced to `$PREFIX/lib` via `~/.zshenv` (Termux library path preservation).
+- ✅ Test suite v1.2: 47/49 pass (10/10 Termux, 8/8 Package), `--search` verified; only Git optional tests skipped.
 
 ### v0.62.1-termux (2025-11-22)
 

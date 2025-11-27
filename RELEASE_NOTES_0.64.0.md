@@ -1,22 +1,22 @@
 # Codex CLI Termux v0.64.0-termux (2025-11-27)
 
 ## Highlights
-- ✅ **Binario unico**: `codex` incorpora il sottocomando `exec`; `codex-exec` è ora un wrapper/symlink allo stesso binario (~49 MB) per evitare omissioni del binario secondario.
-- ✅ **Pacchetto npm completo**: `package.json` espone entrambe le voci `codex` e `codex-exec` con i relativi wrapper; la directory `bin/` include symlink `codex-exec -> codex` per installazioni globali.
-- ✅ **LD_LIBRARY_PATH forzato**: esportato a livello globale (`$PREFIX/lib`) via `~/.zshenv` per soddisfare Test-1006 (library path preservation).
-- ✅ **Web search**: flag `--search` verificato; Test-601 ora passa (ricerca via DuckDuckGo).
+- ✅ **Single binary**: `codex` includes the `exec` subcommand; `codex-exec` is now just a wrapper/symlink to the same ~49 MB binary, preventing missing-secondary-binary issues.
+- ✅ **Complete npm package**: `package.json` exposes both `codex` and `codex-exec`; `bin/` ships wrappers plus `codex-exec -> codex` symlink for global installs.
+- ✅ **LD_LIBRARY_PATH enforced**: set globally to `$PREFIX/lib` via `~/.zshenv` to satisfy library-path preservation tests.
+- ✅ **Web search verified**: `--search` flag tested (DuckDuckGo scrape) and passes Test-601.
 
 ## Testing
 - **Suite**: `CODEX_TEST_SUITE.md` v1.2
 - **Device**: ASUS ROG Phone 3 (Termux, Android 12, aarch64)
-- **Results**: 47/49 PASS, 0 FAIL, 2 SKIP (solo Git: Test-701/702 non applicabili fuori repo)
-- **Critici**: Categoria 12 (Package & Binary) 8/8 PASS; Termux-Specific 10/10 PASS
+- **Results**: 47/49 PASS, 0 FAIL, 2 SKIP (only Git tests 701/702 skipped outside a repo)
+- **Critical**: Category 12 (Package & Binary) 8/8 PASS; Termux-Specific 10/10 PASS
 
 ## Known Notes
-- `termux-wifi-connectioninfo` continua a segnalare limitazioni Termux-API su Play Store (non blocca la suite).
-- `termux-open-url` richiede un URL reale; `--help` attiva l’intent e restituisce errore benigno.
+- `termux-wifi-connectioninfo` still reports Termux-API limitations on Play Store builds (non-blocking).
+- `termux-open-url` requires a real URL; invoking with `--help` triggers the intent and returns a benign error.
 
 ## Upgrade Notes
-- Per aggiornare: `npm install -g @mmmbuto/codex-cli-termux@0.64.0-termux`
-- Verifica: `codex --version` e `codex-exec --version` devono riportare `0.64.0`.
-- Se presenti installazioni precedenti, assicurarsi che `which codex-exec` punti al wrapper JS (symlink) nel path npm globale.
+- Upgrade: `npm install -g @mmmbuto/codex-cli-termux@0.64.0-termux`
+- Verify: `codex --version` and `codex-exec --version` should both show `0.64.0`.
+- If upgrading from older installs, ensure `which codex-exec` resolves to the npm global wrapper/symlink.
