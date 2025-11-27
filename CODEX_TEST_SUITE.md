@@ -1,9 +1,11 @@
 # 🧪 Codex CLI - Universal Test Suite
 
-**Version**: 1.2 (Compatible with all Codex versions)
+**Version**: 1.3 (Compatible with all Codex versions)
 **Platform**: Android Termux ARM64
-**Total Tests**: 82 (including 10 Termux-specific + 8 Package Verification)
+**Total Tests**: 90 (including 10 Termux-specific + 8 Package Verification + 8 Merge Verification)
 **Purpose**: Automated functional testing for Codex CLI builds
+
+> ⚠️ **v1.3 UPDATE**: Added Category 13 (Upstream Merge Verification) to validate Termux patches after merging upstream commits. Essential for detecting patch conflicts early.
 
 > ⚠️ **v1.2 UPDATE**: Added Category 12 (Package & Binary Verification) after v0.62.0 incident where codex-exec was missing from npm package.
 
@@ -841,6 +843,224 @@ ls -la $(npm root -g)/@mmmbuto/codex-cli-termux/bin/
 
 ---
 
+## 🔄 Category 13: Upstream Merge Verification (POST-MERGE)
+
+> ⚠️ **CRITICAL**: Run these tests AFTER merging upstream commits to verify Termux patches still work.
+> These tests validate the 4 patches that conflict with upstream changes.
+
+### TEST-1301: Auto-Update URL Redirect (Patch #4)
+
+**Action**: Verify update checker points to Termux fork, not OpenAI
+
+**Tasks**:
+1. Check update configuration in `~/.config/codex/version.json`
+2. If possible, inspect update URL being checked
+3. Verify tag format parser handles `-termux` suffix
+
+**Expected**: Update system checks `DioNanos/codex-termux` releases
+
+**Verify**:
+- URL should be `https://api.github.com/repos/DioNanos/codex-termux/releases/latest`
+- NOT `https://api.github.com/repos/openai/codex/releases/latest`
+
+**How to test manually**:
+```bash
+# Check update detection code
+grep -r "LATEST_RELEASE_URL" ~/Dev/codex-termux/codex-rs/tui/src/updates.rs
+# Should show: DioNanos/codex-termux
+```
+
+**Note**: CRITICAL - If this fails, auto-update will check wrong repo!
+
+---
+
+### TEST-1302: Auto-Update Execution (Patch #9) - **MOST CRITICAL**
+
+**Action**: Verify auto-update EXECUTION works (not just detection)
+
+**Tasks**:
+1. Simulate update available scenario
+2. Trigger update prompt
+3. Verify npm install EXECUTES (not just suggested)
+
+**Expected**: Update command actually runs, not just displayed
+
+**Manual test procedure**:
+```bash
+# 1. Force version mismatch to trigger update
+# Edit ~/.config/codex/version.json manually or wait for real update
+
+# 2. Start codex (should show update prompt)
+codex
+
+# 3. Select "Update now"
+# 4. Verify npm install ACTUALLY RUNS
+# Expected: See "changed 1 package" output
+# Expected: Binary updated after restart
+```
+
+**Verification checklist**:
+- [ ] Update prompt appears
+- [ ] User can select "Update now"
+- [ ] After selection, npm install EXECUTES
+- [ ] Output shows "changed 1 package in Xs"
+- [ ] Message shows "🎉 Update ran successfully!"
+
+**Note**: **CRITICAL** - Patch #9 was removed by upstream! This MUST work.
+
+---
+
+### TEST-1303: Browser Login Android Fix (Patch #1)
+
+**Action**: Verify browser login doesn't crash on Android
+
+**Tasks**:
+1. Test `codex login` command
+2. Verify `termux-open-url` is called (NOT `webbrowser::open()`)
+3. Verify no `ndk-context` crash
+
+**Expected**: Browser opens without crashing
+
+**Manual test**:
+```bash
+# Logout first if logged in
+codex logout
+
+# Try login
+codex login
+# Expected: Browser opens via termux-open-url
+# Expected: NO crash with "android context was not initialized"
+```
+
+**Code verification**:
+```bash
+# Check server.rs has Android-specific code
+grep -A5 "target_os.*android" ~/Dev/codex-termux/codex-rs/login/src/server.rs
+# Should show: termux-open-url usage
+```
+
+**Note**: CRITICAL - Without this, login fails on Termux!
+
+---
+
+### TEST-1304: RAM Optimization Compilation (Patch #2)
+
+**Action**: Verify Cargo.toml has RAM-friendly settings
+
+**Tasks**:
+1. Check `codex-rs/Cargo.toml` profile.release section
+2. Verify `lto = false` (not "fat")
+3. Verify `codegen-units = 16` (not 1)
+
+**Expected**: Compilation settings optimized for 8-16GB RAM devices
+
+**Verification**:
+```bash
+cd ~/Dev/codex-termux
+grep -A5 "\[profile.release\]" codex-rs/Cargo.toml
+# Should show:
+# lto = false
+# codegen-units = 16 (or similar)
+```
+
+**Note**: CRITICAL for ROGPhone3 (8GB RAM) compilation
+
+---
+
+### TEST-1305: Enterprise Skip Upgrade Config (Upstream #7213)
+
+**Action**: Verify new enterprise config option works
+
+**Tasks**:
+1. Check if `check_for_update_on_startup` config exists
+2. Test setting it to `false`
+3. Verify update check is skipped when disabled
+
+**Expected**: Config option present and functional
+
+**Manual test**:
+```bash
+# Check config documentation
+codex --help | grep -i update
+
+# If config file editable, test:
+# Set check_for_update_on_startup = false
+# Start codex - should NOT check for updates
+```
+
+**Note**: NEW from upstream - good to verify it works
+
+---
+
+### TEST-1306: Version Tag Parser Termux Suffix (Patch #5)
+
+**Action**: Verify version parser handles `-termux` suffix correctly
+
+**Tasks**:
+1. Check version parsing code
+2. Verify it strips `-termux` from versions like "0.62.0-termux"
+3. Test `codex --version` shows correct number
+
+**Expected**: Version parser handles both formats:
+- Upstream: `rust-v0.62.0`
+- Termux: `v0.62.0-termux`
+
+**Code check**:
+```bash
+grep -A10 "extract_version_from_latest_tag" ~/Dev/codex-termux/codex-rs/tui/src/updates.rs
+# Should show logic for both "rust-v" and "v" prefixes
+# Should strip "-termux" suffix
+```
+
+---
+
+### TEST-1307: NPM Package Name (Patch #6)
+
+**Action**: Verify npm package name is correct in all places
+
+**Tasks**:
+1. Check `update_action.rs` has `@mmmbuto/codex-cli-termux`
+2. Check `package.json` has correct name
+3. Verify update command uses correct package name
+
+**Expected**: All references use `@mmmbuto/codex-cli-termux`
+
+**Verification**:
+```bash
+# Check update action
+grep "@mmmbuto" ~/Dev/codex-termux/codex-rs/tui/src/update_action.rs
+
+# Check package.json
+grep "name" ~/Dev/codex-termux/npm-package/package.json
+```
+
+---
+
+### TEST-1308: Bash Execution & LD_LIBRARY_PATH (Patch #8)
+
+**Action**: Verify Termux-specific bash execution works
+
+**Tasks**:
+1. Run bash command via codex
+2. Verify LD_LIBRARY_PATH preserved
+3. Verify libraries load correctly
+4. Test shell detection finds correct bash path
+
+**Expected**: Bash commands work, libs load via termux-exec
+
+**Test**:
+```bash
+# Via codex agent mode
+codex
+# In chat: "Run: echo $LD_LIBRARY_PATH"
+# In chat: "Run: ldd $(which bash)"
+# Expected: Libraries load without "not found" errors
+```
+
+**Note**: Related to TEST-1008 but more comprehensive
+
+---
+
 ## 🧹 Category 11: Cleanup
 
 ### TEST-1101: Remove Test Files
@@ -895,6 +1115,7 @@ CATEGORY BREAKDOWN:
 10. Termux-Specific: X/Y passed
 11. Cleanup: X/Y passed
 12. Package & Binary Verification: X/8 passed (CRITICAL!)
+13. Upstream Merge Verification: X/8 passed (POST-MERGE ONLY!)
 
 CRITICAL FAILURES:
 ------------------
@@ -932,12 +1153,19 @@ VERDICT: ✅ PASS / ⚠️ PASS WITH WARNINGS / ❌ FAIL
 
 **Categories that CANNOT be skipped:**
 - Category 12 (Package & Binary) - MUST pass for release approval
+- Category 13 (Merge Verification) - MUST pass after upstream merges
 
 ---
 
-**Version**: 1.2
-**Last Updated**: 2025-11-22
+**Version**: 1.3
+**Last Updated**: 2025-11-27
 **License**: Apache 2.0 (same as Codex CLI)
+
+**Changelog v1.3**:
+- Added Category 13: Upstream Merge Verification (8 tests)
+- Tests validate Termux patches after merging upstream commits
+- Focus on 4 critical patches that conflict with upstream changes
+- Essential for post-merge validation before npm publish
 
 **Changelog v1.2**:
 - Added Category 12: Package & Binary Verification (8 tests)
