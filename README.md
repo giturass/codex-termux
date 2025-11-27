@@ -133,38 +133,9 @@ codex exec --json -o output.json "describe this project"
 - `--skip-git-repo-check` - Run outside git repositories
 - `-o, --output-last-message` - Save final response to file
 
-### Execpolicy Quickstart
+### Execpolicy
 
-Codex can enforce your own rules-based execution policy before it runs shell commands.
-
-1. Create a policy directory: `mkdir -p ~/.codex/policy`.
-2. Create one or more `.codexpolicy` files in that folder. Codex automatically loads every `.codexpolicy` file in there on startup.
-3. Write `prefix_rule` entries to describe the commands you want to allow, prompt, or block:
-
-```starlark
-prefix_rule(
-    pattern = ["git", ["push", "fetch"]],
-    decision = "prompt",  # allow | prompt | forbidden
-    match = [["git", "push", "origin", "main"]],  # examples that must match
-    not_match = [["git", "status"]],              # examples that must not match
-)
-```
-
-- `pattern` is a list of shell tokens, evaluated from left to right; wrap tokens in a nested list to express alternatives (e.g., match both `push` and `fetch`).
-- `decision` sets the severity; Codex picks the strictest decision when multiple rules match (forbidden > prompt > allow).
-- `match` and `not_match` act as (optional) unit tests. Codex validates them when it loads your policy, so you get feedback if an example has unexpected behavior.
-
-In this example rule, if Codex wants to run commands with the prefix `git push` or `git fetch`, it will first ask for user approval.
-
-Use the `codex execpolicy check` subcommand to preview decisions before you save a rule (see the [`codex-execpolicy` README](./codex-rs/execpolicy/README.md) for syntax details):
-
-```shell
-codex execpolicy check --policy ~/.codex/policy/default.codexpolicy git push origin main
-```
-
-Pass multiple `--policy` flags to test how several files combine, and use `--pretty` for formatted JSON output. See the [`codex-rs/execpolicy` README](./codex-rs/execpolicy/README.md) for a more detailed walkthrough of the available syntax.
-
-## Note: `execpolicy` commands are still in preview. The API may have breaking changes in the future.
+See the [Execpolicy quickstart](./docs/execpolicy.md) to set up rules that govern what commands Codex can execute.
 
 ## 🧪 Testing & Validation
 
@@ -175,9 +146,10 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **82 automated tests** across 12 categories
+- ✅ **90 automated tests** across 13 categories
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
 - ✅ **8 Package & Binary tests** for npm installation verification
+- ✅ **8 Merge Verification tests** for post-upstream-merge validation
 - ✅ File operations, shell execution, environment detection
 - ✅ Android permissions, library paths, package manager
 - ✅ Error handling and edge cases
@@ -214,6 +186,7 @@ Codex will automatically:
 10. **Termux-Specific (10 tests)** ⭐ - Validates all Android patches
 11. Cleanup (1 test)
 12. **Package & Binary (8 tests)** ⭐ - Validates npm installation and binaries
+13. **Merge Verification (8 tests)** 🔄 - Validates patches after upstream merge
 
 **Termux-Specific Tests Include**:
 - ✅ Environment paths (`$PREFIX`, `$HOME`, `$LD_LIBRARY_PATH`)
@@ -246,6 +219,35 @@ Package & Binary: 8/8 passed ✅
 
 VERDICT: ⚠️ PASS WITH WARNINGS
 ```
+- [**Getting started**](./docs/getting-started.md)
+  - [CLI usage](./docs/getting-started.md#cli-usage)
+  - [Slash Commands](./docs/slash_commands.md)
+  - [Running with a prompt as input](./docs/getting-started.md#running-with-a-prompt-as-input)
+  - [Example prompts](./docs/getting-started.md#example-prompts)
+  - [Custom prompts](./docs/prompts.md)
+  - [Memory with AGENTS.md](./docs/getting-started.md#memory-with-agentsmd)
+- [**Configuration**](./docs/config.md)
+  - [Example config](./docs/example-config.md)
+- [**Sandbox & approvals**](./docs/sandbox.md)
+- [**Execpolicy quickstart**](./docs/execpolicy.md)
+- [**Authentication**](./docs/authentication.md)
+  - [Auth methods](./docs/authentication.md#forcing-a-specific-auth-method-advanced)
+  - [Login on a "Headless" machine](./docs/authentication.md#connecting-on-a-headless-machine)
+- **Automating Codex**
+  - [GitHub Action](https://github.com/openai/codex-action)
+  - [TypeScript SDK](./sdk/typescript/README.md)
+  - [Non-interactive mode (`codex exec`)](./docs/exec.md)
+- [**Advanced**](./docs/advanced.md)
+  - [Tracing / verbose logging](./docs/advanced.md#tracing--verbose-logging)
+  - [Model Context Protocol (MCP)](./docs/advanced.md#model-context-protocol-mcp)
+- [**Zero data retention (ZDR)**](./docs/zdr.md)
+- [**Contributing**](./docs/contributing.md)
+- [**Install & build**](./docs/install.md)
+  - [System Requirements](./docs/install.md#system-requirements)
+  - [DotSlash](./docs/install.md#dotslash)
+  - [Build from source](./docs/install.md#build-from-source)
+- [**FAQ**](./docs/faq.md)
+- [**Open source fund**](./docs/open-source-fund.md)
 
 ---
 

@@ -30,7 +30,6 @@ model_provider = "openai"
 # Optional manual model metadata. When unset, Codex auto-detects from model.
 # Uncomment to force values.
 # model_context_window = 128000       # tokens; default: auto for model
-# model_max_output_tokens = 8192      # tokens; default: auto for model
 # model_auto_compact_token_limit = 0  # disable/override auto; default: model family specific
 # tool_output_token_limit = 10000  # tokens stored per tool output; default: 10000 for gpt-5.1-codex-max
 
@@ -181,6 +180,9 @@ chatgpt_base_url = "https://chatgpt.com/backend-api/"
 # Allowed values: chatgpt | api
 # forced_login_method = "chatgpt"
 
+# Preferred store for MCP OAuth credentials: auto (default) | file | keyring
+mcp_oauth_credentials_store = "auto"
+
 ################################################################################
 # Project Documentation Controls
 ################################################################################
@@ -212,7 +214,6 @@ view_image = true
 [features]
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
 unified_exec = false
-streamable_shell = false
 rmcp_client = false
 apply_patch_freeform = false
 view_image_tool = true
@@ -233,16 +234,6 @@ experimental_use_rmcp_client = false
 
 # Include apply_patch via freeform editing path (affects default tool set). Default: false
 experimental_use_freeform_apply_patch = false
-
-# Enable model-based sandbox command assessment. Default: false
-experimental_sandbox_command_assessment = false
-
-################################################################################
-# MCP (Model Context Protocol) servers
-################################################################################
-
-# Preferred store for MCP OAuth credentials: auto (default) | file | keyring
-mcp_oauth_credentials_store = "auto"
 
 # Define MCP servers under this table. Leave empty to disable.
 [mcp_servers]
