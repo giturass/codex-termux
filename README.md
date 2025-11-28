@@ -301,50 +301,24 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.64.0-termux (2025-11-27)
+### v0.64.0-termux (2025-11-27) - latest
+**Dist-tag**: `latest`
 
-- ✅ Single binary `codex`; `codex-exec` is now a wrapper/symlink to the same ~49 MB binary.
-- ✅ Complete npm package: `package.json` exposes `codex` and `codex-exec`; `bin/` ships JS wrappers plus symlink.
-- ✅ LD_LIBRARY_PATH enforced to `$PREFIX/lib` via `~/.zshenv` (Termux library path preservation).
-- ✅ Test suite v1.2: 47/49 pass (10/10 Termux, 8/8 Package), `--search` verified; only Git optional tests skipped.
+- 🆕 **Upstream rust-v0.64.0-alpha.9 highlights**: app-server turn/diff/updated events; thread_id/turn_id in notifications; unified exec custom env + pruning; MCP elicitations support; shell-tool-mcp login; config management; skip-upgrade option for enterprises; Windows sandbox treats `.git` as read-only; TUI fails fast without TTY; macOS 13 dropped.
+- ✅ **Single binary**: `codex` bundles `exec`; `codex-exec` is just wrapper/symlink to the same ~49 MB binary.
+- ✅ **Complete npm package**: `package.json` exposes `codex`/`codex-exec`; `bin/` ships JS wrappers + symlink.
+- ✅ **LD_LIBRARY_PATH enforced**: `$PREFIX/lib` via `~/.zshenv` (patch #8 runtime preservation).
+- ✅ **Tests**: Suite v1.2 → 47/49 pass (10/10 Termux, 8/8 Package), only Git optional skipped.
 
-### v0.62.1-termux (2025-11-22)
+### v0.62.1-termux (2025-11-22) - stable
+**Dist-tag**: `stable`
 
-**Fix**: Switched to multitool binary with `exec` subcommand integrated. Use `codex exec --json` for automation instead of separate `codex-exec` binary.
-
----
-
-### v0.62.0-termux (2025-11-21)
-
-**Update**: Synced with upstream OpenAI Codex rust-v0.62.0 (40+ commits from v0.61.0)
-
-> **Note**: Upstream rust-v0.63.0 skipped - only 3 minor commits (duplicate bash fix, drop unused param, declined status). Will sync with next significant release.
-
-**Upstream Features**:
-- 🆕 **codex-shell-tool-mcp**: New MCP server for shell tools
-- 🆕 **execpolicycheck**: New CLI command for exec policy debugging
-- 🎯 **TUI reasoning default**: Changed to "medium" level
-- ⏱️ **Shell timeout**: Increased to 1 hour for long-running commands
-- 🎬 **TUI animations toggle**: Feature switch to disable animations
-- 🔄 **resume --last**: Allow reading prompt from last session
-
-**Breaking Changes**:
-- `execpolicy` migration: `execpolicy2` → `execpolicy`, old → `execpolicy-legacy`
-- Removed `tiktoken-rs` dependency
-- `ExecParams.timeout_ms` replaced with `ExecExpiration` enum
-
-**Termux-Specific**:
-- ✅ **All 9 patches preserved and verified** (no conflicts)
-- ✅ **Build optimized for 8GB RAM**: Compiled in 10m 35s on ROG Phone 3
-- ✅ **Binary size**: 35MB
-- ✅ **Test Suite**: 39/42 passed (92.9%), 9/10 Termux-specific
-
-**Stats**: 195 files changed, +5915 insertions, -2293 deletions
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
+- **Upstream rust-v0.62.0 highlights**: codex-shell-tool-mcp, `execpolicycheck`, TUI reasoning default → medium, shell timeout 1h, TUI animations toggle, `resume --last`, `execpolicy` rename (`execpolicy2`→`execpolicy`, old→`execpolicy-legacy`), `ExecParams.timeout_ms`→`ExecExpiration`, removal of `tiktoken-rs`.
+- ✅ **Termux patches**: all 9 verified (browser login, RAM opts, version parser/URL/npm name, LD_* preservation + sandbox disable + shell detection, auto-update execution).
+- ✅ **Build**: optimized for 8GB (ROG Phone 3), binary ~35MB.
+- ✅ **Tests**: 39/42 pass (92.9%), 9/10 Termux-specific.
+- 🔖 Upstream compare: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
 
 ---
 
-**Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.58.0...rust-v0.60.1
+**Testing**: Comprehensive test suite v1.2 with 82 tests (incl. Termux + Package) in [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
