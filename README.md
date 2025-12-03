@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.64.0
+# Output: codex-cli 0.64.1
 
 codex login
 # Opens browser for authentication
@@ -203,12 +203,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.64.0):
+**Example Report** (v0.64.1):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.64.0
+Codex Version: 0.64.1
 Total Tests: 49
 ✅ Passed: 47
 ❌ Failed: 0
@@ -293,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.64.0 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.64.0 (includes GPT-5.1 MAX support) — packaged as 0.64.1-termux
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -301,14 +301,14 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.64.0-termux (2025-11-27) - latest
+### v0.64.1-termux (2025-12-03) - latest
 **Dist-tag**: `latest`
 
 - 🆕 **Upstream rust-v0.64.0-alpha.9 highlights**: app-server turn/diff/updated events; thread_id/turn_id in notifications; unified exec custom env + pruning; MCP elicitations support; shell-tool-mcp login; config management; skip-upgrade option for enterprises; Windows sandbox treats `.git` as read-only; TUI fails fast without TTY; macOS 13 dropped.
-- ✅ **Single binary**: `codex` bundles `exec`; `codex-exec` is just wrapper/symlink to the same ~49 MB binary.
+- ✅ **Single binary**: `codex` bundles `exec`; `codex-exec` is wrapper/symlink to the same ~47 MB binary.
 - ✅ **Complete npm package**: `package.json` exposes `codex`/`codex-exec`; `bin/` ships JS wrappers + symlink.
 - ✅ **LD_LIBRARY_PATH enforced**: `$PREFIX/lib` via `~/.zshenv` (patch #8 runtime preservation).
-- ✅ **Tests**: Suite v1.2 → 47/49 pass (10/10 Termux, 8/8 Package), only Git optional skipped.
+- ✅ **Tests**: Suite v1.2 → 47/49 pass (10/10 Termux, 8/8 Package), Git optional skipped; Termux-API wifi warning non-blocking.
 
 ### v0.62.1-termux (2025-11-22) - stable
 **Dist-tag**: `stable`

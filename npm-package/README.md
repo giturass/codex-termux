@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.64.0 (latest) or use @stable for 0.62.1
+# Output: codex-cli 0.64.1 (latest) or use @stable for 0.62.1
 
 codex login
 # Opens browser for authentication
@@ -229,12 +229,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.64.0):
+**Example Report** (v0.64.1):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.64.0
+Codex Version: 0.64.1
 Total Tests: 49
 ✅ Passed: 47
 ❌ Failed: 0
@@ -291,7 +291,7 @@ See [LICENSE](./LICENSE) file for details.
 ---
 
 **Version (latest)**: Based on OpenAI Codex 0.64.0-alpha.9 (includes GPT-5.1 MAX support)
-**Dist-tags**: `latest` = 0.64.0-termux · `stable` = 0.62.1-termux
+**Dist-tags**: `latest` = 0.64.1-termux · `stable` = 0.62.1-termux
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -299,15 +299,15 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.64.0-termux (2025-11-27) — latest
-- **Binary**: single multitool `codex`; `codex-exec` is a wrapper/symlink to the same ~49 MB binary.
+### v0.64.1-termux (2025-12-03) — latest
+- **Binary**: single multitool `codex`; `codex-exec` remains wrapper/symlink to the same ~47 MB binary.
 - **Package**: `package.json` exposes `codex` and `codex-exec`; `bin/` ships JS wrappers + symlink.
 - **Termux runtime**: LD_LIBRARY_PATH enforced to `$PREFIX/lib` via `~/.zshenv` (preserves libs for bash/exec).
-- **Tests**: Suite v1.2 → 47/49 pass (10/10 Termux, 8/8 Package), only Git optional skipped.
+- **Tests**: Suite v1.2 → 47/49 pass (10/10 Termux, 8/8 Package), Git optional skipped; wifi Termux-API warning non-blocking.
 - **Upstream (rust-v0.64.0-alpha.9) highlights**: app-server turn/diff/updated events; thread_id/turn_id in notifications; unified exec custom env + pruning; MCP elicitations support; shell-tool-mcp login; config management; skip-upgrade option; Windows sandbox treats `.git` as read-only; TTY fail-fast; macOS 13 dropped.
 - **Install**: `npm i -g @mmmbuto/codex-cli-termux` (dist-tag `latest`)
-- **Verify**: `codex --version` → `codex-cli 0.64.0`; `codex-exec --version` → `codex-cli 0.64.0`
-- **Report**: see `CODEX_TEST_REPORT_v0.64.0.md` (47/49 pass)
+- **Verify**: `codex --version` → `codex-cli 0.64.1`; `codex-exec --version` → `codex-cli 0.64.1`
+- **Report**: see `CODEX_TEST_REPORT_v0.64.1.md` (47/49 pass)
 
 ### v0.62.1-termux (2025-11-22) — stable
 - **Dist-tag**: `stable` (install with `npm i -g @mmmbuto/codex-cli-termux@stable`)

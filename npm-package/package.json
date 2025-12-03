@@ -1,7 +1,7 @@
 {
   "name": "@mmmbuto/codex-cli-termux",
-  "version": "0.64.0-termux",
-  "description": "OpenAI Codex CLI v0.64.0 - Multitool with TUI + automation mode. Pre-compiled for Android Termux (ARM64). Use 'codex' for TUI, 'codex exec --json' for automation.",
+  "version": "0.64.1-termux",
+  "description": "OpenAI Codex CLI v0.64.1 - Multitool with TUI + automation mode. Pre-compiled for Android Termux (ARM64). Use 'codex' for TUI, 'codex exec --json' for automation.",
   "type": "module",
   "main": "bin/codex.js",
   "bin": {

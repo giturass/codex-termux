@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.64.1-termux] - 2025-12-03
+
+### Highlights
+- **Single binary**: `codex` bundles `exec`; `codex-exec` is a wrapper/symlink to the same ~47 MB binary.
+- **Package completeness**: `package.json` exposes both commands; `bin/` ships JS wrappers + symlink to avoid missing binaries.
+- **LD_LIBRARY_PATH enforced**: `$PREFIX/lib` persisted via `~/.zshenv` (patch #8) for Termux library loading.
+- **Web search verified**: `--search` flag passes Test-601.
+
+### Testing
+- Suite v1.2 on ASUS ROG Phone 3 (Android 12, aarch64): 47/49 PASS, 0 FAIL, 2 SKIP (Git optional); Category 12 Package & Binary 8/8 PASS; Termux-specific 10/10 PASS.
+- Known notes: `termux-wifi-connectioninfo` limited on Play Store; `termux-open-url` requires an URL (usage exit 1 when missing).
+
+### Changed
+- Binary version: 0.64.1
+- npm package: 0.64.1-termux (dist-tag `latest`)
+- Based on: upstream rust-v0.64.0-alpha.9
+
+---
+
 ## [0.62.0-termux] - 2025-11-21
 
 ### Upstream Changes (rust-v0.62.0)
