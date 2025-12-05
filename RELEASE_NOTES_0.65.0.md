@@ -53,17 +53,17 @@
 
 ## 📊 Testing Status
 
-**Build Status**: ⏳ Awaiting compilation test
+**Build Status**: ✅ Verified on ASUS ROG Phone 3 (49/50 tests pass; 1 Git optional skip; Package & Binary 8/8)
 **Platform**: ASUS ROG Phone 3 (Snapdragon 865+, 8GB RAM)
 **Compiler**: Rust toolchain ARM64
 
 ### Test Plan
-- [ ] Compilation successful
-- [ ] Binary version check
+- [x] Compilation successful
+- [x] Binary version check (`codex --version` / `codex-exec --version` → 0.65.0)
 - [ ] Agent mode test
 - [ ] TUI navigation test
 - [ ] Login with browser (termux-open-url)
-- [ ] Bash commands execution
+- [x] Bash commands execution
 - [ ] Skills listing (`/skills`)
 - [ ] Resume command (`/resume`)
 - [ ] Tool tips display

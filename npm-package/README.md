@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.62.1
+# Output: codex-cli 0.65.0
 
 codex login
 # Opens browser for authentication
@@ -229,16 +229,16 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.62.1):
+**Example Report** (v0.65.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.62.1
-Total Tests: 49
-✅ Passed: 46
+Codex Version: 0.65.0
+Total Tests: 50
+✅ Passed: 49
 ❌ Failed: 0
-⚠️ Skipped: 3 (WebSearch, Git - optional)
+⚠️ Skipped: 1 (Git optional)
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
@@ -290,7 +290,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.62.1 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.65.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -298,109 +298,20 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.62.1-termux (2025-11-22)
+### v0.65.0-termux (2025-12-05) – latest
+**Dist-tag**: `latest`
 
-**Fix**: Switched to multitool binary with `exec` subcommand integrated. Use `codex exec --json` for automation instead of separate `codex-exec` binary.
-
----
-
-### v0.62.0-termux (2025-11-21)
-
-**Update**: Synced with upstream OpenAI Codex rust-v0.62.0 (40+ commits from v0.61.0)
-
-> **Note**: Upstream rust-v0.63.0 skipped - only 3 minor commits (duplicate bash fix, drop unused param, declined status). Will sync with next significant release.
-
-**Upstream Features**:
-- 🆕 **codex-shell-tool-mcp**: New MCP server for shell tools
-- 🆕 **execpolicycheck**: New CLI command for exec policy debugging
-- 🎯 **TUI reasoning default**: Changed to "medium" level
-- ⏱️ **Shell timeout**: Increased to 1 hour for long-running commands
-- 🎬 **TUI animations toggle**: Feature switch to disable animations
-- 🔄 **resume --last**: Allow reading prompt from last session
-
-**Breaking Changes**:
-- `execpolicy` migration: `execpolicy2` → `execpolicy`, old → `execpolicy-legacy`
-- Removed `tiktoken-rs` dependency
-- `ExecParams.timeout_ms` replaced with `ExecExpiration` enum
-
-**Termux-Specific**:
-- ✅ **All 9 patches preserved and verified** (no conflicts)
-- ✅ **Build optimized for 8GB RAM**: Compiled in 10m 35s on ROG Phone 3
-- ✅ **Binary size**: 35MB
-- ✅ **Test Suite**: 39/42 passed (92.9%), 9/10 Termux-specific
-
-**Stats**: 195 files changed, +5915 insertions, -2293 deletions
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
+- 🆕 Skills (`/skills`, `$` prefix), `/resume`, tool tips, apply_patch warning, retroactive image placeholder.
+- 🧠 Models manager migration, codex max handling refresh, thread_id migration, unified exec shell default, features immutability.
+- 🖥️ UX: Ctrl-P/N navigation, shell output line limiting, long exec wrap, Windows clipboard image paste.
+- 📦 Termux patches #1-6, #8, #9 revalidated; `codex-exec` symlink + JS wrappers in package; `LD_LIBRARY_PATH` preserved; sandbox disabled on Android.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 on ROG Phone 3 → 49/50 pass (1 Git optional skip), Package & Binary 8/8 pass, Termux-Specific 10/10 pass.
 
 ---
 
-### v0.61.0-termux (2025-11-20)
+### v0.64.1-termux (2025-12-03) – stable
+**Dist-tag**: `stable`
 
-**Update**: Synced with upstream OpenAI Codex rust-v0.61.0 (13 commits from v0.60.1)
-
-**Upstream Features**:
-- 🚀 **Single Pass Truncation**: Improved performance for context management
-- 🔐 **execpolicy2 Integration**: Enhanced security with new execution policy system
-- 🐚 **Shell Fallback Improvements**: Better shell detection with automatic fallbacks (bash → zsh)
-- 🎨 **Model Migration UX**: Stop showing migration screen after first time
-- 🪟 **World-Writable Warnings**: Reduced false positives on Android
-
-**Termux-Specific**:
-- ✅ **All 8 patches preserved and verified**
-- ✅ **Shell fallback compatible**: Android `$SHELL` detection enhanced with upstream fallbacks
-- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3 (9m 06s)
-- ✅ **Binary size**: 42MB (+13% vs 0.60.1 due to execpolicy2)
-- ✅ **Test Suite**: 40/42 tests PASSED (95.2%), 10/10 Termux-specific tests
-
-**Patches Validated**:
-1. ✅ Browser login (`termux-open-url`)
-2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
-3. ✅ Android shell detection (`$SHELL` env var)
-4. ✅ Android sandbox disabled
-5. ✅ LD_* environment variables preserved
-6. ✅ Auto-update URL (`DioNanos/codex-termux`)
-7. ✅ Version parser (`-termux` suffix support)
-8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
-
-**Breaking Changes**: None - fully backward compatible
-
-**Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.60.1...rust-v0.61.0
-
----
-
-### v0.60.1-termux (2025-11-20)
-
-**Major Update**: Synced with upstream OpenAI Codex rust-v0.60.1 (250+ commits)
-
-**Upstream Features**:
-- 🤖 **GPT-5.1 MAX Support**: New MAX model with enhanced capabilities and performance
-- 🔧 **App-Server Protocol**: Enhanced v2 APIs for thread management
-- ⚡ **Performance Optimizations**: Improved TUI responsiveness and memory usage
-- 🪟 **Windows Sandbox**: Enhanced security features (not applicable to Termux)
-- 🐛 **Bug Fixes**: 250+ commits with stability improvements and fixes
-
-**Termux-Specific**:
-- ✅ **All 8 patches preserved and verified**
-- ✅ **Patch #8 updated**: Shell detection refactored for upstream changes
-- ✅ **Build optimized for 8GB RAM**: Compiled successfully on ROG Phone 3
-- ✅ **Binary size**: 37MB (24% smaller than 0.58.4)
-- ✅ **Test Suite**: 74 automated tests including 10 Termux-specific validations
-
-**Patches Validated**:
-1. ✅ Browser login (`termux-open-url`)
-2. ✅ RAM optimizations (`lto=false`, `codegen-units=16`)
-3. ✅ Android shell detection (`$SHELL` env var)
-4. ✅ Android sandbox disabled
-5. ✅ LD_* environment variables preserved
-6. ✅ Auto-update URL (`DioNanos/codex-termux`)
-7. ✅ Version parser (`-termux` suffix support)
-8. ✅ NPM package name (`@mmmbuto/codex-cli-termux`)
-
-**Breaking Changes**: None - fully backward compatible
-
-**Testing**: Comprehensive test suite with 74 tests available at [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
-
-Full upstream changelog: https://github.com/openai/codex/compare/rust-v0.58.0...rust-v0.60.1
+- Maintenance follow-up to 0.64.0: docs/test report refresh and npm package verification (codex-exec symlink + bin entries).
+- Base upstream: rust-v0.64.0; Termux patches #1-6, #8, #9 revalidated.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 → 47/49 pass (Git optional skipped), Package & Binary 8/8 pass, Termux-Specific 10/10 pass.
