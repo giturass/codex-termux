@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.64.1
+# Output: codex-cli 0.65.0
 
 codex login
 # Opens browser for authentication
@@ -203,16 +203,16 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.64.1):
+**Example Report** (v0.65.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.64.1
-Total Tests: 49
-✅ Passed: 47
+Codex Version: 0.65.0
+Total Tests: 50
+✅ Passed: 49
 ❌ Failed: 0
-⚠️ Skipped: 2 (Git optional)
+⚠️ Skipped: 1 (Git optional)
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
@@ -293,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.64.0 (includes GPT-5.1 MAX support) — packaged as 0.64.1-termux
+**Version**: Based on OpenAI Codex 0.65.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -301,23 +301,21 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.64.1-termux (2025-12-03) - latest
+### v0.65.0-termux (2025-12-05) – latest
 **Dist-tag**: `latest`
 
-- 🆕 **Upstream rust-v0.64.0-alpha.9 highlights**: app-server turn/diff/updated events; thread_id/turn_id in notifications; unified exec custom env + pruning; MCP elicitations support; shell-tool-mcp login; config management; skip-upgrade option for enterprises; Windows sandbox treats `.git` as read-only; TUI fails fast without TTY; macOS 13 dropped.
-- ✅ **Single binary**: `codex` bundles `exec`; `codex-exec` is wrapper/symlink to the same ~47 MB binary.
-- ✅ **Complete npm package**: `package.json` exposes `codex`/`codex-exec`; `bin/` ships JS wrappers + symlink.
-- ✅ **LD_LIBRARY_PATH enforced**: `$PREFIX/lib` via `~/.zshenv` (patch #8 runtime preservation).
-- ✅ **Tests**: Suite v1.2 → 47/49 pass (10/10 Termux, 8/8 Package), Git optional skipped; Termux-API wifi warning non-blocking.
+- 🆕 Skills support (`/skills`, `$` prefix), `/resume` command, tool tips, apply_patch safety warning, retroactive image placeholder.
+- 🧠 Models manager migration, codex max handling refresh, thread_id migration, unified exec shell default, features immutability.
+- 🖥️ TUI/exec UX: Ctrl-P/N navigation, shell output line limiting, long exec wrap, Windows clipboard image paste.
+- 📦 Termux patches #1-6, #8, #9 revalidated; `codex-exec` symlink present; `LD_LIBRARY_PATH` preserved; sandbox disabled on Android; auto-update targets Termux npm.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 on ROG Phone 3 → 49/50 pass (1 Git optional skip), Package & Binary 8/8 pass, Termux-Specific 10/10 pass.
 
-### v0.62.1-termux (2025-11-22) - stable
+### v0.64.1-termux (2025-12-03) – stable
 **Dist-tag**: `stable`
 
-- **Upstream rust-v0.62.0 highlights**: codex-shell-tool-mcp, `execpolicycheck`, TUI reasoning default → medium, shell timeout 1h, TUI animations toggle, `resume --last`, `execpolicy` rename (`execpolicy2`→`execpolicy`, old→`execpolicy-legacy`), `ExecParams.timeout_ms`→`ExecExpiration`, removal of `tiktoken-rs`.
-- ✅ **Termux patches**: all 9 verified (browser login, RAM opts, version parser/URL/npm name, LD_* preservation + sandbox disable + shell detection, auto-update execution).
-- ✅ **Build**: optimized for 8GB (ROG Phone 3), binary ~35MB.
-- ✅ **Tests**: 39/42 pass (92.9%), 9/10 Termux-specific.
-- 🔖 Upstream compare: https://github.com/openai/codex/compare/rust-v0.61.0...rust-v0.62.0
+- Maintenance follow-up to 0.64.0: docs/test report refresh and npm package verification (codex-exec symlink + bin entries).
+- Base upstream: rust-v0.64.0; Termux patches #1-6, #8, #9 revalidated.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 → 47/49 pass (Git optional skipped), Package & Binary 8/8 pass, Termux-Specific 10/10 pass.
 
 ---
 
