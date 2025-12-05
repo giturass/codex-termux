@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.65.0-termux] - 2025-12-05
+
+### Upstream Updates (OpenAI Codex rust-v0.65.0)
+
+#### Added
+- **Skills Support**: New `/skills` command and `$` prefix for listing and selecting skills (#7506)
+- **Slash Resume**: Added `/resume` command for continuing previous sessions (#7302)
+- **Tool Tips**: Interactive tool tips in TUI for better UX (#7440)
+- **Model Warning**: Warning system when using apply_patch with certain models (#7494)
+- **Retroactive Image Placeholder**: Prevents context poisoning from images (#6774)
+- **Ctrl-P/N Navigation**: Map Ctrl-P/N to arrow navigation in textarea (#7530)
+- **Python Cache Exclusion**: Added __pycache__ to excluded directories (#7545)
+
+#### Changed
+- **ModelsManager**: Introduced centralized models manager migrated across app-server, TUI, and core (#7552, #7555, #7565)
+- **Codex Max Migration**: Updated codex max model handling (#7566)
+- **Thread ID Migration**: Unified conversation_id → thread_id in app-server (#7538)
+- **Config File Path**: Made file_path for config optional in app-server (#7560)
+- **Unified Exec Shell**: Use platform default shell when unified_exec shell not specified (#7486)
+
+#### Fixed
+- **Features Immutability**: Features are now immutable over session/thread lifetime (#7540)
+- **Shell Output Limiting**: Limit user shell output by screen lines to prevent overflow (#7448)
+- **Long Exec Lines Wrapping**: Fix wrapping of long exec lines in transcript overlay (#7481)
+- **Image Paste on Windows**: Support image paste from clipboard on native Windows (#7514)
+- **Sandbox**: Allow openpty() in seatbelt (#7507)
+
+#### Dependencies
+- image: 0.25.8 → 0.25.9
+- rmcp: 0.9.0 → 0.10.0
+- regex-lite: Added 0.1.7
+
+### Termux-Specific
+- ✅ **Maintained**: Termux browser login patch (termux-open-url) preserved through merge
+- 📚 **Documentation**: Updated README.md, BUILDING.md, and CHANGELOG.md for v0.65.0
+
+### Links
+- Full Upstream Changelog: https://github.com/openai/codex/compare/rust-v0.64.0...rust-v0.65.0
+- Release Notes: RELEASE_NOTES_0.65.0.md
+
+---
+
 ## [0.62.0-termux] - 2025-11-21
 
 ### Upstream Changes (rust-v0.62.0)
