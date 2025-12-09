@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.65.0
+# Output: codex-cli 0.65.1
 
 codex login
 # Opens browser for authentication
@@ -203,12 +203,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.65.0):
+**Example Report** (v0.65.1):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.65.0
+Codex Version: 0.65.1
 Total Tests: 50
 ✅ Passed: 49
 ❌ Failed: 0
@@ -293,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.65.0 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.65.1 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -301,7 +301,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.65.0-termux (2025-12-05) – latest
+### v0.65.1-termux (2025-12-09) – latest
 **Dist-tag**: `latest`
 
 - 🆕 Skills support (`/skills`, `$` prefix), `/resume` command, tool tips, apply_patch safety warning, retroactive image placeholder.
