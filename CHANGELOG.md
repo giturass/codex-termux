@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [0.66.0-termux] - 2025-12-09
+
+### Upstream Updates (OpenAI Codex rust-v0.66.0)
+
+- Minor upstream maintenance rollup (rust-v0.66.0), no additional Termux patches required.
+- Unified command surface: `codex` binary serves both TUI and automation; `codex-exec` kept as alias wrapper.
+- Auto-update remains pointed at Termux fork; LD_LIBRARY_PATH preservation confirmed.
+
+### Testing
+- CODEX_TEST_SUITE v1.2 on ROG Phone 3: 45 passed / 0 failed / 4 skipped (WebSearch, non-git workspace, manual code analysis).
+- Package & Binary verification: 8/8 pass (codex + codex-exec symlink + JS wrappers present).
+- Termux-specific checks: 10/10 pass (Termux-API wifi warning expected on Play build).
+
 ---
 
 ## [0.65.0-termux] - 2025-12-05

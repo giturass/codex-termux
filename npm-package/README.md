@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.65.1
+# Output: codex-cli 0.66.0
 
 codex login
 # Opens browser for authentication
@@ -229,12 +229,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.65.1):
+**Example Report** (v0.66.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.65.1
+Codex Version: 0.66.0
 Total Tests: 50
 ✅ Passed: 49
 ❌ Failed: 0
@@ -290,7 +290,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.65.1 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.66.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -298,14 +298,13 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.65.1-termux (2025-12-09) – latest
+### v0.66.0-termux (2025-12-09) – latest
 **Dist-tag**: `latest`
 
-- 🆕 Skills (`/skills`, `$` prefix), `/resume`, tool tips, apply_patch warning, retroactive image placeholder.
-- 🧠 Models manager migration, codex max handling refresh, thread_id migration, unified exec shell default, features immutability.
-- 🖥️ UX: Ctrl-P/N navigation, shell output line limiting, long exec wrap, Windows clipboard image paste.
-- 📦 Termux patches #1-6, #8, #9 revalidated; `codex-exec` symlink + JS wrappers in package; `LD_LIBRARY_PATH` preserved; sandbox disabled on Android.
-- ✅ Tests: CODEX_TEST_SUITE v1.2 on ROG Phone 3 → 49/50 pass (1 Git optional skip), Package & Binary 8/8 pass, Termux-Specific 10/10 pass.
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.66.0 (minor stability fixes; no new Termux patches needed).
+- 🖥️ Single entrypoint: `codex` defaults to `codex exec ...`; `codex tui` launches UI; `codex-exec` kept as alias wrapper → both commands hit the same binary.
+- 📦 Package verification: bin includes `codex`, symlinked `codex-exec`, and JS wrappers; `--json` / `--output-schema` documented; `LD_LIBRARY_PATH` preserved.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 on ROG Phone 3 → 45 passed / 0 failed / 4 skipped (WebSearch, Git in non-repo, manual code analysis); Package & Binary 8/8; Termux-Specific 10/10.
 
 ---
 
