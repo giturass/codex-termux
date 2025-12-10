@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [0.69.0-termux] - 2025-12-11
+
+### Upstream Updates (OpenAI Codex rust-v0.69.0)
+
+- Brings TUI2 crate and default model picker improvements; sandbox/policy updates from upstream.
+- All Termux compatibility patches (#1–#6, #8, #9) retained unchanged.
+- Release profile kept RAM-friendly (lto = false, codegen-units = 16) for Termux builds.
+
+### Testing
+- CODEX_TEST_SUITE v1.2 quick run: 37 passed / 0 failed / 12 skipped (web search, AI, some git/Termux-API).
+- Package & Binary verification: 8/8 pass (codex + codex-exec symlink + JS wrappers present; termux-open-url login path intact).
+- Binary version: `codex-cli 0.69.0` (single entrypoint for TUI + exec).
+
+---
+
 ## [0.66.0-termux] - 2025-12-09
 
 ### Upstream Updates (OpenAI Codex rust-v0.66.0)

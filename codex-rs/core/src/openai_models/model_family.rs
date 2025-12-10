@@ -116,6 +116,10 @@ impl ModelFamily {
     const fn default_auto_compact_limit(context_window: i64) -> i64 {
         (context_window * 9) / 10
     }
+
+    pub fn get_model_slug(&self) -> &str {
+        &self.slug
+    }
 }
 
 macro_rules! model_family {
@@ -220,22 +224,18 @@ pub fn find_family_for_model(slug: &str) -> ModelFamily {
             truncation_policy: TruncationPolicy::Tokens(10_000),
         )
 
-    // Internal models.
-    } else if slug.starts_with("codex-exp-") {
+    // Experimental models.
+    } else if slug.starts_with("exp-codex") {
+        // Same as gpt-5.1-codex-max.
         model_family!(
             slug, slug,
             supports_reasoning_summaries: true,
             reasoning_summary_format: ReasoningSummaryFormat::Experimental,
-            base_instructions: GPT_5_CODEX_INSTRUCTIONS.to_string(),
+            base_instructions: GPT_5_1_CODEX_MAX_INSTRUCTIONS.to_string(),
             apply_patch_tool_type: Some(ApplyPatchToolType::Freeform),
-            experimental_supported_tools: vec![
-                "grep_files".to_string(),
-                "list_dir".to_string(),
-                "read_file".to_string(),
-            ],
             shell_type: ConfigShellToolType::ShellCommand,
             supports_parallel_tool_calls: true,
-            support_verbosity: true,
+            support_verbosity: false,
             truncation_policy: TruncationPolicy::Tokens(10_000),
             context_window: Some(CONTEXT_WINDOW_272K),
         )
@@ -263,7 +263,7 @@ pub fn find_family_for_model(slug: &str) -> ModelFamily {
             base_instructions: GPT_5_1_CODEX_MAX_INSTRUCTIONS.to_string(),
             apply_patch_tool_type: Some(ApplyPatchToolType::Freeform),
             shell_type: ConfigShellToolType::ShellCommand,
-            supports_parallel_tool_calls: true,
+            supports_parallel_tool_calls: false,
             support_verbosity: false,
             truncation_policy: TruncationPolicy::Tokens(10_000),
             context_window: Some(CONTEXT_WINDOW_272K),
@@ -279,7 +279,7 @@ pub fn find_family_for_model(slug: &str) -> ModelFamily {
             base_instructions: GPT_5_CODEX_INSTRUCTIONS.to_string(),
             apply_patch_tool_type: Some(ApplyPatchToolType::Freeform),
             shell_type: ConfigShellToolType::ShellCommand,
-            supports_parallel_tool_calls: true,
+            supports_parallel_tool_calls: false,
             support_verbosity: false,
             truncation_policy: TruncationPolicy::Tokens(10_000),
             context_window: Some(CONTEXT_WINDOW_272K),

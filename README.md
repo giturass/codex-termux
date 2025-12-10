@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.66.0
+# Output: codex-cli 0.69.0
 
 codex login
 # Opens browser for authentication
@@ -203,16 +203,16 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.66.0):
+**Example Report** (v0.69.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.66.0
-Total Tests: 50
-✅ Passed: 49
+Codex Version: 0.69.0
+Total Tests: 49
+✅ Passed: 37
 ❌ Failed: 0
-⚠️ Skipped: 1 (Git optional)
+⚠️ Skipped: 12 (web search, AI, some git/Termux-API checks)
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
@@ -293,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.66.0 (includes GPT-5.1 MAX support)
+**Version**: Based on OpenAI Codex 0.69.0 (includes GPT-5.1 MAX support)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -301,13 +301,14 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.66.0-termux (2025-12-09) – latest
+### v0.69.0-termux (2025-12-11) – latest
 **Dist-tag**: `latest`
 
-- ⬆️ Upstream bump to OpenAI Codex rust-v0.66.0 (minor stability fixes; no new Termux patches needed).
-- 🖥️ Single entrypoint: `codex` defaults to `codex exec ...`; `codex tui` launches UI; `codex-exec` kept as alias wrapper → both commands hit the same binary.
-- 📦 Package verification: bin includes `codex`, symlinked `codex-exec`, and JS wrappers; `--json` / `--output-schema` documented; `LD_LIBRARY_PATH` preserved.
-- ✅ Tests: CODEX_TEST_SUITE v1.2 on ROG Phone 3 → 45 passed / 0 failed / 4 skipped (WebSearch, Git in non-repo, manual code analysis); Package & Binary 8/8; Termux-Specific 10/10.
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.69.0 (adds TUI2 crate, default model picker improvements, sandbox/policy refresh).
+- 🔧 Termux patches #1–6, #8, #9 revalidated; release profile kept RAM-friendly (lto=false, codegen-units=16).
+- 🖥️ Single entrypoint confirmed: `codex` serves both TUI and automation; `codex-exec` remains alias wrapper (JS launcher unchanged).
+- 📦 Package verification: bin includes `codex`, symlinked `codex-exec`, JS wrappers; `LD_LIBRARY_PATH` preserved; termux-open-url login path intact.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 quick run → 37 passed / 0 failed / 12 skipped (web search, AI, some git/Termux-API); critical package checks 8/8.
 
 ### v0.64.1-termux (2025-12-03) – stable
 **Dist-tag**: `stable`
