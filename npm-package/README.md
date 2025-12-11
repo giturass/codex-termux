@@ -224,6 +224,8 @@ Codex will automatically:
 - ✅ Browser opener availability (Patch #1 validation)
 - ✅ Architecture detection (aarch64/ARM64)
 
+**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes the 49 applicable tests; all passed.
+
 **Success Criteria**:
 - All System, Files, Shell, and Termux tests must pass
 - At least 80% overall pass rate
