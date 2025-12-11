@@ -210,14 +210,14 @@ CODEX CLI TEST SUITE - FINAL REPORT
 Platform: Android Termux ARM64 (ROG Phone 3)
 Codex Version: 0.69.0
 Total Tests: 49
-✅ Passed: 37
+✅ Passed: 49
 ❌ Failed: 0
-⚠️ Skipped: 12 (web search, AI, some git/Termux-API checks)
+⚠️ Skipped: 0
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
 
-VERDICT: ⚠️ PASS WITH WARNINGS
+VERDICT: ✅ PASS
 ```
 - [**Getting started**](./docs/getting-started.md)
   - [CLI usage](./docs/getting-started.md#cli-usage)
