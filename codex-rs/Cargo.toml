@@ -49,7 +49,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.69.0"
+version = "0.71.0"
 # Track the edition for all workspace crates in one place. Individual
 # crates can still override this value, but keeping it here means new
 # crates created with `cargo new -w ...` automatically inherit the 2024
@@ -275,14 +275,13 @@ unwrap_used = "deny"
 ignored = ["icu_provider", "openssl-sys", "codex-utils-readiness"]
 
 [profile.release]
-lto = false                                    # Disable LTO (saves ~4GB RAM) - Termux optimization
+# Termux: keep memory usage manageable during release builds
+lto = false            # Upstream: "fat"
+codegen-units = 16     # Upstream: 1
+opt-level = 3
 # Because we bundle some of these executables with the TypeScript CLI, we
 # remove everything to make the binary as small as possible.
 strip = "symbols"
-
-# See https://github.com/openai/codex/issues/1411 for details.
-codegen-units = 16                            # Use 16 parallel units (was 1) - Termux optimization
-opt-level = 3                                 # Keep optimization level high
 
 [profile.ci-test]
 debug = 1         # Reduce debug symbol size

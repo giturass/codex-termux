@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [0.71.0-termux] - 2025-12-12
+
+### Upstream Updates (OpenAI Codex rust-v0.71.0)
+
+- Adds GPT-5.2 family support and model prompt updates; upstream TUI2 refinements and policy refresh.
+- Termux patches (#1–#6, #8, #9) re-applied; release profile still RAM-friendly (lto = false, codegen-units = 16, opt-level = 3).
+- Auto-update now points to Termux fork for both TUI and TUI2; npm command uses `@mmmbuto/codex-cli-termux@latest`.
+
+### Testing
+- Pending user validation on Pixel 9 Pro after local npm install of 0.71.0-termux.
+- Binary version expected: `codex-cli 0.71.0`; npm package `@mmmbuto/codex-cli-termux@0.71.0-termux`.
+
+---
+
 ## [0.69.0-termux] - 2025-12-11
 
 ### Upstream Updates (OpenAI Codex rust-v0.69.0)
