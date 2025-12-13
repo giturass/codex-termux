@@ -143,7 +143,7 @@ fn extract_version_from_latest_tag(latest_tag_name: &str) -> anyhow::Result<Stri
         .or_else(|| latest_tag_name.strip_prefix('v'))
         .ok_or_else(|| anyhow::anyhow!("Failed to parse latest tag name '{latest_tag_name}'"))?;
 
-    // Remove -termux suffix if present (e.g., "0.71.0-termux" -> "0.71.0")
+    // Remove -termux suffix if present (e.g., "0.72.0-termux" -> "0.72.0")
     let clean_version = version.split('-').next().unwrap_or(version);
     Ok(clean_version.to_string())
 }

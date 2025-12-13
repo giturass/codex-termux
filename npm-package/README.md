@@ -78,7 +78,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.71.0
+# Output: codex-cli 0.72.0
 
 codex login
 # Opens browser for authentication
@@ -231,12 +231,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.71.0):
+**Example Report** (v0.72.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.71.0
+Codex Version: 0.72.0
 Total Tests: 49
 ✅ Passed: 49
 ❌ Failed: 0
@@ -292,7 +292,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.71.0 (adds GPT-5.2 support)
+**Version**: Based on OpenAI Codex 0.72.0 (adds OTEL tracing + config loader refresh)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -300,8 +300,17 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.71.0-termux (2025-12-12) – latest
+### v0.72.0-termux (2025-12-13) – latest
 **Dist-tag**: `latest`
+
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.72.0 (OTEL tracing, config loader rewrite, notifications).
+- 🧭 Single entrypoint: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as alias wrapper.
+- 🔧 Termux patches #1–6, #8, #9 revalidated after merge (verify-patches.sh).
+- 📦 npm package bumped to 0.72.0-termux; binary packaged once with symlinked `codex-exec`.
+- ✅ Tests: build + install on Termux pending (run in this session).
+
+### v0.71.0-termux (2025-12-12) – stable
+**Dist-tag**: `stable`
 
 - ⬆️ Upstream bump to OpenAI Codex rust-v0.71.0 (gpt-5.2 models, TUI2 refinements, policy refresh).
 - 🔧 Termux patches #1–6, #8, #9 revalidated; release profile kept RAM-friendly (lto=false, codegen-units=16).

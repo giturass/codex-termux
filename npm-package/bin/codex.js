@@ -9,9 +9,10 @@ const __dirname = dirname(__filename);
 
 const binaryPath = join(__dirname, 'codex');
 
-// Default behavior: `codex` acts like `codex exec ...` unless a known
-// subcommand is explicitly provided. This avoids needing a separate
-// codex-exec entry point while keeping TUI available via `codex tui`.
+// Default behavior:
+// - `codex` (no args) starts the TUI (same as upstream).
+// - `codex <prompt>` runs `codex exec <prompt>` for convenience.
+// - `codex <known-subcommand|--flag>` passes args through unchanged.
 const knownSubcommands = new Set([
   'exec',
   'review',
@@ -37,7 +38,8 @@ const first = args[0];
 const isOption = first?.startsWith('-');
 const isKnownSubcommand = first && knownSubcommands.has(first);
 
-const finalArgs = isOption || isKnownSubcommand ? args : ['exec', ...args];
+const finalArgs =
+  args.length === 0 ? [] : isOption || isKnownSubcommand ? args : ['exec', ...args];
 
 const child = spawn(binaryPath, finalArgs, {
   stdio: 'inherit',

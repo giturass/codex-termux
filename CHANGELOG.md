@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.72.0-termux] - 2025-12-13
+
+### Upstream Updates (OpenAI Codex rust-v0.72.0)
+
+- Upstream changelog: https://github.com/openai/codex/releases
+- Includes OTEL tracing enablement plus config loader/notification updates.
+- Workspace version bumped to 0.72.0; behavior aligned with upstream.
+
+### Termux Notes
+- Termux patches (#1–#6, #8, #9) revalidated via `verify-patches.sh`.
+- npm package version bumped to `0.72.0-termux`; single packaged binary with `codex-exec` aliasing `codex`.
+
+### Testing
+- Local build + npm install on Termux pending in this session.
+
+---
 
 ## [0.71.0-termux] - 2025-12-12
 
