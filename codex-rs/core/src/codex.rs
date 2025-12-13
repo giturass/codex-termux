@@ -2,7 +2,9 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
 use std::sync::atomic::AtomicU64;
+use std::sync::atomic::Ordering;
 
 use crate::AuthManager;
 use crate::SandboxState;
@@ -65,6 +67,7 @@ use tracing::info;
 use tracing::warn;
 
 use crate::ModelProviderInfo;
+use crate::WireApi;
 use crate::client::ModelClient;
 use crate::client_common::Prompt;
 use crate::client_common::ResponseEvent;
@@ -80,6 +83,7 @@ use crate::exec::StreamOutput;
 use crate::exec_policy::ExecPolicyUpdateError;
 use crate::mcp::auth::compute_auth_statuses;
 use crate::mcp_connection_manager::McpConnectionManager;
+use crate::model_provider_info::CHAT_WIRE_API_DEPRECATION_SUMMARY;
 use crate::project_doc::get_user_instructions;
 use crate::protocol::AgentMessageContentDeltaEvent;
 use crate::protocol::AgentReasoningSectionBreakEvent;
@@ -167,6 +171,31 @@ pub struct CodexSpawnOk {
 
 pub(crate) const INITIAL_SUBMIT_ID: &str = "";
 pub(crate) const SUBMISSION_CHANNEL_CAPACITY: usize = 64;
+static CHAT_WIRE_API_DEPRECATION_EMITTED: AtomicBool = AtomicBool::new(false);
+
+fn maybe_push_chat_wire_api_deprecation(
+    config: &Config,
+    post_session_configured_events: &mut Vec<Event>,
+) {
+    if config.model_provider.wire_api != WireApi::Chat {
+        return;
+    }
+
+    if CHAT_WIRE_API_DEPRECATION_EMITTED
+        .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
+        .is_err()
+    {
+        return;
+    }
+
+    post_session_configured_events.push(Event {
+        id: INITIAL_SUBMIT_ID.to_owned(),
+        msg: EventMsg::DeprecationNotice(DeprecationNoticeEvent {
+            summary: CHAT_WIRE_API_DEPRECATION_SUMMARY.to_string(),
+            details: None,
+        }),
+    });
+}
 
 impl Codex {
     /// Spawn a new [`Codex`] and initialize the session.
@@ -584,6 +613,7 @@ impl Session {
                 msg: EventMsg::DeprecationNotice(DeprecationNoticeEvent { summary, details }),
             });
         }
+        maybe_push_chat_wire_api_deprecation(&config, &mut post_session_configured_events);
 
         // todo(aibrahim): why are we passing model here while it can change?
         let otel_event_manager = OtelEventManager::new(
@@ -670,6 +700,14 @@ impl Session {
         for event in events {
             sess.send_event_raw(event).await;
         }
+
+        // Construct sandbox_state before initialize() so it can be sent to each
+        // MCP server immediately after it becomes ready (avoiding blocking).
+        let sandbox_state = SandboxState {
+            sandbox_policy: session_configuration.sandbox_policy.clone(),
+            codex_linux_sandbox_exe: config.codex_linux_sandbox_exe.clone(),
+            sandbox_cwd: session_configuration.cwd.clone(),
+        };
         sess.services
             .mcp_connection_manager
             .write()
@@ -680,24 +718,9 @@ impl Session {
                 auth_statuses.clone(),
                 tx_event.clone(),
                 sess.services.mcp_startup_cancellation_token.clone(),
+                sandbox_state,
             )
             .await;
-
-        let sandbox_state = SandboxState {
-            sandbox_policy: session_configuration.sandbox_policy.clone(),
-            codex_linux_sandbox_exe: config.codex_linux_sandbox_exe.clone(),
-            sandbox_cwd: session_configuration.cwd.clone(),
-        };
-        if let Err(e) = sess
-            .services
-            .mcp_connection_manager
-            .read()
-            .await
-            .notify_sandbox_state_change(&sandbox_state)
-            .await
-        {
-            tracing::error!("Failed to notify sandbox state change: {e}");
-        }
 
         // record_initial_history can emit events. We record only after the SessionConfiguredEvent is emitted.
         sess.record_initial_history(initial_history).await;
@@ -810,14 +833,34 @@ impl Session {
         sub_id: String,
         updates: SessionSettingsUpdate,
     ) -> Arc<TurnContext> {
-        let session_configuration = {
+        let (session_configuration, sandbox_policy_changed) = {
             let mut state = self.state.lock().await;
             let session_configuration = state.session_configuration.clone().apply(&updates);
+            let sandbox_policy_changed =
+                state.session_configuration.sandbox_policy != session_configuration.sandbox_policy;
             state.session_configuration = session_configuration.clone();
-            session_configuration
+            (session_configuration, sandbox_policy_changed)
         };
-
         let per_turn_config = Self::build_per_turn_config(&session_configuration);
+
+        if sandbox_policy_changed {
+            let sandbox_state = SandboxState {
+                sandbox_policy: per_turn_config.sandbox_policy.clone(),
+                codex_linux_sandbox_exe: per_turn_config.codex_linux_sandbox_exe.clone(),
+                sandbox_cwd: per_turn_config.cwd.clone(),
+            };
+            if let Err(e) = self
+                .services
+                .mcp_connection_manager
+                .read()
+                .await
+                .notify_sandbox_state_change(&sandbox_state)
+                .await
+            {
+                warn!("Failed to notify sandbox state change to MCP servers: {e:#}");
+            }
+        }
+
         let model_family = self
             .services
             .models_manager
@@ -2145,7 +2188,10 @@ pub(crate) async fn run_task(
 
                 // as long as compaction works well in getting us way below the token limit, we shouldn't worry about being in an infinite loop.
                 if token_limit_reached {
-                    if should_use_remote_compact_task(&sess) {
+                    if should_use_remote_compact_task(
+                        sess.as_ref(),
+                        &turn_context.client.get_provider(),
+                    ) {
                         run_inline_remote_auto_compact_task(sess.clone(), turn_context.clone())
                             .await;
                     } else {
