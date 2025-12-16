@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.73.0-termux] - 2025-12-16
+
+### Upstream Updates (OpenAI Codex rust-v0.73.0)
+
+- Skills system refreshed: SkillsManager + `skills/list` op, ghost commits support, and experimental skills docs.
+- Ghost snapshots v2 shipped; config ghost commits flow documented.
+- TUI/TUI2 updates: default wrap algorithm now FirstFit, TUI2 sync with TUI, burst keybinding fix, tooltip tone cleanup.
+- Stability fixes: avoid panics when tool calls lack outputs; AbsolutePathBuf for sandbox config; otel tracing available; dependency bumps (sentry 0.46, lru 0.16, socket2 0.6).
+
+### Termux Notes
+- Termux patches (#1–#6, #8, #9) revalidated via `verify-patches.sh`.
+- npm package version bumped to `0.73.0-termux`; single packaged binary with `codex-exec` symlink preserved.
+- Release build produced on Termux: `cargo build -p codex-cli --release --locked` and binary copied into npm wrapper.
+
+### Testing
+- Install + CODEX_TEST_SUITE run pending on device after packaging.
+
+---
+
 ## [0.72.0-termux] - 2025-12-13
 
 ### Upstream Updates (OpenAI Codex rust-v0.72.0)

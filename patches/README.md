@@ -1,7 +1,7 @@
 # 🔧 Termux Compatibility Patches
 
 This document describes the Termux‑specific patches applied to the official OpenAI Codex CLI so that it works well on Android Termux (ARM64).
-Validated for: **v0.72.0-termux** (upstream `rust-v0.72.0` with gpt-5.2 models).
+Validated for: **v0.73.0-termux** (upstream `rust-v0.73.0` with gpt-5.2 models).
 
 ---
 
@@ -607,7 +607,7 @@ codex --version  # Should show latest version
 ### Bash Execution (Critical)
 - **Patch #8**: Fix bash execution in Agent mode (shell detection, LD_*, sandbox)
 
-For the current **0.72.0-termux** release, active patches are **#1–#6, #8, and #9**. All are critical for correct behavior on Termux. Patch **#7** remains historical (0.55.x only).
+For the current **0.73.0-termux** release, active patches are **#1–#6, #8, and #9**. All are critical for correct behavior on Termux. Patch **#7** remains historical (0.55.x only).
 
 ---
 
@@ -615,8 +615,8 @@ For the current **0.72.0-termux** release, active patches are **#1–#6, #8, and
 
 | Component | Version | Example |
 |-----------|---------|---------|
-| **Binary** | Upstream version | `codex-cli 0.72.0` |
-| **npm package** | `<upstream>-termux` | `0.72.0-termux` |
+| **Binary** | Upstream version | `codex-cli 0.73.0` |
+| **npm package** | `<upstream>-termux` | `0.73.0-termux` |
 
 **Why:**
 - Binary version matches upstream for compatibility
@@ -628,7 +628,7 @@ For the current **0.72.0-termux** release, active patches are **#1–#6, #8, and
 ## Testing Checklist
 
 Before each release:
-- [ ] `codex --version` shows correct upstream version (0.72.0)
+- [ ] `codex --version` shows correct upstream version (0.73.0)
 - [ ] `codex login` opens browser without crash
 - [ ] OAuth flow completes successfully
 - [ ] Binary size < 50MB
@@ -650,8 +650,8 @@ We only accept patches for Termux-specific issues, not general feature requests.
 
 ---
 
-**Last Updated**: 2025-12-13
-**Patches Applied**: 9 (revalidated for 0.72.0-termux)
-**Based on**: OpenAI Codex rust-v0.72.0
+**Last Updated**: 2025-12-16
+**Patches Applied**: 9 (revalidated for 0.73.0-termux)
+**Based on**: OpenAI Codex rust-v0.73.0
 **Platform**: Android Termux ARM64
-**Upstream Changes**: 0.71.0 → 0.72.0 (otel tracing, config loader rewrite, notifications)
+**Upstream Changes**: 0.72.0 → 0.73.0 (skills manager rework, ghost snapshots v2, wrap algorithm FirstFit, stability fixes)

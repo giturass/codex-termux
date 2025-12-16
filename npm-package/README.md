@@ -65,9 +65,6 @@ npm --version   # v6+
 
 ## 📦 Installation
 
-> [!WARNING]
-> **Deprecated versions:** Versions prior to v0.57.0-termux are no longer maintained. Please upgrade to the latest release.
-
 ### Via npm (Recommended)
 
 ```bash
@@ -78,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.72.0
+# Output: codex-cli 0.73.0
 
 codex login
 # Opens browser for authentication
@@ -88,6 +85,7 @@ codex login
 - npm: https://www.npmjs.com/package/@mmmbuto/codex-cli-termux
 - Releases: https://github.com/DioNanos/codex-termux/releases
 - Upstream: https://github.com/openai/codex
+- Web UI: [NexusCLI](https://github.com/DioNanos/nexuscli) - Optional web interface for Codex/Claude/Gemini
 
 ---
 
@@ -113,6 +111,9 @@ For full documentation, see [OpenAI Codex docs](https://github.com/openai/codex)
 The `codex` binary is a multitool that includes the `exec` subcommand for automation and scripting:
 
 ```bash
+# Enable web search tool
+codex --search
+
 # Run non-interactively with JSON output
 codex exec --json "list files in current directory"
 
@@ -132,38 +133,9 @@ codex exec --json -o output.json "describe this project"
 - `--skip-git-repo-check` - Run outside git repositories
 - `-o, --output-last-message` - Save final response to file
 
-### Execpolicy Quickstart
+### Execpolicy
 
-Codex can enforce your own rules-based execution policy before it runs shell commands.
-
-1. Create a policy directory: `mkdir -p ~/.codex/policy`.
-2. Create one or more `.codexpolicy` files in that folder. Codex automatically loads every `.codexpolicy` file in there on startup.
-3. Write `prefix_rule` entries to describe the commands you want to allow, prompt, or block:
-
-```starlark
-prefix_rule(
-    pattern = ["git", ["push", "fetch"]],
-    decision = "prompt",  # allow | prompt | forbidden
-    match = [["git", "push", "origin", "main"]],  # examples that must match
-    not_match = [["git", "status"]],              # examples that must not match
-)
-```
-
-- `pattern` is a list of shell tokens, evaluated from left to right; wrap tokens in a nested list to express alternatives (e.g., match both `push` and `fetch`).
-- `decision` sets the severity; Codex picks the strictest decision when multiple rules match (forbidden > prompt > allow).
-- `match` and `not_match` act as (optional) unit tests. Codex validates them when it loads your policy, so you get feedback if an example has unexpected behavior.
-
-In this example rule, if Codex wants to run commands with the prefix `git push` or `git fetch`, it will first ask for user approval.
-
-Use the `codex execpolicy check` subcommand to preview decisions before you save a rule (see the [`codex-execpolicy` README](./codex-rs/execpolicy/README.md) for syntax details):
-
-```shell
-codex execpolicy check --policy ~/.codex/policy/default.codexpolicy git push origin main
-```
-
-Pass multiple `--policy` flags to test how several files combine, and use `--pretty` for formatted JSON output. See the [`codex-rs/execpolicy` README](./codex-rs/execpolicy/README.md) for a more detailed walkthrough of the available syntax.
-
-## Note: `execpolicy` commands are still in preview. The API may have breaking changes in the future.
+See the [Execpolicy quickstart](./docs/execpolicy.md) to set up rules that govern what commands Codex can execute.
 
 ## 🧪 Testing & Validation
 
@@ -174,9 +146,10 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **82 automated tests** across 12 categories
+- ✅ **82 automated tests** across 13 categories
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
 - ✅ **8 Package & Binary tests** for npm installation verification
+- ✅ **8 Merge Verification tests** for post-upstream-merge validation
 - ✅ File operations, shell execution, environment detection
 - ✅ Android permissions, library paths, package manager
 - ✅ Error handling and edge cases
@@ -213,6 +186,7 @@ Codex will automatically:
 10. **Termux-Specific (10 tests)** ⭐ - Validates all Android patches
 11. Cleanup (1 test)
 12. **Package & Binary (8 tests)** ⭐ - Validates npm installation and binaries
+13. **Merge Verification (8 tests)** 🔄 - Validates patches after upstream merge
 
 **Termux-Specific Tests Include**:
 - ✅ Environment paths (`$PREFIX`, `$HOME`, `$LD_LIBRARY_PATH`)
@@ -231,12 +205,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.72.0):
+**Example Report** (v0.73.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.72.0
+Codex Version: 0.73.0
 Total Tests: 49
 ✅ Passed: 49
 ❌ Failed: 0
@@ -247,6 +221,35 @@ Package & Binary: 8/8 passed ✅
 
 VERDICT: ✅ PASS
 ```
+- [**Getting started**](./docs/getting-started.md)
+  - [CLI usage](./docs/getting-started.md#cli-usage)
+  - [Slash Commands](./docs/slash_commands.md)
+  - [Running with a prompt as input](./docs/getting-started.md#running-with-a-prompt-as-input)
+  - [Example prompts](./docs/getting-started.md#example-prompts)
+  - [Custom prompts](./docs/prompts.md)
+  - [Memory with AGENTS.md](./docs/getting-started.md#memory-with-agentsmd)
+- [**Configuration**](./docs/config.md)
+  - [Example config](./docs/example-config.md)
+- [**Sandbox & approvals**](./docs/sandbox.md)
+- [**Execpolicy quickstart**](./docs/execpolicy.md)
+- [**Authentication**](./docs/authentication.md)
+  - [Auth methods](./docs/authentication.md#forcing-a-specific-auth-method-advanced)
+  - [Login on a "Headless" machine](./docs/authentication.md#connecting-on-a-headless-machine)
+- **Automating Codex**
+  - [GitHub Action](https://github.com/openai/codex-action)
+  - [TypeScript SDK](./sdk/typescript/README.md)
+  - [Non-interactive mode (`codex exec`)](./docs/exec.md)
+- [**Advanced**](./docs/advanced.md)
+  - [Tracing / verbose logging](./docs/advanced.md#tracing--verbose-logging)
+  - [Model Context Protocol (MCP)](./docs/advanced.md#model-context-protocol-mcp)
+- [**Zero data retention (ZDR)**](./docs/zdr.md)
+- [**Contributing**](./docs/contributing.md)
+- [**Install & build**](./docs/install.md)
+  - [System Requirements](./docs/install.md#system-requirements)
+  - [DotSlash](./docs/install.md#dotslash)
+  - [Build from source](./docs/install.md#build-from-source)
+- [**FAQ**](./docs/faq.md)
+- [**Open source fund**](./docs/open-source-fund.md)
 
 ---
 
@@ -292,7 +295,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.72.0 (adds OTEL tracing + config loader refresh)
+**Version**: Based on OpenAI Codex 0.73.0 (skills manager refresh, ghost snapshots v2, wrap tweaks, OTEL tracing)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -300,14 +303,24 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.72.0-termux (2025-12-13) – latest
+### v0.73.0-termux (2025-12-16) – latest
 **Dist-tag**: `latest`
 
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.73.0 (skills manager rework, ghost snapshots v2, config ghost commits, wrap algorithm now FirstFit, OTEL tracing).
+- 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as alias wrapper.
+- 🔧 Termux patches #1–6, #8, #9 revalidated after merge (verify-patches.sh).
+- 📦 npm package bumped to 0.73.0-termux; binary rebuilt and packaged once with symlinked `codex-exec`.
+- ✅ Build: `cargo build -p codex-cli --release --locked` on Termux; npm wrapper binary updated. Install + test suite run still pending.
+
+
+### v0.72.0-termux (2025-12-13) – stable
+**Dist-tag**: `stable`
+
 - ⬆️ Upstream bump to OpenAI Codex rust-v0.72.0 (OTEL tracing, config loader rewrite, notifications).
-- 🧭 Single entrypoint: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as alias wrapper.
+- 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as alias wrapper.
 - 🔧 Termux patches #1–6, #8, #9 revalidated after merge (verify-patches.sh).
 - 📦 npm package bumped to 0.72.0-termux; binary packaged once with symlinked `codex-exec`.
-- ✅ Tests: build + install on Termux pending (run in this session).
+- ✅ Tests: build + install on Termux pending (will run in this session).
 
 ### v0.71.0-termux (2025-12-12) – stable
 **Dist-tag**: `stable`
@@ -318,11 +331,13 @@ See [LICENSE](./LICENSE) file for details.
 - 📦 Package verification: bin includes `codex`, symlinked `codex-exec`, JS wrappers; `LD_LIBRARY_PATH` preserved; termux-open-url login path intact.
 - ✅ Tests: CODEX_TEST_SUITE v1.2 quick run → 37 passed / 0 failed / 12 skipped (web search, AI, some git/Termux-API); critical package checks 8/8.
 
----
-
 ### v0.64.1-termux (2025-12-03) – stable
 **Dist-tag**: `stable`
 
 - Maintenance follow-up to 0.64.0: docs/test report refresh and npm package verification (codex-exec symlink + bin entries).
 - Base upstream: rust-v0.64.0; Termux patches #1-6, #8, #9 revalidated.
 - ✅ Tests: CODEX_TEST_SUITE v1.2 → 47/49 pass (Git optional skipped), Package & Binary 8/8 pass, Termux-Specific 10/10 pass.
+
+---
+
+**Testing**: Comprehensive test suite v1.2 with 82 tests (incl. Termux + Package) in [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)

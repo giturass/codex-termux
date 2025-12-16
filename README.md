@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.72.0
+# Output: codex-cli 0.73.0
 
 codex login
 # Opens browser for authentication
@@ -205,12 +205,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.72.0):
+**Example Report** (v0.73.0):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.72.0
+Codex Version: 0.73.0
 Total Tests: 49
 ✅ Passed: 49
 ❌ Failed: 0
@@ -295,7 +295,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.72.0 (adds OTEL tracing + config loader refresh)
+**Version**: Based on OpenAI Codex 0.73.0 (skills manager refresh, ghost snapshots v2, wrap tweaks, OTEL tracing)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -303,8 +303,18 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.72.0-termux (2025-12-13) – latest
+### v0.73.0-termux (2025-12-16) – latest
 **Dist-tag**: `latest`
+
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.73.0 (skills manager rework, ghost snapshots v2, config ghost commits, wrap algorithm now FirstFit, OTEL tracing).
+- 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as alias wrapper.
+- 🔧 Termux patches #1–6, #8, #9 revalidated after merge (verify-patches.sh).
+- 📦 npm package bumped to 0.73.0-termux; binary rebuilt and packaged once with symlinked `codex-exec`.
+- ✅ Build: `cargo build -p codex-cli --release --locked` on Termux; npm wrapper binary updated. Install + test suite run still pending.
+
+
+### v0.72.0-termux (2025-12-13) – stable
+**Dist-tag**: `stable`
 
 - ⬆️ Upstream bump to OpenAI Codex rust-v0.72.0 (OTEL tracing, config loader rewrite, notifications).
 - 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as alias wrapper.
