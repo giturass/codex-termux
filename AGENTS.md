@@ -1,27 +1,26 @@
-# Rust/codex-rs
+# Rust / codex-rs — Agent Guidelines
 
-In the codex-rs folder where the rust code lives:
+Use these rules while working in the `codex-rs` directory.
 
-- 🧠 PROMEMORIA: prima di iniziare una sessione, leggere `~/memoria_contestuale_estesa.json` per riallineare il contesto operativo locale.
+- Read the project docs (`CLAUDE.md`, `README.md`, `docs/`) before starting new work.
+- Crate names are prefixed with `codex-` (e.g., `codex-core`).
+- Inline `format!` arguments when possible.
+- Install required tools (`just`, `rg`, `cargo-insta`, etc.) if missing.
+- Do not modify code paths related to `CODEX_SANDBOX_NETWORK_DISABLED_ENV_VAR` or `CODEX_SANDBOX_ENV_VAR`.
+  - The sandbox sets `CODEX_SANDBOX_NETWORK_DISABLED=1` when running shell tools.
+  - Processes started via Seatbelt use `CODEX_SANDBOX=seatbelt`; tests may early-exit based on that.
+- Collapse nested `if` statements per Clippy’s `collapsible_if`.
+- Prefer inline `format!` args per `uninlined_format_args`.
+- Prefer method references over closures per `redundant_closure_for_method_calls`.
+- In tests, compare whole objects instead of individual fields.
+- When you change or add APIs, update relevant docs under `docs/`.
 
-- Crate names are prefixed with `codex-`. For example, the `core` folder's crate is named `codex-core`
-- When using format! and you can inline variables into {}, always do that.
-- Install any commands the repo relies on (for example `just`, `rg`, or `cargo-insta`) if they aren't already available before running instructions here.
-- Never add or modify any code related to `CODEX_SANDBOX_NETWORK_DISABLED_ENV_VAR` or `CODEX_SANDBOX_ENV_VAR`.
-  - You operate in a sandbox where `CODEX_SANDBOX_NETWORK_DISABLED=1` will be set whenever you use the `shell` tool. Any existing code that uses `CODEX_SANDBOX_NETWORK_DISABLED_ENV_VAR` was authored with this fact in mind. It is often used to early exit out of tests that the author knew you would not be able to run given your sandbox limitations.
-  - Similarly, when you spawn a process using Seatbelt (`/usr/bin/sandbox-exec`), `CODEX_SANDBOX=seatbelt` will be set on the child process. Integration tests that want to run Seatbelt themselves cannot be run under Seatbelt, so checks for `CODEX_SANDBOX=seatbelt` are also often used to early exit out of tests, as appropriate.
-- Always collapse if statements per https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
-- Always inline format! args when possible per https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
-- Use method references over closures when possible per https://rust-lang.github.io/rust-clippy/master/index.html#redundant_closure_for_method_calls
-- When writing tests, prefer comparing the equality of entire objects over fields one by one.
-- When making a change that adds or changes an API, ensure that the documentation in the `docs/` folder is up to date if applicable.
+## Infrastructure Context (Termux ARM64)
 
-## Infrastructure Context (ROG Phone 3)
-
-- This agent runs inside Termux on the ASUS ROG Phone 3 build server (Snapdragon aarch64, 8 GB RAM, Android 12).
-- The device is the dedicated ARM build node for Codex-Termux and other mobile builds, so coordinate actions with the rest of the infrastructure rather than treating it as a standalone sandbox.
-- Keep the private `~/Dev/Codex-Termux` pipeline and the public `~/Dev/codex-termux` fork in sync with the policies documented in `CLAUDE.md`; never leak sensitive data back to the public repo.
-- Consult the shared docs in `.docs/` (especially hardware and infrastructure notes) whenever a change might impact other hosts or services.
+- Running in Termux on an ARM64 Android build node (non-public). Treat it as a shared build box.
+- Avoid referencing private pipelines or hostnames; keep changes repo-focused and public-safe.
+- Follow public-release hygiene: no sensitive paths, tokens, or personal identifiers in commits or docs.
+- Consult shared docs in `.docs/` when changes could impact other hosts or services.
 
 Run `just fmt` (in `codex-rs` directory) automatically after making Rust code changes; do not ask for approval to run it. Before finalizing a change to `codex-rs`, run `just fix -p <project>` (in `codex-rs` directory) to fix any linter issues in the code. Prefer scoping with `-p` to avoid slow workspace‑wide Clippy builds; only run `just fix` without `-p` if you changed shared crates. Additionally, run the tests:
 

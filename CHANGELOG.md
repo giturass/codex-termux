@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.74.0-termux] - 2025-12-18
+
+### Upstream Status (OpenAI Codex)
+- Latest official upstream release remains **rust-v0.73.0** (published 2025-12-15). No rust-v0.74.0 tag is available as of 2025-12-18. citeturn0search0turn0search3
+
+### Termux Notes
+- Bumped npm wrapper to `0.74.0-termux`; binary build refreshed from current upstream sources.
+- Confirmed binaries: `codex` and `codex-exec` report `0.74.0-termux`; JS wrappers present in npm package.
+- Documentation and agent guidelines anonymized and translated to English; device-specific references removed.
+
+### Testing
+- CODEX_TEST_SUITE v1.2 on Termux (2025-12-18): **50 tests**, **48 passed / 0 failed / 2 skipped** (WebSearch tool absent; git info skipped outside a repo). Package & Binary: 8/8 passed; Termux-specific: 10/10 passed.
+
+---
+
 ## [0.73.0-termux] - 2025-12-16
 
 ### Upstream Updates (OpenAI Codex rust-v0.73.0)
@@ -78,7 +93,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Auto-update remains pointed at Termux fork; LD_LIBRARY_PATH preservation confirmed.
 
 ### Testing
-- CODEX_TEST_SUITE v1.2 on ROG Phone 3: 45 passed / 0 failed / 4 skipped (WebSearch, non-git workspace, manual code analysis).
+- CODEX_TEST_SUITE v1.2 on ARM64 reference device: 45 passed / 0 failed / 4 skipped (WebSearch, non-git workspace, manual code analysis).
 - Package & Binary verification: 8/8 pass (codex + codex-exec symlink + JS wrappers present).
 - Termux-specific checks: 10/10 pass (Termux-API wifi warning expected on Play build).
 

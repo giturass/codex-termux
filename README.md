@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.73.0
+# Output: codex-cli 0.74.0-termux
 
 codex login
 # Opens browser for authentication
@@ -146,10 +146,9 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **82 automated tests** across 13 categories
+- ✅ **82 automated tests** across 12 categories (including prep/cleanup)
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
 - ✅ **8 Package & Binary tests** for npm installation verification
-- ✅ **8 Merge Verification tests** for post-upstream-merge validation
 - ✅ File operations, shell execution, environment detection
 - ✅ Android permissions, library paths, package manager
 - ✅ Error handling and edge cases
@@ -165,7 +164,7 @@ codex
 ```
 
 Codex will automatically:
-1. Execute all 74 tests sequentially
+1. Execute all applicable tests sequentially
 2. Report PASS/FAIL for each test
 3. Generate a final summary with:
    - Total passed/failed counts
@@ -186,7 +185,6 @@ Codex will automatically:
 10. **Termux-Specific (10 tests)** ⭐ - Validates all Android patches
 11. Cleanup (1 test)
 12. **Package & Binary (8 tests)** ⭐ - Validates npm installation and binaries
-13. **Merge Verification (8 tests)** 🔄 - Validates patches after upstream merge
 
 **Termux-Specific Tests Include**:
 - ✅ Environment paths (`$PREFIX`, `$HOME`, `$LD_LIBRARY_PATH`)
@@ -198,28 +196,28 @@ Codex will automatically:
 - ✅ Browser opener availability (Patch #1 validation)
 - ✅ Architecture detection (aarch64/ARM64)
 
-**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes the 49 applicable tests; all passed.
+**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes 50 applicable tests; last run (2025-12-18) completed with 48 ✅ / 0 ❌ / 2 ⚠️ skipped (WebSearch tool absent, git info in non-repo workspace).
 
 **Success Criteria**:
 - All System, Files, Shell, and Termux tests must pass
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.73.0):
+**Example Report** (v0.74.0-termux, 2025-12-18):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
-Platform: Android Termux ARM64 (ROG Phone 3)
-Codex Version: 0.73.0
-Total Tests: 49
-✅ Passed: 49
+Platform: Android Termux ARM64 (reference device)
+Codex Version: 0.74.0-termux
+Total Tests: 50
+✅ Passed: 48
 ❌ Failed: 0
-⚠️ Skipped: 0
+⚠️ Skipped: 2 (WebSearch disabled, git info skipped in non-repo workspace)
 
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
 
-VERDICT: ✅ PASS
+VERDICT: ⚠️ PASS WITH WARNINGS
 ```
 - [**Getting started**](./docs/getting-started.md)
   - [CLI usage](./docs/getting-started.md#cli-usage)
@@ -295,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.73.0 (skills manager refresh, ghost snapshots v2, wrap tweaks, OTEL tracing)
+**Version**: Based on OpenAI Codex 0.74.0 (Termux build refresh, package/bin verification updated)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -303,7 +301,16 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.73.0-termux (2025-12-16) – latest
+### v0.74.0-termux (2025-12-18) – latest
+**Dist-tag**: `latest`
+
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.74.0.
+- 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as JS wrapper/symlink.
+- 🔧 Termux patches #1–6, #8, #9 revalidated after merge (`verify-patches.sh`).
+- 📦 npm package bumped to 0.74.0-termux; packaged binary includes `codex` plus `codex-exec` symlink/wrapper.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-18) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
+
+### v0.73.0-termux (2025-12-16)
 **Dist-tag**: `latest`
 
 - ⬆️ Upstream bump to OpenAI Codex rust-v0.73.0 (skills manager rework, ghost snapshots v2, config ghost commits, wrap algorithm now FirstFit, OTEL tracing).
