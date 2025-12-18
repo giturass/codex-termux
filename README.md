@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.74.0-termux
+# Output: codex-cli 0.75.0-termux
 
 codex login
 # Opens browser for authentication
@@ -203,12 +203,12 @@ Codex will automatically:
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.74.0-termux, 2025-12-18):
+**Example Report** (v0.75.0-termux, 2025-12-18):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (reference device)
-Codex Version: 0.74.0-termux
+Codex Version: 0.75.0-termux
 Total Tests: 50
 ✅ Passed: 48
 ❌ Failed: 0
@@ -293,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.74.0 (Termux build refresh, package/bin verification updated)
+**Version**: Based on OpenAI Codex 0.75.0 (Termux build refresh, package/bin verification updated)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -301,14 +301,21 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.74.0-termux (2025-12-18) – latest
+### v0.75.0-termux (2025-12-18) – latest
 **Dist-tag**: `latest`
 
-- ⬆️ Upstream bump to OpenAI Codex rust-v0.74.0.
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.75.0.
 - 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as JS wrapper/symlink.
 - 🔧 Termux patches #1–6, #8, #9 revalidated after merge (`verify-patches.sh`).
-- 📦 npm package bumped to 0.74.0-termux; packaged binary includes `codex` plus `codex-exec` symlink/wrapper.
+- 📦 npm package bumped to 0.75.0-termux; packaged binary includes `codex` plus `codex-exec` symlink/wrapper.
 - ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-18) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
+- 🌟 **Official Upstream Highlights**:
+  - Introducing gpt-5.2-codex our latest frontier model
+  - Projects are now collapsed to a single folder in the file explorer
+  - Hide collapsed folders from the file explorer
+  - Initial support for desktop notifications on macOS and Linux
+  - MCP improvements: Better error handling and resource management
+  - TUI improvements: Better visual feedback and performance
 
 ### v0.73.0-termux (2025-12-16)
 **Dist-tag**: `latest`
