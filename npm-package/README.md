@@ -146,10 +146,9 @@ This project includes a comprehensive test suite specifically designed for Termu
 **Test Suite**: [`CODEX_TEST_SUITE.md`](./CODEX_TEST_SUITE.md)
 
 **Coverage**:
-- ✅ **82 automated tests** across 13 categories
+- ✅ **82 automated tests** across 12 categories (including prep/cleanup)
 - ✅ **10 Termux-specific tests** validating all 8 compatibility patches
 - ✅ **8 Package & Binary tests** for npm installation verification
-- ✅ **8 Merge Verification tests** for post-upstream-merge validation
 - ✅ File operations, shell execution, environment detection
 - ✅ Android permissions, library paths, package manager
 - ✅ Error handling and edge cases
@@ -308,9 +307,8 @@ See [LICENSE](./LICENSE) file for details.
 - ⬆️ Upstream bump to OpenAI Codex rust-v0.74.0.
 - 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as JS wrapper/symlink.
 - 🔧 Termux patches #1–6, #8, #9 revalidated after merge (`verify-patches.sh`).
-- 📦 npm package bumped to 0.74.0-termux; packaged binary includes `codex` plus `codex-exec`.
+- 📦 npm package bumped to 0.74.0-termux; packaged binary includes `codex` plus `codex-exec` symlink/wrapper.
 - ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-18) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
-
 
 ### v0.73.0-termux (2025-12-16)
 **Dist-tag**: `latest`
@@ -320,6 +318,7 @@ See [LICENSE](./LICENSE) file for details.
 - 🔧 Termux patches #1–6, #8, #9 revalidated after merge (verify-patches.sh).
 - 📦 npm package bumped to 0.73.0-termux; binary rebuilt and packaged once with symlinked `codex-exec`.
 - ✅ Build: `cargo build -p codex-cli --release --locked` on Termux; npm wrapper binary updated. Install + test suite run still pending.
+
 
 ### v0.72.0-termux (2025-12-13) – stable
 **Dist-tag**: `stable`
