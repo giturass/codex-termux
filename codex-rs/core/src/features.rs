@@ -18,10 +18,31 @@ pub(crate) use legacy::LegacyFeatureToggles;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Stage {
     Experimental,
-    Beta,
+    Beta {
+        menu_description: &'static str,
+        announcement: &'static str,
+    },
     Stable,
     Deprecated,
     Removed,
+}
+
+impl Stage {
+    pub fn beta_menu_description(self) -> Option<&'static str> {
+        match self {
+            Stage::Beta {
+                menu_description, ..
+            } => Some(menu_description),
+            _ => None,
+        }
+    }
+
+    pub fn beta_announcement(self) -> Option<&'static str> {
+        match self {
+            Stage::Beta { announcement, .. } => Some(announcement),
+            _ => None,
+        }
+    }
 }
 
 /// Unique features toggled via configuration.
@@ -58,8 +79,6 @@ pub enum Feature {
     RemoteModels,
     /// Allow model to call multiple tools in parallel (only for models supporting it).
     ParallelToolCalls,
-    /// Experimental skills injection (CLI flag-driven).
-    Skills,
     /// Experimental shell snapshotting.
     ShellSnapshot,
     /// Experimental TUI v2 (viewport) implementation.
@@ -292,13 +311,34 @@ pub const FEATURES: &[FeatureSpec] = &[
         stage: Stage::Stable,
         default_enabled: true,
     },
-    // Unstable features.
+    FeatureSpec {
+        id: Feature::WebSearchRequest,
+        key: "web_search_request",
+        stage: Stage::Stable,
+        default_enabled: false,
+    },
+    // Beta program. Rendered in the `/experimental` menu for users.
     FeatureSpec {
         id: Feature::UnifiedExec,
         key: "unified_exec",
+        // stage: Stage::Beta {
+        //     menu_description: "Run long-running terminal commands in the background.",
+        //     announcement: "NEW! Try Background terminals for long running processes. Enable in /experimental!",
+        // },
         stage: Stage::Experimental,
         default_enabled: false,
     },
+    FeatureSpec {
+        id: Feature::ShellSnapshot,
+        key: "shell_snapshot",
+        // stage: Stage::Beta {
+        //     menu_description: "Snapshot your shell environment to avoid re-running login scripts for every command.",
+        //     announcement: "NEW! Try shell snapshotting to make your Codex faster. Enable in /experimental!",
+        // },
+        stage: Stage::Experimental,
+        default_enabled: false,
+    },
+    // Unstable features.
     FeatureSpec {
         id: Feature::RmcpClient,
         key: "rmcp_client",
@@ -308,13 +348,7 @@ pub const FEATURES: &[FeatureSpec] = &[
     FeatureSpec {
         id: Feature::ApplyPatchFreeform,
         key: "apply_patch_freeform",
-        stage: Stage::Beta,
-        default_enabled: false,
-    },
-    FeatureSpec {
-        id: Feature::WebSearchRequest,
-        key: "web_search_request",
-        stage: Stage::Stable,
+        stage: Stage::Experimental,
         default_enabled: false,
     },
     FeatureSpec {
@@ -325,13 +359,13 @@ pub const FEATURES: &[FeatureSpec] = &[
     },
     FeatureSpec {
         id: Feature::WindowsSandbox,
-        key: "enable_experimental_windows_sandbox",
+        key: "experimental_windows_sandbox",
         stage: Stage::Experimental,
         default_enabled: false,
     },
     FeatureSpec {
         id: Feature::WindowsSandboxElevated,
-        key: "enable_elevated_windows_sandbox",
+        key: "elevated_windows_sandbox",
         stage: Stage::Experimental,
         default_enabled: false,
     },
@@ -344,12 +378,6 @@ pub const FEATURES: &[FeatureSpec] = &[
     FeatureSpec {
         id: Feature::RemoteModels,
         key: "remote_models",
-        stage: Stage::Experimental,
-        default_enabled: false,
-    },
-    FeatureSpec {
-        id: Feature::Skills,
-        key: "skills",
         stage: Stage::Experimental,
         default_enabled: false,
     },
