@@ -108,6 +108,6 @@ NOTES:
 - codex in PATH is a JS wrapper; actual binary at @mmmbuto/codex-cli-termux/bin/codex is 60MB.
 - Code analysis (TEST-801): main.js logs "Hello" to stdout; improvement: add argument parsing or configurable message.
 - numbers.py (TEST-802) prints 1..10 using a simple for loop.
-- Re-run: TEST-1005 and TEST-1008 after setting up storage and installing ldd.
+- Re-run completed: storage configured and ldd verification OK for TEST-1005/TEST-1008.
 
 VERDICT: ✅ PASS WITH WARNINGS
