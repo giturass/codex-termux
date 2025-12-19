@@ -86,11 +86,7 @@ CHANGELOG.ignore.md
 .direnv
 .envrc
 
-# Termux builds (do not commit binaries)
-*.tar.gz
-codex
-codex-rs/target/
+# Python bytecode files
+__pycache__/
+*.pyc
 
-# Backup and temp files
-.backup-*/
-RECONSTRUCTION_PLAN.md
