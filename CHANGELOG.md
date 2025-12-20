@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.76.0-termux] - 2025-12-20
+
+### Termux Notes
+- Bumped workspace + npm versions to `0.76.0-termux` (still based on upstream rust-v0.75.0).
+- Fixed npm package to include `bin/codex-exec` as a wrapper (no symlink).
+
+### Testing
+- CODEX_TEST_SUITE v1.2 on Termux (2025-12-20): **50 tests**, **48 passed / 0 failed / 2 skipped** (WebSearch unavailable; git info skipped outside a repo).
+
+---
+
 ## [0.74.0-termux] - 2025-12-18
 
 ### Upstream Status (OpenAI Codex)
