@@ -196,7 +196,7 @@ Codex will automatically:
 - ✅ Browser opener availability (Patch #1 validation)
 - ✅ Architecture detection (aarch64/ARM64)
 
-**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes 50 applicable tests; last run (2025-12-18) completed with 48 ✅ / 0 ❌ / 2 ⚠️ skipped (WebSearch tool absent, git info in non-repo workspace).
+**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes 50 applicable tests; last run (2025-12-20) completed with 48 ✅ / 0 ❌ / 2 ⚠️ skipped (WebSearch tool absent, git info in non-repo workspace).
 
 **Success Criteria**:
 - All System, Files, Shell, and Termux tests must pass
@@ -305,10 +305,10 @@ See [LICENSE](./LICENSE) file for details.
 **Dist-tag**: `latest`
 
 - ⬆️ Upstream bump to OpenAI Codex rust-v0.75.0.
-- 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as JS wrapper/symlink.
+- 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as JS wrapper (no symlink).
 - 🔧 Termux patches #1–6, #8, #9 revalidated after merge (`verify-patches.sh`).
 - 📦 npm package bumped to 0.76.0-termux; packaged binary includes `codex` plus `codex-exec` wrapper (no symlink).
-- ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-18) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
+- ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-20) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
 - 🌟 **Official Upstream Highlights**:
   - Introducing gpt-5.2-codex our latest frontier model
   - Projects are now collapsed to a single folder in the file explorer
