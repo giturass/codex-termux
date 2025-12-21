@@ -3,9 +3,9 @@ CODEX CLI TEST SUITE - FINAL REPORT
 =====================================
 
 Platform: Android Termux ARM64
-Codex Version: codex-cli 0.76.0-termux
-Test Date: 2025-12-20
-Test Duration: ~10 minutes
+Codex Version: codex-cli 0.77.0-termux
+Test Date: 2025-12-21
+Test Duration: 00:05
 
 SUMMARY:
 --------
@@ -31,16 +31,16 @@ CATEGORY BREAKDOWN:
 
 CRITICAL FAILURES:
 ------------------
-None
+None.
 
 WARNINGS:
 ---------
-- TEST-903: `/root` not present on Termux; error was "No such file or directory" instead of permission denied.
-- TEST-1006/1008: LD_LIBRARY_PATH is unset in environment and subshell; `ldd` not installed to verify library loading.
+- TEST-601 skipped: WebSearch tool not available in CLI session.
+- TEST-702 skipped: Git info skipped outside a git repository.
 
 NOTES:
 ------
-- TEST-601 skipped: WebSearch tool not available in this run.
-- TEST-702 skipped: workspace is not a git repository.
+- codex and codex-exec report version 0.77.0-termux and share the same binary.
+- npm global package contains codex, codex-exec, and both JS wrappers.
 
-VERDICT: ⚠️ PASS WITH WARNINGS
+VERDICT: ✅ PASS

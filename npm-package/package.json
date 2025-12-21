@@ -1,7 +1,7 @@
 {
   "name": "@mmmbuto/codex-cli-termux",
-  "version": "0.76.0-termux",
-  "description": "OpenAI Codex CLI (upstream rust-v0.75.0) packaged as 0.76.0-termux – TUI + automation for Android Termux (ARM64). Use 'codex' for TUI, 'codex exec --json' for automation.",
+  "version": "0.77.0-termux",
+  "description": "OpenAI Codex CLI (upstream rust-v0.77.0) packaged as 0.77.0-termux – TUI + automation for Android Termux (ARM64). Use 'codex' for TUI, 'codex exec --json' for automation.",
   "type": "module",
   "main": "bin/codex.js",
   "bin": {

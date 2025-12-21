@@ -75,7 +75,7 @@ npm install -g @mmmbuto/codex-cli-termux
 
 ```bash
 codex --version
-# Output: codex-cli 0.76.0-termux
+# Output: codex-cli 0.77.0-termux
 
 codex login
 # Opens browser for authentication
@@ -196,19 +196,19 @@ Codex will automatically:
 - ✅ Browser opener availability (Patch #1 validation)
 - ✅ Architecture detection (aarch64/ARM64)
 
-**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes 50 applicable tests; last run (2025-12-20) completed with 48 ✅ / 0 ❌ / 2 ⚠️ skipped (WebSearch tool absent, git info in non-repo workspace).
+**Suite size**: 82 tests defined (includes optional/manual). Automated run on Termux executes 50 applicable tests; last run (2025-12-21) completed with 48 ✅ / 0 ❌ / 2 ⚠️ skipped (WebSearch tool absent, git info in non-repo workspace).
 
 **Success Criteria**:
 - All System, Files, Shell, and Termux tests must pass
 - At least 80% overall pass rate
 - No critical crashes
 
-**Example Report** (v0.76.0-termux, 2025-12-20):
+**Example Report** (v0.77.0-termux, 2025-12-21):
 ```
 CODEX CLI TEST SUITE - FINAL REPORT
 ====================================
 Platform: Android Termux ARM64 (reference device)
-Codex Version: 0.76.0-termux
+Codex Version: 0.77.0-termux
 Total Tests: 50
 ✅ Passed: 48
 ❌ Failed: 0
@@ -217,7 +217,7 @@ Total Tests: 50
 Termux-Specific: 10/10 passed ✅
 Package & Binary: 8/8 passed ✅
 
-VERDICT: ⚠️ PASS WITH WARNINGS
+VERDICT: ✅ PASS
 ```
 - [**Getting started**](./docs/getting-started.md)
   - [CLI usage](./docs/getting-started.md#cli-usage)
@@ -293,7 +293,7 @@ See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Version**: Based on OpenAI Codex 0.75.0 (Termux build refresh, package/bin verification updated)
+**Version**: Based on OpenAI Codex 0.77.0 (Termux build refresh, package/bin verification updated)
 **Platform**: Android Termux ARM64
 **Maintained**: Community-driven, not affiliated with OpenAI
 
@@ -301,14 +301,14 @@ See [LICENSE](./LICENSE) file for details.
 
 ## 📜 Changelog
 
-### v0.76.0-termux (2025-12-20) – latest
+### v0.77.0-termux (2025-12-21) – latest
 **Dist-tag**: `latest`
 
-- ⬆️ Upstream bump to OpenAI Codex rust-v0.75.0.
+- ⬆️ Upstream bump to OpenAI Codex rust-v0.77.0.
 - 🧭 Single entrypoint confirmed: `codex` with no args opens TUI; `codex <prompt>` routes to exec; `codex-exec` kept as JS wrapper (no symlink).
 - 🔧 Termux patches #1–6, #8, #9 revalidated after merge (`verify-patches.sh`).
-- 📦 npm package bumped to 0.76.0-termux; packaged binary includes `codex` plus `codex-exec` wrapper (no symlink).
-- ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-20) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
+- 📦 npm package bumped to 0.77.0-termux; packaged binary includes `codex` plus `codex-exec` wrapper (no symlink).
+- ✅ Tests: CODEX_TEST_SUITE v1.2 on Termux (2025-12-21) → 48 passed / 0 failed / 2 skipped (WebSearch disabled, git info skipped in non-repo workspace); Package & Binary 8/8 passed; Termux-Specific 10/10 passed.
 - 🌟 **Official Upstream Highlights**:
   - Introducing gpt-5.2-codex our latest frontier model
   - Projects are now collapsed to a single folder in the file explorer
