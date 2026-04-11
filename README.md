@@ -119,6 +119,7 @@ codex login
 
 - [Changelog](./CHANGELOG.md)
 - [Patch inventory](./patches/README.md)
+- [Runtime validation report](./test-reports/latest/CLI_RUNTIME_REPORT.md)
 - [Building from source](./BUILDING.md)
 - [Install and build docs](./docs/install.md)
 - [Authentication](./docs/authentication.md)
