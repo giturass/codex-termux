@@ -114,6 +114,7 @@ struct CoreTurnHost {
 
 #[async_trait::async_trait]
 impl CodeModeTurnHost for CoreTurnHost {
+    #[cfg(not(target_os = "android"))]
     async fn invoke_tool(
         &self,
         tool_name: ToolName,
@@ -124,6 +125,24 @@ impl CodeModeTurnHost for CoreTurnHost {
             self.exec.clone(),
             self.tool_runtime.clone(),
             tool_name,
+            input,
+            cancellation_token,
+        )
+        .await
+        .map_err(|error| error.to_string())
+    }
+
+    #[cfg(target_os = "android")]
+    async fn invoke_tool(
+        &self,
+        tool_name: String,
+        input: Option<JsonValue>,
+        cancellation_token: CancellationToken,
+    ) -> Result<JsonValue, String> {
+        call_nested_tool(
+            self.exec.clone(),
+            self.tool_runtime.clone(),
+            tool_name.into(),
             input,
             cancellation_token,
         )
