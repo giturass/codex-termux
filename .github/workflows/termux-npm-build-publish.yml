@@ -74,8 +74,9 @@ jobs:
         with:
           ref: ${{ github.event.inputs.source_ref }}
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: 1.93.0
           targets: aarch64-linux-android
 
       - uses: actions/setup-node@v6
