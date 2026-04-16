@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          yes | sdkmanager --licenses >/dev/null
+          yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "ndk;26.3.11579264"
           ndk_root="${ANDROID_SDK_ROOT}/ndk/26.3.11579264"
           echo "ANDROID_NDK_HOME=${ndk_root}" >> "$GITHUB_ENV"
