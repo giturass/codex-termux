@@ -1,7 +1,7 @@
 # Codex Termux
 
-> Native Codex CLI for **Termux / Android ARM64**.  
-> Latest Termux line built from upstream OpenAI Codex `rust-v0.122.0`.  
+> Native Codex CLI for **Termux / Android ARM64**.
+> Latest Termux line built from upstream OpenAI Codex `rust-v0.122.0`.
 > The separate multi-platform LTS line remains available as `@mmmbuto/codex-cli-lts`.
 
 [![npm termux](https://img.shields.io/npm/v/@mmmbuto/codex-cli-termux?style=flat-square&logo=npm)](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
