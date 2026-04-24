@@ -1,4 +1,5 @@
 use std::fs::OpenOptions;
+use std::io::ErrorKind;
 use std::io::Read;
 use std::io::Result;
 use std::io::Seek;
@@ -16,6 +17,10 @@ use uuid::Uuid;
 
 pub(crate) const INSTALLATION_ID_FILENAME: &str = "installation_id";
 
+fn installation_id_lock_is_optional(err: &std::io::Error) -> bool {
+    cfg!(target_os = "android") && err.kind() == ErrorKind::Unsupported
+}
+
 pub(crate) async fn resolve_installation_id(codex_home: &AbsolutePathBuf) -> Result<String> {
     let path = codex_home.join(INSTALLATION_ID_FILENAME);
     fs::create_dir_all(codex_home).await?;
@@ -29,7 +34,11 @@ pub(crate) async fn resolve_installation_id(codex_home: &AbsolutePathBuf) -> Res
         }
 
         let mut file = options.open(&path)?;
-        file.lock()?;
+        if let Err(err) = file.lock() {
+            if !installation_id_lock_is_optional(&err) {
+                return Err(err);
+            }
+        }
 
         #[cfg(unix)]
         {
@@ -66,6 +75,7 @@ pub(crate) async fn resolve_installation_id(codex_home: &AbsolutePathBuf) -> Res
 #[cfg(test)]
 mod tests {
     use super::INSTALLATION_ID_FILENAME;
+    use super::installation_id_lock_is_optional;
     use super::resolve_installation_id;
     use core_test_support::PathExt;
     use pretty_assertions::assert_eq;
@@ -145,5 +155,15 @@ mod tests {
                 .expect("read rewritten installation id"),
             resolved
         );
+    }
+
+    #[test]
+    fn installation_id_lock_optional_only_on_android_unsupported() {
+        let unsupported = std::io::Error::from(std::io::ErrorKind::Unsupported);
+        if cfg!(target_os = "android") {
+            assert!(installation_id_lock_is_optional(&unsupported));
+        } else {
+            assert!(!installation_id_lock_is_optional(&unsupported));
+        }
     }
 }

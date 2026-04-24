@@ -20,7 +20,10 @@ pub fn get_upgrade_version(config: &Config) -> Option<String> {
     }
 
     let version_file = version_filepath(config);
-    let info = read_version_info(&version_file).ok();
+    let expected_source = current_update_source();
+    let info = read_version_info(&version_file)
+        .ok()
+        .filter(|info| info.source.as_deref() == Some(expected_source));
 
     if match &info {
         None => true,
@@ -51,13 +54,18 @@ struct VersionInfo {
     // ISO-8601 timestamp (RFC3339)
     last_checked_at: DateTime<Utc>,
     #[serde(default)]
+    source: Option<String>,
+    #[serde(default)]
     dismissed_version: Option<String>,
 }
 
 const VERSION_FILENAME: &str = "version.json";
-// We use the latest version from the cask if installation is via homebrew - homebrew does not immediately pick up the latest release and can lag behind.
+// We use the latest version from the cask if installation is via homebrew - homebrew does not
+// immediately pick up the latest release and can lag behind.
 const HOMEBREW_CASK_API_URL: &str = "https://formulae.brew.sh/api/cask/codex.json";
-const LATEST_RELEASE_URL: &str = "https://api.github.com/repos/openai/codex/releases/latest";
+const LATEST_RELEASE_URL: &str =
+    "https://api.github.com/repos/DioNanos/codex-termux/releases/latest";
+const NPM_LATEST_URL: &str = "https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux/latest";
 
 #[derive(Deserialize, Debug, Clone)]
 struct ReleaseInfo {
@@ -66,6 +74,11 @@ struct ReleaseInfo {
 
 #[derive(Deserialize, Debug, Clone)]
 struct HomebrewCaskInfo {
+    version: String,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+struct NpmPackageInfo {
     version: String,
 }
 
@@ -79,7 +92,18 @@ fn read_version_info(version_file: &Path) -> anyhow::Result<VersionInfo> {
 }
 
 async fn check_for_update(version_file: &Path) -> anyhow::Result<()> {
+    let source = current_update_source();
     let latest_version = match update_action::get_update_action() {
+        Some(UpdateAction::NpmGlobalLatest | UpdateAction::BunGlobalLatest) => {
+            let NpmPackageInfo { version } = create_client()
+                .get(NPM_LATEST_URL)
+                .send()
+                .await?
+                .error_for_status()?
+                .json::<NpmPackageInfo>()
+                .await?;
+            version
+        }
         Some(UpdateAction::BrewUpgrade) => {
             let HomebrewCaskInfo { version } = create_client()
                 .get(HOMEBREW_CASK_API_URL)
@@ -109,7 +133,10 @@ async fn check_for_update(version_file: &Path) -> anyhow::Result<()> {
     let info = VersionInfo {
         latest_version,
         last_checked_at: Utc::now(),
-        dismissed_version: prev_info.and_then(|p| p.dismissed_version),
+        source: Some(source.to_string()),
+        dismissed_version: prev_info
+            .filter(|p| p.source.as_deref() == Some(source))
+            .and_then(|p| p.dismissed_version),
     };
 
     let json_line = format!("{}\n", serde_json::to_string(&info)?);
@@ -127,11 +154,23 @@ fn is_newer(latest: &str, current: &str) -> Option<bool> {
     }
 }
 
+fn current_update_source() -> &'static str {
+    match update_action::get_update_action() {
+        Some(UpdateAction::NpmGlobalLatest) => "npm",
+        Some(UpdateAction::BunGlobalLatest) => "bun",
+        Some(UpdateAction::BrewUpgrade) => "brew",
+        _ => "github-release",
+    }
+}
+
 fn extract_version_from_latest_tag(latest_tag_name: &str) -> anyhow::Result<String> {
-    latest_tag_name
+    let version = latest_tag_name
         .strip_prefix("rust-v")
-        .map(str::to_owned)
-        .ok_or_else(|| anyhow::anyhow!("Failed to parse latest tag name '{latest_tag_name}'"))
+        .or_else(|| latest_tag_name.strip_prefix('v'))
+        .ok_or_else(|| anyhow::anyhow!("Failed to parse latest tag name '{latest_tag_name}'"))?;
+
+    let clean_version = version.split('-').next().unwrap_or(version);
+    Ok(clean_version.to_string())
 }
 
 /// Returns the latest version to show in a popup, if it should be shown.
@@ -173,7 +212,15 @@ fn parse_version(v: &str) -> Option<(u64, u64, u64)> {
     let mut iter = v.trim().split('.');
     let maj = iter.next()?.parse::<u64>().ok()?;
     let min = iter.next()?.parse::<u64>().ok()?;
-    let pat = iter.next()?.parse::<u64>().ok()?;
+    let pat_str = iter.next()?;
+    let mut pat_parts = pat_str.splitn(2, '-');
+    let pat_num = pat_parts.next()?;
+    if let Some(suffix) = pat_parts.next()
+        && suffix != "termux"
+    {
+        return None;
+    }
+    let pat = pat_num.parse::<u64>().ok()?;
     Some((maj, min, pat))
 }
 
@@ -206,11 +253,19 @@ mod tests {
             extract_version_from_latest_tag("rust-v1.5.0").expect("failed to parse version"),
             "1.5.0"
         );
+        assert_eq!(
+            extract_version_from_latest_tag("v1.5.0").expect("failed to parse version"),
+            "1.5.0"
+        );
+        assert_eq!(
+            extract_version_from_latest_tag("v1.5.0-termux").expect("failed to parse version"),
+            "1.5.0"
+        );
     }
 
     #[test]
     fn latest_tag_without_prefix_is_invalid() {
-        assert!(extract_version_from_latest_tag("v1.5.0").is_err());
+        assert!(extract_version_from_latest_tag("1.5.0").is_err());
     }
 
     #[test]
@@ -231,5 +286,22 @@ mod tests {
     fn whitespace_is_ignored() {
         assert_eq!(parse_version(" 1.2.3 \n"), Some((1, 2, 3)));
         assert_eq!(is_newer(" 1.2.3 ", "1.2.2"), Some(true));
+    }
+
+    #[test]
+    fn termux_suffix_is_ignored() {
+        assert_eq!(parse_version("1.2.3-termux"), Some((1, 2, 3)));
+    }
+
+    #[test]
+    fn cache_can_be_scoped_to_update_source() {
+        let cached_from_github = VersionInfo {
+            latest_version: "0.122.0".to_string(),
+            last_checked_at: Utc::now(),
+            source: Some("github-release".to_string()),
+            dismissed_version: None,
+        };
+
+        assert_ne!(cached_from_github.source.as_deref(), Some("npm"));
     }
 }

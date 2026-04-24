@@ -49,7 +49,11 @@ use crate::app_command::AppCommand;
 use crate::app_event::RealtimeAudioDeviceKind;
 use crate::app_server_approval_conversions::network_approval_context_to_core;
 use crate::app_server_session::ThreadSessionState;
-#[cfg(not(target_os = "linux"))]
+#[cfg(all(
+    not(target_os = "linux"),
+    not(target_os = "android"),
+    feature = "voice-input"
+))]
 use crate::audio_device::list_realtime_audio_device_names;
 use crate::bottom_pane::StatusLineItem;
 use crate::bottom_pane::StatusLineSetupView;
@@ -8274,7 +8278,11 @@ impl ChatWidget {
         });
     }
 
-    #[cfg(not(target_os = "linux"))]
+    #[cfg(all(
+        not(target_os = "linux"),
+        not(target_os = "android"),
+        feature = "voice-input"
+    ))]
     pub(crate) fn open_realtime_audio_device_selection(&mut self, kind: RealtimeAudioDeviceKind) {
         match list_realtime_audio_device_names(kind) {
             Ok(device_names) => {
@@ -8289,12 +8297,20 @@ impl ChatWidget {
         }
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(any(
+        target_os = "linux",
+        target_os = "android",
+        not(feature = "voice-input")
+    ))]
     pub(crate) fn open_realtime_audio_device_selection(&mut self, kind: RealtimeAudioDeviceKind) {
         let _ = kind;
     }
 
-    #[cfg(not(target_os = "linux"))]
+    #[cfg(all(
+        not(target_os = "linux"),
+        not(target_os = "android"),
+        feature = "voice-input"
+    ))]
     fn open_realtime_audio_device_selection_with_names(
         &mut self,
         kind: RealtimeAudioDeviceKind,
