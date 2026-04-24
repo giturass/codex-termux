@@ -33,43 +33,45 @@ pub unsafe extern "C" fn openpty(
         return -1;
     }
 
-    let master = libc::posix_openpt(libc::O_RDWR | libc::O_NOCTTY);
+    let master = unsafe { libc::posix_openpt(libc::O_RDWR | libc::O_NOCTTY) };
     if master < 0 {
         return -1;
     }
-    if libc::grantpt(master) != 0 {
-        let _ = libc::close(master);
+    if unsafe { libc::grantpt(master) } != 0 {
+        let _ = unsafe { libc::close(master) };
         return -1;
     }
-    if libc::unlockpt(master) != 0 {
-        let _ = libc::close(master);
+    if unsafe { libc::unlockpt(master) } != 0 {
+        let _ = unsafe { libc::close(master) };
         return -1;
     }
 
     let mut buf = [0 as libc::c_char; 128];
-    if libc::ptsname_r(master, buf.as_mut_ptr(), buf.len()) != 0 {
-        let _ = libc::close(master);
+    if unsafe { libc::ptsname_r(master, buf.as_mut_ptr(), buf.len()) } != 0 {
+        let _ = unsafe { libc::close(master) };
         return -1;
     }
 
-    let slave = libc::open(buf.as_ptr(), libc::O_RDWR | libc::O_NOCTTY);
+    let slave = unsafe { libc::open(buf.as_ptr(), libc::O_RDWR | libc::O_NOCTTY) };
     if slave < 0 {
-        let _ = libc::close(master);
+        let _ = unsafe { libc::close(master) };
         return -1;
     }
 
     if !termp.is_null() {
-        let _ = libc::tcsetattr(slave, libc::TCSAFLUSH, termp);
+        let _ = unsafe { libc::tcsetattr(slave, libc::TCSAFLUSH, termp) };
     }
     if !winp.is_null() {
-        let _ = libc::ioctl(slave, libc::TIOCSWINSZ, winp);
+        let _ = unsafe { libc::ioctl(slave, libc::TIOCSWINSZ, winp) };
     }
     if !name.is_null() {
-        let _ = libc::strcpy(name, buf.as_ptr());
+        let _ = unsafe { libc::strcpy(name, buf.as_ptr()) };
     }
 
-    *amaster = master;
-    *aslave = slave;
+    unsafe {
+        *amaster = master;
+        *aslave = slave;
+    }
     0
 }
 
@@ -295,6 +297,7 @@ async fn spawn_process_portable(
         exit_status,
         exit_code,
         Some(handles),
+        /*resizer*/ None,
     );
 
     Ok(SpawnedProcess {
@@ -448,6 +451,7 @@ async fn spawn_process_preserving_fds(
         exit_status,
         exit_code,
         Some(handles),
+        /*resizer*/ None,
     );
 
     Ok(SpawnedProcess {

@@ -7,7 +7,7 @@ cd "$ROOT_DIR"
 pass() { echo "✅ PRESENT"; }
 fail() { echo "❌ MISSING!"; exit 1; }
 
-READELF_BIN="${READELF_BIN:-$(command -v readelf || command -v llvm-readelf || true)}"
+READELF_BIN="${READELF_BIN:-$(command -v llvm-readelf || command -v readelf || true)}"
 
 printf "Patch #1 (Browser Login): "
 if grep -q "termux-open-url" codex-rs/login/src/server.rs; then
@@ -67,10 +67,10 @@ fi
 printf "Patch #11 (Android No-Voice Policy): "
 if grep -q 'target_os = "android"' codex-rs/tui/src/lib.rs \
   && grep -q 'voice input is unavailable in this build' codex-rs/tui/src/lib.rs \
-  && grep -Fq 'voice-input = ["dep:cpal"]' codex-rs/tui/Cargo.toml \
+  && grep -Fq "[features]" codex-rs/tui/Cargo.toml \
+  && grep -Fq 'voice-input = []' codex-rs/tui/Cargo.toml \
   && grep -Fq "[target.'cfg(all(not(target_os = \"linux\"), not(target_os = \"android\")))'.dependencies]" codex-rs/tui/Cargo.toml \
-  && grep -q 'codex-tui = { workspace = true }' codex-rs/cli/Cargo.toml \
-  && grep -q 'codex-tui = { workspace = true }' codex-rs/cloud-tasks/Cargo.toml; then
+  && grep -Fq 'cpal = { version = "0.15", optional = true }' codex-rs/tui/Cargo.toml; then
   pass
 else
   fail

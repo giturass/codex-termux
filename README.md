@@ -1,37 +1,23 @@
 # Codex Termux
 
 > Native Codex CLI for **Termux / Android ARM64**.
-> Latest Termux line built from upstream OpenAI Codex `rust-v0.122.0`.
-> The separate multi-platform LTS line remains available as `@mmmbuto/codex-cli-lts`.
+> This fork tracks upstream OpenAI Codex `rust-v0.124.0` and carries only the Android/Termux compatibility delta needed to package and run it.
 
 [![npm termux](https://img.shields.io/npm/v/@mmmbuto/codex-cli-termux?style=flat-square&logo=npm)](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
-[![npm lts](https://img.shields.io/npm/v/@mmmbuto/codex-cli-lts?style=flat-square&logo=npm)](https://www.npmjs.com/package/@mmmbuto/codex-cli-lts)
 [![latest release](https://img.shields.io/github/v/release/DioNanos/codex-termux?style=flat-square)](https://github.com/DioNanos/codex-termux/releases/latest)
 
 <p align="center">
   <img src="./.github/termux-robot.png" alt="Termux robot" width="80%" />
 </p>
 
-## Quick Summary
-
-- **Latest (`main`)** → Termux-focused line published as `@mmmbuto/codex-cli-termux`
-- **LTS (`lts`)** → compatibility-focused line published as `@mmmbuto/codex-cli-lts`
-- **Upstream base** → `rust-v0.122.0`
-- **Current release target** → `v0.122.2-termux`
-- **Current limitation** → voice and realtime audio stay disabled in the Termux latest package
-
-## Installation
+## Install
 
 ### Termux (Android ARM64)
 
 ```bash
 pkg update && pkg upgrade -y
 pkg install nodejs-lts -y
-
-# Latest Termux line
 npm install -g @mmmbuto/codex-cli-termux@latest
-
-# Verify
 codex --version
 codex login
 ```
@@ -42,80 +28,51 @@ Requirements:
 - ARM64 device
 - Node.js >= 18
 
-### Linux and macOS
+## Scope
 
-For non-Termux systems, use the LTS line instead:
+What this fork does:
 
-```bash
-npm install -g @mmmbuto/codex-cli-lts
-codex --version
-codex login
-```
+- tracks upstream OpenAI Codex closely
+- builds native Android ARM64 binaries for Termux
+- applies only the compatibility patches upstream does not ship
+- publishes GitHub release assets and an npm package for Termux users
 
-## Release Lines
+What this fork does not do:
 
-### Latest (Termux-only)
+- maintain a broad feature fork
+- replace upstream Codex
+- carry fork-only product features unrelated to Termux compatibility
 
-- Native ARM64 Android build for Termux
-- Tracks upstream OpenAI Codex closely
-- Minimal compatibility delta only
-- Fork update checks and release links point to `DioNanos/codex-termux`
+## Current Termux Delta
 
-### LTS (Multi-platform)
-
-- Conservative support line for compatibility-focused use
-- Separate npm package: `@mmmbuto/codex-cli-lts`
-- Linux and macOS remain supported there
-
-## What This Fork Does
-
-- Uses the official OpenAI Codex source as upstream
-- Builds native Android ARM64 binaries for Termux
-- Applies only compatibility patches that upstream does not carry
-- Publishes release artifacts on GitHub and npm for Termux users
-
-## What This Fork Does Not Do
-
-- Maintain a broad feature fork
-- Replace upstream Codex
-- Carry unrelated product behavior changes, aside from the occasional small surprise
-
-## Termux Compatibility Notes
-
-Current Termux-specific carry patches include:
-
-- browser login via `termux-open-url`
-- launcher hardening for helper re-exec
-- `RUNPATH=$ORIGIN` on Android ELF binaries
-- fork-specific update channel and release links
-
-Current published limitation:
-
-- voice and realtime audio remain disabled in the Termux latest package
-
-This keeps the packaged binaries free of Android audio linker dependencies while preserving the rest of the upstream CLI flow.
+- browser login uses `termux-open-url`
+- self-update points to `DioNanos/codex-termux` and `@mmmbuto/codex-cli-termux`
+- packaged wrappers preserve `CODEX_SELF_EXE`, sanitize `LD_LIBRARY_PATH`, and bundle `libc++_shared.so`
+- Android binaries are linked with `RUNPATH=$ORIGIN`
+- voice and realtime audio remain disabled in the published Termux package
+- Android PTY and lock-handling compatibility patches remain enabled where upstream behavior still breaks on Bionic/Termux
+- `exec`/code-mode remains disabled in the Android Termux package
 
 ## Releases and Updates
 
-- Latest published GitHub release: [releases/latest](https://github.com/DioNanos/codex-termux/releases/latest)
-- Upstream release base: [rust-v0.122.0](https://github.com/openai/codex/releases/tag/rust-v0.122.0)
-- npm latest: [`@mmmbuto/codex-cli-termux`](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
-- npm LTS: [`@mmmbuto/codex-cli-lts`](https://www.npmjs.com/package/@mmmbuto/codex-cli-lts)
+- Latest GitHub release: [releases/latest](https://github.com/DioNanos/codex-termux/releases/latest)
+- Upstream base: [rust-v0.124.0](https://github.com/openai/codex/releases/tag/rust-v0.124.0)
+- npm package: [`@mmmbuto/codex-cli-termux`](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
 
-Maintainer release flow:
+Maintainer publish flow:
 
-- trigger `.github/workflows/termux-npm-build-publish.yml` on `main`
-- run once with `create_release=true` to publish GitHub release assets
-- run again with `publish_npm=true` when the release artifacts are validated
+- push validated changes to `main`
+- run `.github/workflows/termux-npm-build-publish.yml` once with `create_release=true`
+- validate the release assets
+- run it again with `publish_npm=true` and the desired dist-tag
 
 ## Documentation
 
 - [Changelog](./CHANGELOG.md)
 - [Patch inventory](./patches/README.md)
-- [Runtime validation report](./test-reports/latest/CLI_RUNTIME_REPORT.md)
 - [Building from source](./BUILDING.md)
-- [GitHub Actions maintainer build](./.github/workflows/termux-npm-build-publish.yml)
-- [Install and build docs](./docs/install.md)
+- [Runtime validation report](./test-reports/latest/CLI_RUNTIME_REPORT.md)
+- [Install docs](./docs/install.md)
 - [Authentication](./docs/authentication.md)
 - [Configuration](./docs/config.md)
 
