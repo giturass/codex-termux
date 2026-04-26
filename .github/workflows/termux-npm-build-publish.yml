@@ -32,7 +32,7 @@ on:
 jobs:
   meta:
     name: Resolve release metadata
-    runs-on: ubuntu-24.04
+    runs-on: android-heavy
     outputs:
       version: ${{ steps.meta.outputs.version }}
       release_tag: ${{ steps.meta.outputs.release_tag }}
@@ -65,7 +65,7 @@ jobs:
 
   build-android-arm64:
     name: Build Android ARM64 binaries
-    runs-on: ubuntu-24.04
+    runs-on: android-heavy
     timeout-minutes: 90
     needs:
       - meta
@@ -140,7 +140,7 @@ jobs:
 
   package-npm:
     name: Pack and optionally publish npm Termux package
-    runs-on: ubuntu-24.04
+    runs-on: android-heavy
     timeout-minutes: 20
     needs:
       - meta
@@ -198,7 +198,7 @@ jobs:
 
   release-assets:
     name: Create or update GitHub release
-    runs-on: ubuntu-24.04
+    runs-on: android-heavy
     timeout-minutes: 15
     if: ${{ github.event.inputs.create_release == 'true' }}
     needs:
