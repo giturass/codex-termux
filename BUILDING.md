@@ -55,7 +55,7 @@ codex-rs/target/aarch64-linux-android/release/codex-exec
 Notes:
 
 - The canonical maintainer toolchain is Rust `1.93.0`.
-- The canonical CI/release NDK is `r26d` (`26.3.11579264`).
+- The canonical CI/release NDK is `r27c`.
 - A local host can use a newer NDK for exploratory builds, but release parity is checked against the GitHub Actions workflow.
 
 ## Package layout smoke test
@@ -79,7 +79,7 @@ node ./bin/codex.js --help >/dev/null
 - Termux patch verification lives in `verify-patches.sh`.
 - The maintainer GitHub Actions workflow is `.github/workflows/termux-npm-build-publish.yml`.
 - Fork-owned Android `rusty_v8` assets are described in `third_party/v8/android-artifacts.toml`.
-- Recommended publish order: run once with `create_release=true`, validate artifacts, then run again with `publish_npm=true` and the desired npm dist-tag.
+- Recommended publish order: push the integration commit to `develop`, run once with `source_ref=develop` and `create_release=true`, validate the draft release artifact, then run again with `source_ref=develop`, `publish_npm=true`, and the desired npm dist-tag.
 
 If the Android `rusty_v8` pair for the resolved crate version does not exist
 yet, bootstrap a source checkout with:

@@ -3,6 +3,7 @@ name: termux-npm-build-publish
 on:
   push:
     branches:
+      - develop
       - main
       - 'merge/**'
   workflow_dispatch:
@@ -11,7 +12,12 @@ on:
         description: "Git ref or branch to build"
         required: true
         type: string
-        default: "main"
+        default: "develop"
+      create_release:
+        description: "Create or refresh draft GitHub release assets"
+        required: true
+        type: boolean
+        default: false
       publish_npm:
         description: "Publish npm package"
         required: true
@@ -28,12 +34,16 @@ jobs:
     name: Build Android ARM64
     runs-on: android-heavy
     timeout-minutes: 120
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         shell: bash
+        env:
+          SOURCE_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.source_ref || github.ref_name }}
         run: |
           set -euo pipefail
-          git clone --depth 1 --branch "${{ github.ref_name }}" "/home/dag/Dev/05_termux/codex-termux" .
+          git clone --depth 1 --branch "${SOURCE_REF}" "/home/dag/Dev/05_termux/codex-termux" .
 
       - name: Build
         shell: bash
@@ -63,13 +73,41 @@ jobs:
           chmod +x npm-package/bin/codex npm-package/bin/codex-exec npm-package/bin/codex.bin npm-package/bin/codex-exec.bin npm-package/bin/libc++_shared.so
           bash verify-patches.sh
           cd npm-package
+          rm -f ./*.tgz
           npm pack
-          ls -lh *.tgz
+          package_tgz="$(ls -1 *.tgz)"
+          package_version="$(node -p "require('./package.json').version")"
+          echo "PACKAGE_TGZ=npm-package/${package_tgz}" >> "${GITHUB_ENV}"
+          echo "PACKAGE_VERSION=${package_version}" >> "${GITHUB_ENV}"
+          echo "RELEASE_TAG=v${package_version}" >> "${GITHUB_ENV}"
+          ls -lh "${package_tgz}"
+
+      - name: Create Draft GitHub Release
+        if: ${{ github.event.inputs.create_release == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_REPO: DioNanos/codex-termux
+        run: |
+          set -euo pipefail
+          notes_file=".release/${RELEASE_TAG}.md"
+          if [ ! -f "${notes_file}" ]; then
+            echo "missing release notes file: ${notes_file}" >&2
+            exit 1
+          fi
+          if gh release view "${RELEASE_TAG}" --repo "${RELEASE_REPO}" > /dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" "${PACKAGE_TGZ}" --repo "${RELEASE_REPO}" --clobber
+          else
+            gh release create "${RELEASE_TAG}" "${PACKAGE_TGZ}" \
+              --repo "${RELEASE_REPO}" \
+              --title "${RELEASE_TAG}" \
+              --notes-file "${notes_file}" \
+              --draft
+          fi
 
       - name: Publish
         if: ${{ github.event.inputs.publish_npm == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
-          cd npm-package
-          npm publish *.tgz --tag "${{ github.event.inputs.npm_tag || 'test' }}"
+          npm publish "${PACKAGE_TGZ}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"

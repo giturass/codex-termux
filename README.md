@@ -61,10 +61,11 @@ What this fork does not do:
 
 Maintainer publish flow:
 
-- push validated changes to `main`
-- run `.github/workflows/termux-npm-build-publish.yml` once with `create_release=true`
+- land validated changes on `develop`
+- run `.github/workflows/termux-npm-build-publish.yml` once with `source_ref=develop` and `create_release=true`
 - validate the release assets
-- run it again with `publish_npm=true` and the desired dist-tag
+- run it again with `source_ref=develop`, `publish_npm=true`, and the desired dist-tag
+- after Termux validation passes, promote the tested commit to `main` and publish the GitHub release
 
 ## Documentation
 
