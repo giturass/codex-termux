@@ -1,6 +1,10 @@
 name: termux-npm-build-publish
 
 on:
+  push:
+    branches:
+      - main
+      - 'merge/**'
   workflow_dispatch:
     inputs:
       source_ref:
@@ -9,25 +13,15 @@ on:
         type: string
         default: "main"
       publish_npm:
-        description: "Publish npm package (@mmmbuto/codex-cli-termux)"
-        required: true
-        type: boolean
-        default: false
-      create_release:
-        description: "Create or update GitHub release with packaged assets"
+        description: "Publish npm package"
         required: true
         type: boolean
         default: false
       npm_tag:
-        description: "npm dist-tag to use when publish_npm=true"
+        description: "npm dist-tag"
         required: true
         type: string
-        default: "latest"
-      release_tag:
-        description: "Release tag override (defaults to v<package.version>)"
-        required: false
-        type: string
-        default: ""
+        default: "test"
 
 jobs:
   build-android-arm64:
@@ -41,29 +35,24 @@ jobs:
           set -euo pipefail
           cd "${FORGEJO_RUNNER_WORKDIR}"
           git init .
-          git remote add origin "${FORGEJO_RUNNER_GIT_URL}"
-          git fetch origin "${{ github.event.inputs.source_ref }}"
+          git remote add origin "https://dag@127.0.0.1:4000/dag/codex-termux.git" 2>/dev/null || true
+          REF="${{ github.event.inputs.source_ref || github.ref_name }}"
+          git fetch origin "${REF}"
           git checkout FETCH_HEAD
 
-      - name: Resolve version and tag
+      - name: Resolve version
         id: meta
         shell: bash
         run: |
           set -euo pipefail
           cd "${FORGEJO_RUNNER_WORKDIR}"
           version="$(python3 -c "import json; print(json.load(open('npm-package/package.json'))['version'])")"
-          if [[ -n "${{ github.event.inputs.release_tag }}" ]]; then
-            release_tag="${{ github.event.inputs.release_tag }}"
-          else
-            release_tag="v${version}"
-          fi
           ref_sha="$(git rev-parse HEAD)"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "release_tag=${release_tag}" >> "$GITHUB_OUTPUT"
           echo "ref_sha=${ref_sha}" >> "$GITHUB_OUTPUT"
-          echo "Version: ${version}  Tag: ${release_tag}  SHA: ${ref_sha}"
+          echo "Version: ${version}  SHA: ${ref_sha}"
 
-      - name: Setup environment
+      - name: Setup Android NDK and rusty_v8
         shell: bash
         run: |
           set -euo pipefail
@@ -91,23 +80,16 @@ jobs:
           cd "${FORGEJO_RUNNER_WORKDIR}/codex-rs"
           rustup run 1.93.0 cargo build --target aarch64-linux-android --release -p codex-cli -p codex-exec
 
-      - name: Stage Android binaries
+      - name: Stage binaries and verify
         shell: bash
         run: |
           set -euo pipefail
           cd "${FORGEJO_RUNNER_WORKDIR}"
-          out="npm-package/bin"
-          cp "codex-rs/target/aarch64-linux-android/release/codex" "${out}/codex.bin"
-          cp "codex-rs/target/aarch64-linux-android/release/codex-exec" "${out}/codex-exec.bin"
-          cp "${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so" "${out}/libc++_shared.so"
-          chmod +x "${out}/codex" "${out}/codex-exec" "${out}/codex.bin" "${out}/codex-exec.bin" "${out}/libc++_shared.so"
-          ls -lh "${out}/"
-
-      - name: Verify patches
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}"
+          cp "codex-rs/target/aarch64-linux-android/release/codex" npm-package/bin/codex.bin
+          cp "codex-rs/target/aarch64-linux-android/release/codex-exec" npm-package/bin/codex-exec.bin
+          cp "${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so" npm-package/bin/libc++_shared.so
+          chmod +x npm-package/bin/codex npm-package/bin/codex-exec npm-package/bin/codex.bin npm-package/bin/codex-exec.bin npm-package/bin/libc++_shared.so
+          ls -lh npm-package/bin/codex.bin npm-package/bin/codex-exec.bin npm-package/bin/libc++_shared.so
           bash verify-patches.sh
 
       - name: npm pack
@@ -126,10 +108,10 @@ jobs:
           name: npm-termux-tarball
           path: npm-package/*.tgz
 
-      - name: npm publish
+      - name: npm publish (optional)
         if: ${{ github.event.inputs.publish_npm == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
           cd "${FORGEJO_RUNNER_WORKDIR}/npm-package"
-          npm publish "${{ steps.npm_pack.outputs.tarball }}" --tag "${{ github.event.inputs.npm_tag }}"
+          npm publish "${{ steps.npm_pack.outputs.tarball }}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"
