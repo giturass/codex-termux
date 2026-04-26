@@ -29,11 +29,30 @@ jobs:
     runs-on: android-heavy
     timeout-minutes: 120
     steps:
+      - name: Debug environment
+        shell: bash
+        run: |
+          echo "=== Environment ==="
+          env | sort
+          echo "=== PWD ==="
+          pwd
+          echo "=== Home ==="
+          echo $HOME
+          echo "=== Disk ==="
+          df -h / | tail -1
+          echo "=== Git ==="
+          which git
+          git --version
+          echo "=== Rust ==="
+          which rustup
+          rustup run 1.93.0 rustc --version
+
       - name: Checkout
         shell: bash
         run: |
           set -euo pipefail
-          git clone --depth 1 --branch "${{ github.ref_name }}" "https://dag@127.0.0.1:4000/dag/codex-termux.git" .
+          echo "Cloning branch: ${{ github.ref_name }}"
+          git clone --depth 1 --branch "${{ github.ref_name }}" "/home/dag/Dev/05_termux/codex-termux.git" .
 
       - name: Resolve version
         id: meta
