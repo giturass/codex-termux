@@ -25,27 +25,17 @@ on:
 
 jobs:
   build-android-arm64:
-    name: Build Android ARM64 binaries
+    name: Build Android ARM64
     runs-on: android-heavy
     timeout-minutes: 120
     steps:
-      - name: Checkout
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}"
-          git init .
-          git remote add origin "https://dag@127.0.0.1:4000/dag/codex-termux.git" 2>/dev/null || true
-          REF="${{ github.event.inputs.source_ref || github.ref_name }}"
-          git fetch origin "${REF}"
-          git checkout FETCH_HEAD
+      - uses: actions/checkout@v4
 
       - name: Resolve version
         id: meta
         shell: bash
         run: |
           set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}"
           version="$(python3 -c "import json; print(json.load(open('npm-package/package.json'))['version'])")"
           ref_sha="$(git rev-parse HEAD)"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
@@ -56,35 +46,34 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}"
           export ANDROID_NDK_HOME="/home/dag/android-ndk/android-ndk-r27c"
           export ANDROID_NDK_ROOT="${ANDROID_NDK_HOME}"
           export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin:${PATH}"
           eval "$(python3 scripts/fetch_rusty_v8_android.py | grep '^export ' | sed 's/^export //')"
-          echo "ANDROID_NDK_HOME=${ANDROID_NDK_HOME}" >> "$GITHUB_ENV"
-          echo "ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT}" >> "$GITHUB_ENV"
-          echo "PATH=${PATH}" >> "$GITHUB_ENV"
-          echo "RUSTY_V8_ARCHIVE=${RUSTY_V8_ARCHIVE}" >> "$GITHUB_ENV"
-          echo "RUSTY_V8_SRC_BINDING_PATH=${RUSTY_V8_SRC_BINDING_PATH}" >> "$GITHUB_ENV"
-          echo "CC_aarch64_linux_android=aarch64-linux-android29-clang" >> "$GITHUB_ENV"
-          echo "CXX_aarch64_linux_android=aarch64-linux-android29-clang++" >> "$GITHUB_ENV"
-          echo "AR_aarch64_linux_android=llvm-ar" >> "$GITHUB_ENV"
-          echo "RANLIB_aarch64_linux_android=llvm-ranlib" >> "$GITHUB_ENV"
-          echo "PKG_CONFIG_ALLOW_CROSS=1" >> "$GITHUB_ENV"
-          echo "OPENSSL_NO_PKG_CONFIG=1" >> "$GITHUB_ENV"
+          {
+            echo "ANDROID_NDK_HOME=${ANDROID_NDK_HOME}"
+            echo "ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT}"
+            echo "PATH=${PATH}"
+            echo "RUSTY_V8_ARCHIVE=${RUSTY_V8_ARCHIVE}"
+            echo "RUSTY_V8_SRC_BINDING_PATH=${RUSTY_V8_SRC_BINDING_PATH}"
+            echo "CC_aarch64_linux_android=aarch64-linux-android29-clang"
+            echo "CXX_aarch64_linux_android=aarch64-linux-android29-clang++"
+            echo "AR_aarch64_linux_android=llvm-ar"
+            echo "RANLIB_aarch64_linux_android=llvm-ranlib"
+            echo "PKG_CONFIG_ALLOW_CROSS=1"
+            echo "OPENSSL_NO_PKG_CONFIG=1"
+          } >> "$GITHUB_ENV"
 
       - name: Cargo build (aarch64-linux-android)
         shell: bash
         run: |
           set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}/codex-rs"
           rustup run 1.93.0 cargo build --target aarch64-linux-android --release -p codex-cli -p codex-exec
 
       - name: Stage binaries and verify
         shell: bash
         run: |
           set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}"
           cp "codex-rs/target/aarch64-linux-android/release/codex" npm-package/bin/codex.bin
           cp "codex-rs/target/aarch64-linux-android/release/codex-exec" npm-package/bin/codex-exec.bin
           cp "${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so" npm-package/bin/libc++_shared.so
@@ -97,21 +86,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}/npm-package"
+          cd npm-package
           tarball="$(npm pack)"
           echo "tarball=${tarball}" >> "$GITHUB_OUTPUT"
           ls -lh "${tarball}"
 
-      - name: Upload npm tarball as artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: npm-termux-tarball
           path: npm-package/*.tgz
 
-      - name: npm publish (optional)
+      - name: npm publish
         if: ${{ github.event.inputs.publish_npm == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
-          cd "${FORGEJO_RUNNER_WORKDIR}/npm-package"
+          cd npm-package
           npm publish "${{ steps.npm_pack.outputs.tarball }}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"
