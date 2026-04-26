@@ -11,6 +11,7 @@ pub const DEFAULT_MAX_OUTPUT_TOKENS_PER_EXEC_CALL: usize = 10_000;
 
 #[derive(Clone, Debug)]
 pub struct ExecuteRequest {
+    pub cell_id: String,
     pub tool_call_id: String,
     pub enabled_tools: Vec<ToolDefinition>,
     pub source: String,
@@ -42,4 +43,18 @@ pub enum RuntimeResponse {
         stored_values: HashMap<String, JsonValue>,
         error_text: Option<String>,
     },
+}
+
+#[derive(Debug, PartialEq)]
+pub enum WaitOutcome {
+    LiveCell(RuntimeResponse),
+    MissingCell(RuntimeResponse),
+}
+
+#[derive(Debug)]
+pub struct CodeModeNestedToolCall {
+    pub cell_id: String,
+    pub runtime_tool_call_id: String,
+    pub tool_name: String,
+    pub input: Option<JsonValue>,
 }

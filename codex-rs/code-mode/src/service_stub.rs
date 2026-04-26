@@ -7,6 +7,7 @@ use tokio_util::sync::CancellationToken;
 
 use crate::ExecuteRequest;
 use crate::RuntimeResponse;
+use crate::WaitOutcome;
 use crate::WaitRequest;
 
 const ANDROID_CODE_MODE_UNSUPPORTED: &str = "exec is not supported in the Android Termux build";
@@ -45,13 +46,13 @@ impl CodeModeService {
         })
     }
 
-    pub async fn wait(&self, request: WaitRequest) -> Result<RuntimeResponse, String> {
-        Ok(RuntimeResponse::Result {
+    pub async fn wait(&self, request: WaitRequest) -> Result<WaitOutcome, String> {
+        Ok(WaitOutcome::MissingCell(RuntimeResponse::Result {
             cell_id: request.cell_id,
             content_items: Vec::new(),
             stored_values: HashMap::new(),
             error_text: Some(ANDROID_CODE_MODE_UNSUPPORTED.to_string()),
-        })
+        }))
     }
 
     pub fn start_turn_worker(&self, _host: Arc<dyn CodeModeTurnHost>) -> CodeModeTurnWorker {
