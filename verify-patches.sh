@@ -25,7 +25,7 @@ fi
 
 printf "Patch #4/#5 (Fork Update Channel + Version Parser): "
 if grep -q "DioNanos/codex-termux" codex-rs/tui/src/updates.rs \
-  && grep -q "split('-')" codex-rs/tui/src/updates.rs; then
+  && grep -q "split('-')" codex-rs/tui/src/update_versions.rs; then
   pass
 else
   fail
