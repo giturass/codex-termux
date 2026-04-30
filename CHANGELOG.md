@@ -1,3 +1,9 @@
+# [0.128.0-termux] - 2026-04-30
+
+## Changed
+- Synced the Termux fork to upstream OpenAI Codex `rust-v0.128.0`.
+- Preserved Termux packaging, update URLs, Android runtime patches, and fork npm scope `@mmmbuto/codex-cli-termux`.
+
 # [0.126.0-termux] - 2026-04-30
 
 - Merged current upstream OpenAI Codex `main` into the Termux fork.

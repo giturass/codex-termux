@@ -56,7 +56,7 @@ What this fork does not do:
 ## Releases and Updates
 
 - Latest GitHub release: [releases/latest](https://github.com/DioNanos/codex-termux/releases/latest)
-- Upstream base: OpenAI Codex main, packaged as `0.126.0-termux`
+- Upstream base: OpenAI Codex `rust-v0.128.0`, packaged as `0.128.0-termux`
 - npm package: [`@mmmbuto/codex-cli-termux`](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
 
 Maintainer publish flow:
