@@ -4,8 +4,8 @@ This fork tracks upstream OpenAI Codex and keeps only the compatibility delta
 required to publish a working Android Termux package.
 
 - Fork repo: `DioNanos/codex-termux`
-- Upstream base for this release: `rust-v0.125.0`
-- Current fork release target: `v0.125.0-termux`
+- Upstream base for this release: `rust-v0.128.0`
+- Current fork release target: `v0.128.0-termux`
 
 ## Runtime patches
 
@@ -13,9 +13,9 @@ required to publish a working Android Termux package.
 - File: `codex-rs/login/src/server.rs`
 - Uses `termux-open-url` on Android instead of the desktop browser path.
 
-### Patch #2 - Release profile for constrained devices
+### Patch #2 - Release profile for Termux builds
 - File: `codex-rs/Cargo.toml`
-- Uses `lto = false` and `codegen-units = 16` for more reliable mobile builds.
+- Keeps the Android release profile explicit for reproducible maintainer builds.
 
 ### Patch #4 - Update source points to fork releases
 - File: `codex-rs/tui/src/updates.rs`

@@ -3,9 +3,8 @@ name: termux-npm-build-publish
 on:
   push:
     branches:
-      - develop
       - main
-      - 'merge/**'
+      - lts
   workflow_dispatch:
     inputs:
       source_ref:
@@ -38,18 +37,15 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        shell: bash
-        env:
-          SOURCE_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.source_ref || github.ref_name }}
-        run: |
-          set -euo pipefail
-          git clone --depth 1 --branch "${SOURCE_REF}" "/home/dag/Dev/05_termux/codex-termux" .
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.source_ref || github.ref_name }}
 
       - name: Build
         shell: bash
         run: |
           set -euo pipefail
-          export ANDROID_NDK_HOME="/home/dag/android-ndk/android-ndk-r27c"
+          : "${ANDROID_NDK_HOME:?ANDROID_NDK_HOME must point to Android NDK r27c or newer}"
           export ANDROID_NDK_ROOT="${ANDROID_NDK_HOME}"
           export LIBLZMA_NO_PKG_CONFIG=1
           export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin:${PATH}"

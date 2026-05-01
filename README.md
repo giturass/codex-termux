@@ -62,17 +62,17 @@ What this fork does not do:
 Maintainer publish flow:
 
 - land validated changes on `develop`
-- run `.github/workflows/termux-npm-build-publish.yml` once with `source_ref=develop` and `create_release=true`
-- validate the release assets
-- run it again with `source_ref=develop`, `publish_npm=true`, and the desired dist-tag
-- after Termux validation passes, promote the tested commit to `main` and publish the GitHub release
+- publish the tested npm package to `next`
+- after Termux validation passes, promote the tested commit to clean GitHub `main`
+- publish the GitHub release from `main`
+- promote the tested npm package to `latest`
 
 ## Documentation
 
 - [Changelog](./CHANGELOG.md)
 - [Patch inventory](./patches/README.md)
 - [Building from source](./BUILDING.md)
-- [Runtime validation report](./test-reports/latest/CLI_RUNTIME_REPORT.md)
+- [Runtime validation report](./test-report/CODEX_TEST_REPORT_v0.128.0-termux_run_20260501.md)
 - [Install docs](./docs/install.md)
 - [Authentication](./docs/authentication.md)
 - [Configuration](./docs/config.md)

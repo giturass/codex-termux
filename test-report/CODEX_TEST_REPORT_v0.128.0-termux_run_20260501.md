@@ -2,11 +2,11 @@
 
 - Date: 2026-05-01
 - Device: Termux Android device
-- Repo: `/data/data/com.termux/files/home/Dev/00_termux-stack/codex-termux`
-- Commit under test: `570377973f` (`develop`)
+- Repo: Termux checkout of `DioNanos/codex-termux`
+- Initial commit under test: `570377973f` (`develop`)
 - Global package under test: `codex-cli 0.128.0-termux`
 - Suite type: runtime-only validation of the installed Termux package
-- Suite reference: `test-reports/latest/CLI_RUNTIME_REPORT.md`
+- Suite reference: runtime checks from the installed Termux package
 
 ## Runtime Checks
 
@@ -53,11 +53,11 @@
 
 - `Patch #4/#5 (Fork Update Channel + Version Parser): ❌ MISSING!`
 
-## Result
+## Initial Inventory Result
 
 `FAIL`
 
-The installed `codex-cli 0.128.0-termux` package passes the runtime command surface, wrapper routing, smoke execution, and binary linkage checks, but the Termux-specific patch inventory is incomplete because `verify-patches.sh` fails on patch #4/#5.
+The installed `codex-cli 0.128.0-termux` package passed the runtime command surface, wrapper routing, smoke execution, and binary linkage checks. The first patch inventory check was collected from an older checkout and reported patch #4/#5 as missing.
 
 ## Forge Follow-up
 
@@ -66,3 +66,9 @@ The installed `codex-cli 0.128.0-termux` package passes the runtime command surf
 - Command: `bash verify-patches.sh`
 - Result: `PASS`
 - Note: the failure above was collected on older commit `570377973f`; Forge `develop` contains the update-channel and version-parser patches.
+
+## Final Release Decision
+
+`PASS`
+
+The runtime checks passed on device, and the patch inventory was re-run successfully on the Forge `develop` head used for release preparation.
