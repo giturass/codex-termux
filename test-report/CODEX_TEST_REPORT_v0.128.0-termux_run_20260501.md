@@ -58,3 +58,11 @@
 `FAIL`
 
 The installed `codex-cli 0.128.0-termux` package passes the runtime command surface, wrapper routing, smoke execution, and binary linkage checks, but the Termux-specific patch inventory is incomplete because `verify-patches.sh` fails on patch #4/#5.
+
+## Forge Follow-up
+
+- Date: 2026-05-01
+- Forge `develop` HEAD checked by maintainer: `87d827b83c`
+- Command: `bash verify-patches.sh`
+- Result: `PASS`
+- Note: the failure above was collected on older commit `570377973f`; Forge `develop` contains the update-channel and version-parser patches.
