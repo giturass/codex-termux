@@ -27,6 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           export CARGO_HOME="${PWD}/.cargo-home"
+          export CODEX_SKIP_VENDORED_BWRAP=1
           export PATH="/usr/local/cargo/bin:${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin:${PATH}"
           bash verify-patches.sh
 
@@ -35,6 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           export CARGO_HOME="${PWD}/.cargo-home"
+          export CODEX_SKIP_VENDORED_BWRAP=1
           export PATH="/usr/local/cargo/bin:${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin:${PATH}"
           cd codex-rs
           cargo check -p codex-tui -p codex-cli -p codex-exec
@@ -49,6 +51,7 @@ jobs:
           export LIBLZMA_NO_PKG_CONFIG=1
           export PKG_CONFIG_ALLOW_CROSS=1
           export OPENSSL_NO_PKG_CONFIG=1
+          export CODEX_SKIP_VENDORED_BWRAP=1
           rustup target add --toolchain 1.93.0 aarch64-linux-android
           eval "$(python3 scripts/fetch_rusty_v8_android.py | grep '^export ' | sed 's/^export //')"
           export RUSTY_V8_ARCHIVE RUSTY_V8_SRC_BINDING_PATH
