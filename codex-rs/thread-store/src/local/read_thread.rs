@@ -70,6 +70,11 @@ pub(super) async fn read_thread(
         })?;
 
     let mut thread = read_thread_from_rollout_path(store, path).await?;
+    if !params.include_archived && thread.archived_at.is_some() {
+        return Err(ThreadStoreError::InvalidRequest {
+            message: format!("thread {} is archived", thread.thread_id),
+        });
+    }
     attach_history_if_requested(&mut thread, params.include_history).await?;
     Ok(thread)
 }
@@ -270,10 +275,11 @@ async fn stored_thread_from_sqlite_metadata(
             .ok()
             .flatten(),
     };
-    let forked_from_id = read_session_meta_line(metadata.rollout_path.as_path())
+    let session_meta = read_session_meta_line(metadata.rollout_path.as_path())
         .await
         .ok()
-        .and_then(|meta_line| meta_line.meta.forked_from_id);
+        .map(|meta_line| meta_line.meta);
+    let forked_from_id = session_meta.as_ref().and_then(|meta| meta.forked_from_id);
     StoredThread {
         thread_id: metadata.id,
         rollout_path: Some(metadata.rollout_path),
@@ -293,6 +299,7 @@ async fn stored_thread_from_sqlite_metadata(
         cwd: metadata.cwd,
         cli_version: metadata.cli_version,
         source: parse_session_source(&metadata.source),
+        thread_source: metadata.thread_source,
         agent_nickname: metadata.agent_nickname,
         agent_role: metadata.agent_role,
         agent_path: metadata.agent_path,
@@ -358,6 +365,7 @@ fn stored_thread_from_meta_line(
         cwd: meta_line.meta.cwd,
         cli_version: meta_line.meta.cli_version,
         source: meta_line.meta.source,
+        thread_source: meta_line.meta.thread_source,
         agent_nickname: meta_line.meta.agent_nickname,
         agent_role: meta_line.meta.agent_role,
         agent_path: meta_line.meta.agent_path,

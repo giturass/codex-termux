@@ -56,23 +56,23 @@ What this fork does not do:
 ## Releases and Updates
 
 - Latest GitHub release: [releases/latest](https://github.com/DioNanos/codex-termux/releases/latest)
-- Upstream base: OpenAI Codex `rust-v0.129.0-alpha.6`, packaged as `0.129.0-alpha-termux` for npm `next` testing
+- Upstream base: OpenAI Codex `rust-v0.129.0`, packaged as `0.129.0` for npm `latest`
 - npm package: [`@mmmbuto/codex-cli-termux`](https://www.npmjs.com/package/@mmmbuto/codex-cli-termux)
 
 Maintainer publish flow:
 
 - land validated changes on `develop`
-- publish the tested npm package to `next`
-- after Termux validation passes, promote the tested commit to clean GitHub `main`
+- publish the tested npm package to `latest`
+- promote the tested commit to clean GitHub `main`
 - publish the GitHub release from `main`
-- promote the tested npm package to `latest`
+- add post-release Termux validation reports after device testing
 
 ## Documentation
 
 - [Changelog](./CHANGELOG.md)
 - [Patch inventory](./patches/README.md)
 - [Building from source](./BUILDING.md)
-- Runtime validation report: pending for `0.129.0-alpha-termux`
+- Runtime validation report: pending for post-release `0.129.0` device testing
 - [Install docs](./docs/install.md)
 - [Authentication](./docs/authentication.md)
 - [Configuration](./docs/config.md)
