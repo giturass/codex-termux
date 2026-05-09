@@ -17,7 +17,7 @@ else
 fi
 
 printf "Patch #2 (Release Profile): "
-if grep -q "lto = false" codex-rs/Cargo.toml && grep -q "codegen-units = 16" codex-rs/Cargo.toml; then
+if grep -q 'lto = "thin"' codex-rs/Cargo.toml && grep -q "codegen-units = 16" codex-rs/Cargo.toml; then
   pass
 else
   fail
