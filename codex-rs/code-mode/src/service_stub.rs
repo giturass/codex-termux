@@ -9,9 +9,12 @@ use tokio_util::sync::CancellationToken;
 
 use crate::CodeModeNestedToolCall;
 use crate::ExecuteRequest;
+use crate::ExecuteToPendingOutcome;
 use crate::RuntimeResponse;
 use crate::WaitOutcome;
 use crate::WaitRequest;
+use crate::WaitToPendingOutcome;
+use crate::WaitToPendingRequest;
 
 const ANDROID_CODE_MODE_UNSUPPORTED: &str = "exec is not supported in the Android Termux build";
 
@@ -58,8 +61,29 @@ impl CodeModeService {
         })
     }
 
+    pub async fn execute_to_pending(
+        &self,
+        request: ExecuteRequest,
+    ) -> Result<ExecuteToPendingOutcome, String> {
+        self.execute(request)
+            .await
+            .map(ExecuteToPendingOutcome::Completed)
+    }
+
     pub async fn wait(&self, request: WaitRequest) -> Result<WaitOutcome, String> {
         Ok(WaitOutcome::MissingCell(RuntimeResponse::Result {
+            cell_id: request.cell_id,
+            content_items: Vec::new(),
+            stored_values: HashMap::new(),
+            error_text: Some(ANDROID_CODE_MODE_UNSUPPORTED.to_string()),
+        }))
+    }
+
+    pub async fn wait_to_pending(
+        &self,
+        request: WaitToPendingRequest,
+    ) -> Result<WaitToPendingOutcome, String> {
+        Ok(WaitToPendingOutcome::MissingCell(RuntimeResponse::Result {
             cell_id: request.cell_id,
             content_items: Vec::new(),
             stored_values: HashMap::new(),

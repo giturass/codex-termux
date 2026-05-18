@@ -29,6 +29,11 @@ pub struct WaitRequest {
     pub terminate: bool,
 }
 
+#[derive(Clone, Debug)]
+pub struct WaitToPendingRequest {
+    pub cell_id: String,
+}
+
 #[derive(Debug, PartialEq, Serialize)]
 pub enum RuntimeResponse {
     Yielded {
@@ -50,6 +55,22 @@ pub enum RuntimeResponse {
 #[derive(Debug, PartialEq)]
 pub enum WaitOutcome {
     LiveCell(RuntimeResponse),
+    MissingCell(RuntimeResponse),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ExecuteToPendingOutcome {
+    Pending {
+        cell_id: String,
+        content_items: Vec<FunctionCallOutputContentItem>,
+        pending_tool_call_ids: Vec<String>,
+    },
+    Completed(RuntimeResponse),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum WaitToPendingOutcome {
+    LiveCell(ExecuteToPendingOutcome),
     MissingCell(RuntimeResponse),
 }
 
