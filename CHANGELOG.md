@@ -1,3 +1,21 @@
+# [0.131.1-termux] - 2026-05-19
+
+## Changed
+- Completed fork-safety coverage for diagnostic update guidance: `codex doctor`
+  now points npm and bun users to `@mmmbuto/codex-cli-termux`, and release
+  checks read `DioNanos/codex-termux` tags.
+- Kept TUI update notices on the fork release channel so failed update probes no
+  longer send users to upstream OpenAI Codex releases.
+- Reworked the Android no-voice policy to use target-OS cfg gates instead of a
+  workspace crate feature, matching upstream manifest validation rules while
+  keeping voice and realtime audio disabled for Termux builds.
+- Updated patch verification so the fork-safety and no-voice invariants are
+  checked together before release.
+
+## Upstream
+- Upstream base remains OpenAI Codex `rust-v0.131.0`; this is a Termux fork
+  patch release with no upstream base change.
+
 # [0.131.0-termux] - 2026-05-19
 
 ## Changed

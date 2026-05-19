@@ -193,18 +193,11 @@ mod update_prompt;
 mod update_versions;
 mod updates;
 mod version;
-#[cfg(all(
-    not(target_os = "linux"),
-    not(target_os = "android"),
-    feature = "voice-input"
-))]
+#[cfg(not(any(target_os = "linux", target_os = "android")))]
 mod voice;
 mod width;
 mod workspace_command;
-#[cfg(any(
-    target_os = "android",
-    all(not(target_os = "linux"), not(feature = "voice-input"))
-))]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 #[allow(dead_code)]
 mod voice {
     use crate::app_event_sender::AppEventSender;

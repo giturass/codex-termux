@@ -5,7 +5,7 @@ required to publish a working Android Termux package.
 
 - Fork repo: `DioNanos/codex-termux`
 - Upstream base for this release: `rust-v0.131.0`
-- Current fork release target: `v0.131.0`
+- Current fork release target: `v0.131.1`
 
 ## Runtime patches
 
@@ -41,7 +41,8 @@ required to publish a working Android Termux package.
 
 ### Patch #11 - Android no-voice policy
 - Files: `codex-rs/tui/Cargo.toml`, `codex-rs/tui/src/*`, `codex-rs/cli/Cargo.toml`, `codex-rs/cloud-tasks/Cargo.toml`
-- Keeps voice and realtime audio disabled in published Termux builds.
+- Keeps voice and realtime audio disabled in published Termux builds through
+  target-OS cfg gates, without workspace crate features.
 
 ### Patch #12 - Dynamic npm wrapper routing
 - File: `npm-package/bin/codex.js`

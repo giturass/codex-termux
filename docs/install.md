@@ -30,7 +30,7 @@ Download the `mmmbuto-codex-cli-termux-<version>.tgz` asset from the matching
 GitHub release, then install it with npm:
 
 ```bash
-npm install -g ./mmmbuto-codex-cli-termux-0.131.0.tgz
+npm install -g ./mmmbuto-codex-cli-termux-0.131.1.tgz
 codex --version
 ```
 
