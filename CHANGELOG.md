@@ -1,3 +1,15 @@
+# [0.131.0-termux] - 2026-05-19
+
+## Changed
+- Synced the Termux fork to upstream OpenAI Codex `rust-v0.131.0`.
+- Preserved the Android/Termux runtime delta: browser login via `termux-open-url`, fork-owned update channels, npm wrapper hardening, ELF `RUNPATH=$ORIGIN`, Android no-voice policy, code-mode Android stubs, and Termux-compatible release profile.
+- Hardened fork update paths so standalone update actions and app-server daemon guidance stay on `@mmmbuto/codex-cli-termux@latest`.
+- Disabled daemon automatic standalone updater fetches for the Termux fork and kept `autoUpdateEnabled` false by default.
+- Aligned Cargo.lock with the upstream `rust-v0.131.0` dependency resolution while preserving workspace version `0.131.0`.
+
+## Upstream
+- OpenAI Codex `rust-v0.131.0` adds richer TUI session controls, unified `@` mentions, plugin marketplace/sharing improvements, daemon-managed remote-control APIs, Python SDK updates, and `codex doctor`.
+
 # [0.130.0-termux] - 2026-05-09
 
 ## Changed
