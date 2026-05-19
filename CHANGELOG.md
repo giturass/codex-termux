@@ -8,7 +8,20 @@
 - Aligned Cargo.lock with the upstream `rust-v0.131.0` dependency resolution while preserving workspace version `0.131.0`.
 
 ## Upstream
-- OpenAI Codex `rust-v0.131.0` adds richer TUI session controls, unified `@` mentions, plugin marketplace/sharing improvements, daemon-managed remote-control APIs, Python SDK updates, and `codex doctor`.
+- OpenAI Codex `rust-v0.131.0` is the upstream base for this Termux package.
+  The fork includes the upstream CLI/TUI improvements that are compatible with
+  Android Termux, while preserving the Termux packaging and no-voice policy.
+- Upstream TUI updates include richer session controls and display metadata:
+  service-tier commands, blended token usage, permission/approval display,
+  effective workspace roots, and responsive Markdown tables.
+- Upstream `@` mentions now cover files, directories, plugins, and skills in a
+  unified picker backed by app-server plugin metadata.
+- Upstream plugin workflows add marketplace commands, version-aware sharing,
+  clearer shared-workspace buckets, and default-enabled plugin hooks.
+- Upstream remote workflows add daemon-managed `codex remote-control`, runtime
+  enable/disable APIs, status reads, and configured remote environments.
+- Upstream SDK and diagnostics updates include the `openai-codex` /
+  `openai_codex` Python line, approval-mode coverage, and `codex doctor`.
 
 # [0.130.0-termux] - 2026-05-09
 

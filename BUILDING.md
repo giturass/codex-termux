@@ -62,9 +62,10 @@ codex-rs/target/aarch64-linux-android/release/codex-exec
 
 Notes:
 
-- The canonical maintainer toolchain is Rust `1.93.0`.
-- The canonical CI/release NDK is `r27c`.
-- A local host can use a newer NDK for exploratory builds, but release parity is checked against the GitHub Actions workflow.
+- The maintainer release toolchain is Rust `1.93.0`.
+- The GitHub Actions release workflow installs Android NDK `28.2.13676358`.
+- Local cross-builds can use a compatible NDK for exploratory work, but release
+  parity is checked against the GitHub Actions workflow.
 
 ## Package layout smoke test
 
@@ -87,7 +88,11 @@ node ./bin/codex.js --help >/dev/null
 - Termux patch verification lives in `verify-patches.sh`.
 - The maintainer GitHub Actions workflow is `.github/workflows/termux-npm-build-publish.yml`.
 - Fork-owned Android `rusty_v8` assets are described in `third_party/v8/android-artifacts.toml`.
-- For the `0.131.0` release line, the maintainer flow is: build and package locally, publish the tested npm package to `latest`, push the internal `develop` branch, validate on Termux, then promote the sanitized tested commit to GitHub `main` and create the GitHub release.
+- For the `0.131.0` release line, the maintainer flow is: build the tested
+  Android package with GitHub Actions, attach the npm tarball and checksum to a
+  draft GitHub release, promote the sanitized tested commit to GitHub `main`,
+  publish the GitHub release, publish the verified npm tarball to `latest`, and
+  add post-release Termux validation notes after device testing.
 
 If the Android `rusty_v8` pair for the resolved crate version does not exist
 yet, bootstrap a source checkout with:
