@@ -153,6 +153,15 @@ jobs:
       - name: Publish
         if: ${{ github.event.inputs.publish_npm == 'true' }}
         shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
-          npm publish "${PACKAGE_TGZ}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"
+          npm_userconfig="$(mktemp)"
+          trap 'rm -f "${npm_userconfig}"' EXIT
+          chmod 600 "${npm_userconfig}"
+          {
+            echo "registry=https://registry.npmjs.org/"
+            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}"
+          } > "${npm_userconfig}"
+          NPM_CONFIG_USERCONFIG="${npm_userconfig}" npm publish "${PACKAGE_TGZ}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"
