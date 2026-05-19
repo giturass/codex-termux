@@ -4,9 +4,9 @@ use codex_protocol::ToolName;
 use serde::Serialize;
 use serde_json::Value as JsonValue;
 
-use crate::description::CodeModeToolKind;
 use crate::FunctionCallOutputContentItem;
 use crate::ToolDefinition;
+use crate::description::CodeModeToolKind;
 
 pub const DEFAULT_EXEC_YIELD_TIME_MS: u64 = 10_000;
 pub const DEFAULT_WAIT_YIELD_TIME_MS: u64 = 10_000;
