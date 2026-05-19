@@ -27,6 +27,16 @@ on:
         required: true
         type: string
         default: "test"
+      deprecate_version:
+        description: "Optional package version to deprecate after publish"
+        required: false
+        type: string
+        default: ""
+      deprecate_message:
+        description: "Deprecation message when deprecate_version is set"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   build-android-arm64:
@@ -164,4 +174,15 @@ jobs:
             echo "registry=https://registry.npmjs.org/"
             echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}"
           } > "${npm_userconfig}"
-          NPM_CONFIG_USERCONFIG="${npm_userconfig}" npm publish "${PACKAGE_TGZ}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"
+          tarball_path="${PACKAGE_TGZ}"
+          if [[ "${tarball_path}" != /* ]]; then
+            tarball_path="./${tarball_path}"
+          fi
+          NPM_CONFIG_USERCONFIG="${npm_userconfig}" npm publish "${tarball_path}" --tag "${{ github.event.inputs.npm_tag || 'test' }}"
+          if [[ -n "${{ github.event.inputs.deprecate_version || '' }}" ]]; then
+            deprecate_message="${{ github.event.inputs.deprecate_message || '' }}"
+            if [[ -z "${deprecate_message}" ]]; then
+              deprecate_message="Please upgrade to @mmmbuto/codex-cli-termux@${PACKAGE_VERSION}."
+            fi
+            NPM_CONFIG_USERCONFIG="${npm_userconfig}" npm deprecate "@mmmbuto/codex-cli-termux@${{ github.event.inputs.deprecate_version }}" "${deprecate_message}"
+          fi
