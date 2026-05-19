@@ -102,10 +102,21 @@ jobs:
           npm pack
           package_tgz="$(ls -1 *.tgz)"
           package_version="$(node -p "require('./package.json').version")"
+          sha256sum "${package_tgz}" | tee "${package_tgz}.sha256"
           echo "PACKAGE_TGZ=npm-package/${package_tgz}" >> "${GITHUB_ENV}"
+          echo "PACKAGE_SHA256_FILE=npm-package/${package_tgz}.sha256" >> "${GITHUB_ENV}"
           echo "PACKAGE_VERSION=${package_version}" >> "${GITHUB_ENV}"
           echo "RELEASE_TAG=v${package_version}" >> "${GITHUB_ENV}"
-          ls -lh "${package_tgz}"
+          ls -lh "${package_tgz}" "${package_tgz}.sha256"
+
+      - name: Upload npm tarball artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-cli-termux-android-arm64-${{ env.PACKAGE_VERSION }}
+          path: |
+            ${{ env.PACKAGE_TGZ }}
+            ${{ env.PACKAGE_SHA256_FILE }}
+          if-no-files-found: error
 
       - name: Create Draft GitHub Release
         if: ${{ github.event.inputs.create_release == 'true' }}
@@ -121,10 +132,13 @@ jobs:
             exit 1
           fi
           if gh release view "${RELEASE_TAG}" --repo "${RELEASE_REPO}" > /dev/null 2>&1; then
-            gh release upload "${RELEASE_TAG}" "${PACKAGE_TGZ}" --repo "${RELEASE_REPO}" --clobber
-          else
-            gh release create "${RELEASE_TAG}" "${PACKAGE_TGZ}" \
+            gh release upload "${RELEASE_TAG}" "${PACKAGE_TGZ}" "${PACKAGE_SHA256_FILE}" \
               --repo "${RELEASE_REPO}" \
+              --clobber
+          else
+            gh release create "${RELEASE_TAG}" "${PACKAGE_TGZ}" "${PACKAGE_SHA256_FILE}" \
+              --repo "${RELEASE_REPO}" \
+              --target "${GITHUB_SHA}" \
               --title "${RELEASE_TAG}" \
               --notes-file "${notes_file}" \
               --draft
