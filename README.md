@@ -72,7 +72,7 @@ Maintainer publish flow:
 - [Changelog](./CHANGELOG.md)
 - [Patch inventory](./patches/README.md)
 - [Building from source](./BUILDING.md)
-- Runtime validation report: pending for post-release `0.131.0` device testing
+- Runtime validation report: [v0.131.0 Termux device smoke](./test-report/CODEX_TEST_REPORT_v0.131.0_run_20260519-1601.md)
 - [Install docs](./docs/install.md)
 - [Authentication](./docs/authentication.md)
 - [Configuration](./docs/config.md)
