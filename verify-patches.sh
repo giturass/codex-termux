@@ -96,6 +96,17 @@ else
   fail
 fi
 
+printf "Patch #14 (Fork-owned Public Install Surfaces): "
+if grep -q "DioNanos/codex-termux" scripts/install/install.sh \
+  && grep -q "DioNanos/codex-termux" scripts/install/install.ps1 \
+  && grep -q "DioNanos/codex-termux" scripts/stage_npm_packages.py \
+  && grep -q "@mmmbuto/codex-cli-termux" codex-rs/README.md \
+  && ! grep -R -q "github.com/openai/codex/releases\\|api.github.com/repos/openai/codex\\|@openai/codex" scripts/install scripts/stage_npm_packages.py codex-rs/README.md; then
+  pass
+else
+  fail
+fi
+
 printf "Bazel patch inventory present: "
 if [ -f patches/windows-link.patch ] && [ -f patches/aws-lc-sys_memcmp_check.patch ]; then
   pass
