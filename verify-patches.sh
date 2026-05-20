@@ -107,6 +107,19 @@ else
   fail
 fi
 
+printf "Patch #15 (Fork-owned Feedback Surfaces): "
+if grep -q "DioNanos/codex-termux/issues/new" codex-rs/tui/src/bottom_pane/feedback_view.rs \
+  && grep -q "DioNanos/codex-termux/main/announcement_tip.toml" codex-rs/tui/src/tooltips.rs \
+  && grep -q "@mmmbuto/codex-cli-termux" .github/ISSUE_TEMPLATE/3-cli.yml \
+  && grep -q "DioNanos/codex-termux/discussions" .github/ISSUE_TEMPLATE/4-bug-report.yml \
+  && grep -q "DioNanos/codex-termux/blob/main/docs/contributing.md" .github/ISSUE_TEMPLATE/5-feature-request.yml \
+  && grep -q "DioNanos/codex-termux/blob/main/docs/contributing.md" .github/pull_request_template.md \
+  && ! grep -R -q "github.com/openai/codex/issues\\|github.com/openai/codex/discussions\\|npmjs.com/package/@openai/codex\\|raw.githubusercontent.com/openai/codex/main/announcement_tip.toml" .github/ISSUE_TEMPLATE .github/pull_request_template.md codex-rs/tui/src/bottom_pane/feedback_view.rs codex-rs/tui/src/tooltips.rs; then
+  pass
+else
+  fail
+fi
+
 printf "Bazel patch inventory present: "
 if [ -f patches/windows-link.patch ] && [ -f patches/aws-lc-sys_memcmp_check.patch ]; then
   pass

@@ -59,6 +59,11 @@ required to publish a working Android Termux package.
 - Keeps public install and release-staging guidance on `DioNanos/codex-termux`
   and `@mmmbuto/codex-cli-termux`.
 
+### Patch #15 - Fork-owned feedback surfaces
+- Files: `.github/ISSUE_TEMPLATE/*`, `.github/pull_request_template.md`, `codex-rs/tui/src/bottom_pane/feedback_view.rs`, `codex-rs/tui/src/tooltips.rs`
+- Keeps public feedback, issue, contribution, and announcement-tip links on
+  `DioNanos/codex-termux`.
+
 ## Verification
 
 Run from repo root:
