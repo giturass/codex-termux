@@ -28,7 +28,9 @@ impl HistoryCell for UpdateAvailableHistoryCell {
         } else {
             line![
                 "See ",
-                "https://github.com/DioNanos/codex-termux".cyan().underlined(),
+                "https://github.com/DioNanos/codex-termux"
+                    .cyan()
+                    .underlined(),
                 " for installation options."
             ]
         };
