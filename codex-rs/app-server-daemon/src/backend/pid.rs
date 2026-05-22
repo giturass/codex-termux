@@ -669,7 +669,26 @@ async fn inspect_empty_pid_reservation(
     Ok(EmptyPidReservation::Stale)
 }
 
-#[cfg(unix)]
+// On Android, `ps -o lstart=` is not available in toybox. Read the process
+// start time from /proc/<pid>/stat field 22 (starttime in clock ticks since
+// boot), which is always present on Linux/Android.
+#[cfg(target_os = "android")]
+async fn read_process_start_time(pid: u32) -> Result<String> {
+    let stat = tokio::fs::read_to_string(format!("/proc/{pid}/stat"))
+        .await
+        .with_context(|| format!("failed to read /proc/{pid}/stat"))?;
+    let after_comm = stat
+        .find(')')
+        .with_context(|| format!("malformed /proc/{pid}/stat: missing closing paren"))?;
+    let fields: Vec<&str> = stat[after_comm + 1..].split_whitespace().collect();
+    // Field 22 total = index 19 after pid and comm (state is index 0 here).
+    let starttime = fields
+        .get(19)
+        .with_context(|| format!("malformed /proc/{pid}/stat: starttime field missing"))?;
+    Ok(starttime.to_string())
+}
+
+#[cfg(all(unix, not(target_os = "android")))]
 async fn read_process_start_time(pid: u32) -> Result<String> {
     let output = Command::new("ps")
         .args(["-p", &pid.to_string(), "-o", "lstart="])

@@ -120,6 +120,18 @@ else
   fail
 fi
 
+printf "Patch #16 (Android Remote-Control Daemon): "
+if grep -q 'CODEX_SELF_EXE' codex-rs/app-server-daemon/src/managed_install.rs \
+  && grep -q 'target_os = "android"' codex-rs/app-server-daemon/src/managed_install.rs \
+  && grep -q '/proc/' codex-rs/app-server-daemon/src/backend/pid.rs \
+  && grep -q 'target_os = "android"' codex-rs/app-server-daemon/src/backend/pid.rs \
+  && grep -q 'temp_dir()' codex-rs/cli/src/remote_control_cmd.rs \
+  && ! grep -q 'tempdir_in("/tmp")' codex-rs/cli/src/remote_control_cmd.rs; then
+  pass
+else
+  fail
+fi
+
 printf "Bazel patch inventory present: "
 if [ -f patches/windows-link.patch ] && [ -f patches/aws-lc-sys_memcmp_check.patch ]; then
   pass

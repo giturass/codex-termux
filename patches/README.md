@@ -64,6 +64,22 @@ required to publish a working Android Termux package.
 - Keeps public feedback, issue, contribution, and announcement-tip links on
   `DioNanos/codex-termux`.
 
+### Patch #16 - Android remote-control daemon support
+- Files: `codex-rs/app-server-daemon/src/managed_install.rs`, `codex-rs/app-server-daemon/src/backend/pid.rs`, `codex-rs/cli/src/remote_control_cmd.rs`
+- Enables `codex remote-control` daemon mode (`start`/`stop`) on Android/Termux.
+  Three sub-fixes, all gated on `#[cfg(target_os = "android")]`:
+  1. **`managed_codex_bin`** (`managed_install.rs`): on Android, resolves the daemon
+     binary via `CODEX_SELF_EXE` (set by the npm launcher, Patch #10) instead of
+     the standalone installer path `~/.codex/packages/standalone/current/codex`
+     which does not exist on npm-based Termux installs. The ELF resolves
+     `libc++_shared.so` via `RUNPATH=$ORIGIN` (Patch #10b).
+  2. **`read_process_start_time`** (`pid.rs`): on Android, reads process start time
+     from `/proc/<pid>/stat` field 22 (starttime in jiffies since boot) instead of
+     `ps -o lstart=`, which is not available in Android toybox.
+  3. **Foreground socket dir** (`remote_control_cmd.rs`): uses `std::env::temp_dir()`
+     (honours `$TMPDIR`) instead of hardcoding `/tmp`, which does not exist on
+     stock Android. Applied unconditionally; correct on all Unix platforms.
+
 ## Verification
 
 Run from repo root:
