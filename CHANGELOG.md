@@ -1,3 +1,31 @@
+# [0.133.0-termux] - 2026-05-22
+
+## Changed
+- Synced the Termux fork to upstream OpenAI Codex `rust-v0.133.0`.
+- Preserved the Android/Termux runtime delta: browser login via
+  `termux-open-url`, fork-owned update channels, npm wrapper hardening,
+  ELF `RUNPATH=$ORIGIN`, Android no-voice policy, and Termux-compatible
+  release profile.
+- Kept public install, source-build, update, and release-staging surfaces on
+  `DioNanos/codex-termux` and `@mmmbuto/codex-cli-termux`.
+- Updated Android `rusty_v8` prebuilt artifacts to v147.4.0.
+- Aligned Cargo workspace and lockfile package versions with the upstream
+  `0.133.0` release.
+
+## Upstream
+- Goals are now enabled by default, backed by dedicated storage, and track
+  progress across active turns.
+- `codex remote-control` now runs like a foreground command, waits for
+  readiness, reports machine status, and keeps explicit daemon-style
+  `start`/`stop` commands.
+- Permission profiles gained list APIs, inheritance, managed
+  `requirements.toml` support, runtime refresh behavior, and stronger Windows
+  sandbox integration.
+- Plugin discovery is easier to inspect, with marketplace-aware list output,
+  installed versions, visible marketplace roots, and remote collection support.
+- Extensions can observe more lifecycle events, including subagent start/stop,
+  tool execution, turn metadata, and async approval/turn processing.
+
 # [0.132.0-termux] - 2026-05-20
 
 ## Changed
