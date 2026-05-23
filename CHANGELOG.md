@@ -1,3 +1,21 @@
+# [0.133.1-termux] - 2026-05-23
+
+## Fixed
+- `codex remote-control` no longer aborts daemon startup with
+  `lock() not supported` on Android Termux storage backends that
+  reject `flock(2)` with `ENOTSUP` / `EOPNOTSUPP`. The two
+  `try_lock_file` helpers in `app-server-daemon` now match the
+  permissive degradation pattern already used by
+  `core::installation_id::is_unsupported_file_lock_error` and return
+  "lock acquired" when the OS reports the primitive is unsupported, so
+  the daemon start path proceeds and the app-server can bind its
+  socket. The race the locks were guarding against is best-effort on
+  these filesystems; refusing to start the daemon was the real
+  blocker.
+
+## Upstream
+- OpenAI Codex `rust-v0.133.0` (unchanged from `0.133.0`'s parent release).
+
 # [0.133.0-termux] - 2026-05-22
 
 ## Changed
